@@ -1,5 +1,11 @@
 # История изменений
 
+## 1.0.1 (21.10.2026)
+
+- Исправлено: у части игроков MMR и цвета не появлялись в истории. Скрипт искал строки по дате, а дата в игре выглядит по-разному в зависимости от языка и региона. Теперь строки находятся при любом формате даты.
+- Скрипт включен сразу после установки. Раньше все пункты меню были серыми, пока не включишь «Включить».
+- Отладка в лог пишет, сколько строк истории нашлось.
+
 ## 1.0.0 (21.10.2026)
 
 Первая версия.
@@ -13,6 +19,12 @@
 ---
 
 # Changelog
+
+## 1.0.1 (2026-10-21)
+
+- Fixed: for some players MMR and colors never showed up in the history. The script found rows by the date, and the date looks different depending on the game language and region. Rows are now found with any date format.
+- The script is on right after install. Before, every menu item stayed grey until you turned on Enable.
+- The debug log shows how many history rows were found.
 
 ## 1.0.0 (2026-10-21)
 

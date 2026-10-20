@@ -1,12 +1,12 @@
 # History Changer
 
-![Downloads](https://img.shields.io/github/downloads/BraVoEw/Scripts-Umbrella/history-changer-v1.0.0/total?label=%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BE%D0%BA)
+![Downloads](https://img.shields.io/github/downloads/BraVoEw/Scripts-Umbrella/total?label=%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BE%D0%BA)
 
 Скрипт для Umbrella (Dota 2). Показывает в истории матчей твой настоящий MMR после каждой игры и его изменение, а над карточкой профиля ставит плашку с винами, лузами и суммой MMR за сутки, неделю или месяц.
 
 Все изменения видны только у тебя на экране. В чужом клиенте, на Dotabuff и OpenDota и в самом рейтинге ничего не меняется.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.0/history_changer.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.1/history_changer.lua)**
 
 ## Возможности
 
@@ -23,7 +23,7 @@
 1. Скачай `history_changer.lua` по ссылке выше.
 2. Положи его в папку `scripts` Umbrella.
 3. Перезагрузи Lua-скрипты.
-4. Открой `Scripts → Scripts → History Changer` и включи скрипт.
+4. Открой `Scripts → Scripts → History Changer`, скрипт включен сразу.
 5. Зайди в Профиль → History.
 
 ## Настройки
@@ -56,7 +56,7 @@ Umbrella script for Dota 2. Shows your real MMR after every match and its change
 
 Everything changes only on your screen. Other clients, Dotabuff, OpenDota and your actual rank stay the same.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.0/history_changer.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.1/history_changer.lua)**
 
 ### Features
 
@@ -72,7 +72,7 @@ Everything changes only on your screen. Other clients, Dotabuff, OpenDota and yo
 1. Download `history_changer.lua` from the link above.
 2. Put it into the Umbrella `scripts` folder.
 3. Reload Lua scripts.
-4. Open `Scripts → Scripts → History Changer` and enable it.
+4. Open `Scripts → Scripts → History Changer`, the script is on by default.
 5. Go to Profile → History.
 
 ### Credits

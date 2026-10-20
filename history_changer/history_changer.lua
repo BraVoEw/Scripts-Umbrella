@@ -408,7 +408,7 @@ do
 	local g_main = page:Create("hc_group_main", Enum.GroupSide.Left)
 	local g_rows = page:Create("hc_group_rows", Enum.GroupSide.Right)
 
-	ui.enable = g_main:Switch("hc_enable", false, "\u{f011}")
+	ui.enable = g_main:Switch("hc_enable", true, "\u{f011}")
 	ui.enable:ToolTip("hc_enable_tip")
 	local g_gear = ui.enable:Gear("hc_gear_extra")
 	ui.debug = g_gear:Switch("hc_debug", false, "\u{f188}")
@@ -483,6 +483,14 @@ local K = {
 	ROW_DEPTH = 4,
 	CLIMB_DEPTH = 5,
 	ROOT_IDS = { "DOTAHeroesPage", "DotaDashboard" },
+	TABLE_ID = "RecentGamesTable",
+	ROW_CLASSES = {
+		HeroName = "hero",
+		ResultColumn = "result",
+		TimestampDate = "date",
+		TimestampTime = "time",
+		DurationColumn = "duration",
+	},
 	DUMP_LINES = 400,
 	DUMP_DEPTH = 7,
 	DUMP_LABELS = 40,
@@ -542,6 +550,8 @@ local state = {
 	page_from = nil,
 	applied = false,
 	frame_error = nil,
+	rows_text = nil,
+	search_text = nil,
 }
 
 local function decode(name, buffer, size)
@@ -642,7 +652,7 @@ local function parse_duration(text)
 end
 
 local function is_date(text)
-	return text:match("^%d+[/%.%-]%d+[/%.%-]%d%d%d%d") ~= nil
+	return text:match("^%d+%s*[/%.%-]%s*%d+%s*[/%.%-]%s*%d+") ~= nil
 end
 
 local function collect_labels(panel, depth, out)
@@ -659,8 +669,28 @@ local function collect_labels(panel, depth, out)
 	return out
 end
 
-local function parse_row(row)
-	local labels = collect_labels(row, 1, {})
+local function row_by_class(labels)
+	local found = {}
+	for _, label in ipairs(labels) do
+		for _, class in ipairs(label:GetClassList() or {}) do
+			local field = K.ROW_CLASSES[class]
+			if field and not found[field] then
+				found[field] = label
+			end
+		end
+	end
+	local seconds = found.duration and parse_duration(found.duration:GetText() or "")
+	if not found.result or not seconds then return nil end
+
+	return {
+		hero = found.hero,
+		result = found.result,
+		date = (found.date and found.date:GetText() or "") .. " " .. (found.time and found.time:GetText() or ""),
+		seconds = seconds,
+	}
+end
+
+local function row_by_text(labels)
 	local date_i
 	for i, label in ipairs(labels) do
 		if is_date(label:GetText() or "") then
@@ -683,6 +713,11 @@ local function parse_row(row)
 	}
 end
 
+local function parse_row(row)
+	local labels = collect_labels(row, 1, {})
+	return row_by_class(labels) or row_by_text(labels)
+end
+
 local function match_for_row(info)
 	local list = state.by_duration[info.seconds]
 	if not list then return nil end
@@ -691,11 +726,18 @@ local function match_for_row(info)
 	for n in info.date:gmatch("%d+") do
 		nums[tonumber(n)] = true
 	end
+	local best, best_score = list[1], -1
 	for _, m in ipairs(list) do
 		local d = os.date("*t", m.start)
-		if nums[d.day] and nums[d.month] and nums[d.year] then return m end
+		local hour12 = d.hour % 12 == 0 and 12 or d.hour % 12
+		local score = (nums[d.day] and 1 or 0) + (nums[d.month] and 1 or 0)
+			+ ((nums[d.year] or nums[d.year % 100]) and 1 or 0)
+			+ ((nums[d.hour] or nums[hour12]) and 1 or 0) + (nums[d.min] and 1 or 0)
+		if score > best_score then
+			best, best_score = m, score
+		end
 	end
-	return list[1]
+	return best
 end
 
 local function strip_tags(text)
@@ -793,17 +835,41 @@ local function apply_row(info, enabled)
 			restore_label(info.hero)
 		end
 	end
+	return match
+end
+
+local function describe_row(row)
+	local parts = {}
+	for _, label in ipairs(collect_labels(row, 1, {})) do
+		local classes = label:GetClassList() or {}
+		parts[#parts + 1] = (#classes > 0 and ("." .. table.concat(classes, ".")) or "Label")
+			.. " \"" .. (label:GetText() or "") .. "\""
+	end
+	return #parts > 0 and table.concat(parts, ", ") or "no labels"
 end
 
 local function apply_rows(container, enabled)
 	state.row_accounts = {}
+	local rows, matched, ranked = 0, 0, 0
 	for i = 0, container:GetChildCount() - 1 do
 		local row = container:GetChild(i)
 		if row and row:IsVisible() then
 			local info = parse_row(row)
 			if info then
-				apply_row(info, enabled)
+				rows = rows + 1
+				local match = apply_row(info, enabled)
+				if match then
+					matched = matched + 1
+					if match.ranked then ranked = ranked + 1 end
+				end
 			end
+		end
+	end
+	if enabled and ui.debug:Get() then
+		local text = "rows " .. rows .. ", matched " .. matched .. ", ranked " .. ranked
+		if text ~= state.rows_text then
+			state.rows_text = text
+			log(text)
 		end
 	end
 
@@ -871,6 +937,37 @@ local function search_container(root)
 				local child = panel:GetChild(i)
 				if child then stack[#stack + 1] = child end
 			end
+		end
+	end
+end
+
+local function table_container()
+	local ok, panel = pcall(Panorama.GetPanelByName, K.TABLE_ID, false)
+	if not ok or not panel then return nil, "table not found" end
+	if not is_shown(panel) then return nil, "table hidden" end
+	local first
+	for i = 0, panel:GetChildCount() - 1 do
+		local row = panel:GetChild(i)
+		if row and row:IsVisible() then
+			if parse_row(row) then return panel end
+			first = first or row
+		end
+	end
+	return nil, "table shown, " .. panel:GetChildCount() .. " children, first row: "
+		.. (first and describe_row(first) or "none")
+end
+
+local function find_container()
+	local container, reason = table_container()
+	if container then return container end
+	local root = find_root()
+	container = root and search_container(root)
+	if container then return container end
+	if ui.debug:Get() then
+		local text = "history panel not found: " .. reason .. (root and "" or ", root not found")
+		if text ~= state.search_text then
+			state.search_text = text
+			log(text)
 		end
 	end
 end
@@ -1103,7 +1200,9 @@ local function dump()
 		.. ", shown account " .. tostring(state.shown_account) }
 	local root = find_root()
 	lines[#lines + 1] = "root " .. (root and panel_line(root, 0) or "not found")
-	local container = state.container or (root and search_container(root))
+	local table_panel, reason = table_container()
+	lines[#lines + 1] = "table " .. (table_panel and "ok" or reason)
+	local container = state.container or table_panel or (root and search_container(root))
 	if container then
 		lines[#lines + 1] = "container " .. chain_text(container)
 		local geo = geometry(container)
@@ -1135,13 +1234,14 @@ local function tick()
 			state.anchor = nil
 			state.geo_summary = nil
 			state.page_visible = false
+			state.rows_text = nil
 			log("history panel closed")
 		end
 		if not state.container and state.clock >= state.next_search then
 			state.next_search = state.clock + K.SEARCH_INTERVAL
-			local root = find_root()
-			state.container = root and search_container(root)
+			state.container = find_container()
 			if state.container then
+				state.search_text = nil
 				log("history panel found: " .. chain_text(state.container))
 			end
 		end
