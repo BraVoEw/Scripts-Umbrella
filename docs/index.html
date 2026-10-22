@@ -572,13 +572,16 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     renderDates();
   }
 
-  function load() {
+  function load(attempt) {
+    attempt = attempt || 0;
     var cached = null;
     try { cached = JSON.parse(store("rel") || "null"); } catch (e) {}
-    if (cached && Date.now() - cached.at < 10 * 60 * 1000) { apply(cached.list); return; }
-    fetch("https://api.github.com/repos/" + REPO + "/releases?per_page=100")
+    if (cached && (!cached.list || !cached.list.length)) cached = null;
+    if (!attempt && cached && Date.now() - cached.at < 10 * 60 * 1000) { apply(cached.list); return; }
+    fetch("https://api.github.com/repos/" + REPO + "/releases?per_page=100" + (attempt ? "&_=" + Date.now() : ""))
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (list) {
+        if (!Array.isArray(list) || !list.length) return Promise.reject("empty");
         var slim = list.map(function (r) {
           return { tag_name: r.tag_name, draft: r.draft, prerelease: r.prerelease, published_at: r.published_at,
             assets: (r.assets || []).map(function (a) { return { name: a.name, download_count: a.download_count }; }) };
@@ -586,7 +589,10 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
         store("rel", JSON.stringify({ at: Date.now(), list: slim }));
         apply(slim);
       })
-      .catch(function () { if (cached) apply(cached.list); });
+      .catch(function () {
+        if (cached && !attempt) apply(cached.list);
+        if (attempt < 3) setTimeout(function () { load(attempt + 1); }, 1500 * (attempt + 1));
+      });
   }
 
   document.querySelectorAll(".thumbs button").forEach(function (b) {
@@ -629,7 +635,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
   function points() {
     var pts = (hist || []).map(function (p) { return { t: Date.parse(p.t), s: p.s || {} }; })
       .filter(function (p) { return !isNaN(p.t); }).sort(function (a, b) { return a.t - b.t; });
-    if (live && !LOCAL) {
+    if (live && !LOCAL && (!pts.length || sum(live) >= sum(pts[pts.length - 1].s))) {
       var now = Date.now();
       if (!pts.length || now - pts[pts.length - 1].t > 60000) pts.push({ t: now, s: live });
     }

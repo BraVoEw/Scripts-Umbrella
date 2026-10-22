@@ -19,8 +19,12 @@ def releases():
 
 def main():
     path = sys.argv[1]
+    rels = releases()
+    if not isinstance(rels, list) or not rels:
+        print("no releases in the answer, skip")
+        return 0
     counts = {key: 0 for key in SCRIPTS}
-    for rel in releases():
+    for rel in rels:
         for key, name in SCRIPTS.items():
             if rel.get("tag_name", "").startswith(key + "-v"):
                 counts[key] += sum(a.get("download_count", 0) for a in rel.get("assets", []) if a.get("name") == name)
@@ -28,9 +32,14 @@ def main():
     if os.path.exists(path):
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-    if data["points"] and data["points"][-1]["s"] == counts:
-        print("no change", counts)
-        return 0
+    if data["points"]:
+        prev = data["points"][-1]["s"]
+        if prev == counts:
+            print("no change", counts)
+            return 0
+        if any(counts[k] < prev.get(k, 0) for k in counts):
+            print("lower than the last snapshot, skip", counts, prev)
+            return 0
     now = datetime.datetime.now(datetime.timezone.utc).replace(second=0, microsecond=0)
     data["points"].append({"t": now.isoformat().replace("+00:00", "Z"), "s": counts})
     with open(path, "w", encoding="utf-8", newline="\n") as f:
