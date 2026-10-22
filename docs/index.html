@@ -204,6 +204,14 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
 .chart .f1 { fill: var(--s1); } .chart .f2 { fill: var(--s2); }
 .chart .ring { stroke: var(--card); stroke-width: 2; }
 .chart .cross { stroke: var(--dim); stroke-width: 1; }
+.chart .ln.total { stroke: var(--text); stroke-width: 2; }
+.chart .dot-total { fill: var(--text); }
+.chart .area-top { stop-color: var(--text); stop-opacity: .10; }
+.chart .area-bottom { stop-color: var(--text); stop-opacity: 0; }
+.headline { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.headline b { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.headline span { color: var(--dim); font-size: 15px; }
+.headline em { font-style: normal; color: var(--win); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
 .chart .bar { transition: opacity .15s; }
 .chart .bar.dim { opacity: .45; }
 .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--edge); border-radius: 10px; padding: 9px 12px; font-size: 13px; box-shadow: var(--shadow); white-space: nowrap; z-index: 3; }
@@ -400,8 +408,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       </div>
       <div class="chart-card">
         <div class="chart-head">
-          <h3 data-i18n="st_time">Загрузки со временем</h3>
-          <div class="legend"><span><i class="key s1"></i>Build Brain</span><span><i class="key s2"></i>History Changer</span></div>
+          <div class="headline"><b id="ln-total">0</b><span data-i18n="st_dl">загрузок</span><em id="ln-delta"></em><span id="ln-since"></span></div>
         </div>
         <div class="chart" id="line-chart"></div>
       </div>
@@ -430,7 +437,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       nav_scripts: "Скрипты", nav_install: "Установка", nav_stats: "Статистика",
       st_title: "Статистика", st_demo: "Превью: на графике демо-данные, настоящие начнут копиться после публикации.",
       st_total: "Всего загрузок", st_day: "За последние 24 часа", st_time: "Загрузки со временем", st_versions: "По версиям",
-      st_sum: "Всего", st_dl: "загрузок", st_released: "релиз",
+      st_sum: "Всего", st_dl: "загрузок", st_since: "с %s", st_released: "релиз",
       hero_title: "Скрипты для <em>Umbrella</em>",
       hero_lead: "Dota 2. Делаю то, чего самому не хватало в игре, и выкладываю для всех. Бесплатно и с открытым кодом.",
       stat_scripts: "скрипта", stat_downloads: "загрузок", stat_updated: "последнее обновление",
@@ -458,7 +465,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       nav_scripts: "Scripts", nav_install: "Install", nav_stats: "Stats",
       st_title: "Stats", st_demo: "Preview: the chart shows demo data, real history starts after publishing.",
       st_total: "Total downloads", st_day: "Last 24 hours", st_time: "Downloads over time", st_versions: "By version",
-      st_sum: "Total", st_dl: "downloads", st_released: "released",
+      st_sum: "Total", st_dl: "downloads", st_since: "since %s", st_released: "released",
       hero_title: "Scripts for <em>Umbrella</em>",
       hero_lead: "Dota 2. I make what I was missing in the game myself and share it with everyone. Free and open source.",
       stat_scripts: "scripts", stat_downloads: "downloads", stat_updated: "last update",
@@ -659,18 +666,19 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     });
     return Date.parse(best || FIRST[k]);
   }
-  function seriesOf(k, pts) {
-    var t0 = firstRelease(k), out = [{ t: t0, v: 0 }];
-    pts.forEach(function (p) { if (p.t > t0) out.push({ t: p.t, v: p.s[k] || 0 }); });
+  function totalSeries(pts) {
+    var start = Math.min.apply(null, KEYS.map(firstRelease)), out = [{ t: start, v: 0 }];
+    pts.forEach(function (p) { if (p.t > start) out.push({ t: p.t, v: sum(p.s) }); });
     return out;
   }
-  function valueAt(ser, t) {
-    var v = null;
-    ser.forEach(function (p) { if (p.t <= t) v = p.v; });
-    return v;
+  function dayLabel(t) {
+    try { return new Date(t).toLocaleDateString(lang === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short" }); }
+    catch (e) { return stamp(t, false); }
   }
   function timeTicks(t0, t1, maxN) {
-    var HR = 3600e3, steps = [3 * HR, 6 * HR, 12 * HR, 24 * HR, 48 * HR, 168 * HR, 336 * HR, 720 * HR], step = steps[steps.length - 1];
+    var HR = 3600e3, DAY = 24 * HR;
+    var steps = (t1 - t0) >= 1.5 * DAY ? [DAY, 2 * DAY, 3 * DAY, 7 * DAY, 14 * DAY, 30 * DAY] : [3 * HR, 6 * HR, 12 * HR, DAY];
+    var step = steps[steps.length - 1];
     for (var i = 0; i < steps.length; i++) if ((t1 - t0) / steps[i] <= maxN) { step = steps[i]; break; }
     var d = new Date(t0);
     d.setHours(0, 0, 0, 0);
@@ -679,63 +687,48 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     for (; t <= t1; t += step) ticks.push(t);
     return { ticks: ticks, step: step };
   }
-  function tickLabel(t, step) {
-    var d = new Date(t);
-    if (step >= 24 * 3600e3 || d.getHours() === 0) return stamp(t, false);
-    return String(d.getHours()).padStart(2, "0") + ":00";
-  }
 
   function lineChart(box, pts) {
     box.innerHTML = "";
     var W = box.clientWidth, H = W < 560 ? 240 : 300;
     if (W < 160) return;
-    var m = { l: 40, r: 44, t: 12, b: 28 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+    var ser = totalSeries(pts);
+    var last = ser[ser.length - 1];
+    document.getElementById("ln-total").textContent = nf(last.v);
+    document.getElementById("ln-delta").textContent = "+" + nf(last.v - ser[0].v);
+    document.getElementById("ln-since").textContent = T[lang].st_since.replace("%s", dayLabel(ser[0].t));
+    var vmax = Math.max(1, last.v);
+    var step = niceStep(vmax / 5), ymax = Math.ceil(vmax * 1.06 / step) * step;
+    var label = function (v) { return nf(v); };
+    var m = { l: 14 + 8 * label(ymax).length, r: 14, t: 10, b: 28 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
     var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, height: H, role: "img", "aria-label": T[lang].st_time }, box);
-    var series = {}, t0 = Infinity, t1 = -Infinity, vmax = 1;
-    KEYS.forEach(function (k) {
-      series[k] = seriesOf(k, pts);
-      series[k].forEach(function (p) { t0 = Math.min(t0, p.t); t1 = Math.max(t1, p.t); vmax = Math.max(vmax, p.v); });
-    });
-    if (!isFinite(t0)) return;
-    if (t1 - t0 < 6 * 3600e3) t1 = t0 + 6 * 3600e3;
-    var step = niceStep(vmax / 4), ymax = Math.ceil(vmax * 1.08 / step) * step;
+    var t0 = ser[0].t, t1 = Math.max(last.t, t0 + 6 * 3600e3);
     var X = function (t) { return m.l + (t - t0) / (t1 - t0) * iw; };
     var Y = function (v) { return m.t + ih - v / ymax * ih; };
+    var defs = svgEl("defs", {}, svg);
+    var grad = svgEl("linearGradient", { id: "area", x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+    svgEl("stop", { offset: "0%", "class": "area-top" }, grad);
+    svgEl("stop", { offset: "100%", "class": "area-bottom" }, grad);
     var grid = svgEl("g", { "class": "grid" }, svg);
     for (var v = 0; v <= ymax + 1e-9; v += step) {
       svgEl("line", { x1: m.l, x2: m.l + iw, y1: Math.round(Y(v)) + 0.5, y2: Math.round(Y(v)) + 0.5 }, grid);
       var tx = svgEl("text", { x: m.l - 8, y: Y(v) + 4, "text-anchor": "end" }, svg);
-      tx.textContent = compact(v);
+      tx.textContent = label(v);
     }
     var tk = timeTicks(t0, t1, W < 560 ? 3 : 6);
-    tk.ticks.forEach(function (t, i) {
-      var x = X(t), anchor = x < m.l + 24 ? "start" : (x > m.l + iw - 24 ? "end" : "middle");
+    var marks = [t0].concat(tk.ticks.filter(function (t) { return X(t) - X(t0) > 70; }));
+    marks.forEach(function (t, i) {
+      var x = X(t), anchor = i === 0 ? "start" : (x > m.l + iw - 30 ? "end" : "middle");
       var xl = svgEl("text", { x: x, y: H - 8, "text-anchor": anchor }, svg);
-      var label = tickLabel(t, tk.step);
-      xl.textContent = i === 0 && label.indexOf(":") > 0 ? stamp(t, false) + " " + label : label;
+      var dt = new Date(t);
+      xl.textContent = i === 0 || tk.step >= 24 * 3600e3 || dt.getHours() === 0 ? dayLabel(t) : String(dt.getHours()).padStart(2, "0") + ":00";
     });
-    KEYS.forEach(function (k) {
-      var d = series[k].map(function (p, i) { return (i ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.v).toFixed(1); }).join("");
-      svgEl("path", { d: d, "class": "ln s" + NUM[k] }, svg);
-    });
-    var ends = KEYS.map(function (k) {
-      var last = series[k][series[k].length - 1];
-      return { k: k, v: last.v, x: X(last.t), y: Y(last.v) };
-    }).sort(function (a, b) { return a.y - b.y; });
-    for (var j = 1; j < ends.length; j++) {
-      var prev = ends[j - 1].ly || ends[j - 1].y;
-      if (Math.abs(ends[j].x - ends[j - 1].x) < 40 && ends[j].y - prev < 16) ends[j].ly = prev + 16;
-    }
-    ends.forEach(function (e) {
-      svgEl("circle", { cx: e.x, cy: e.y, r: 4, "class": "ring f" + NUM[e.k] }, svg);
-      var lb = svgEl("text", { x: e.x + 9, y: (e.ly || e.y) + 4, "class": "val" }, svg);
-      lb.textContent = nf(e.v);
-    });
-    var times = [];
-    KEYS.forEach(function (k) { series[k].forEach(function (p) { if (times.indexOf(p.t) < 0) times.push(p.t); }); });
-    times.sort(function (a, b) { return a - b; });
+    var line = ser.map(function (p, i) { return (i ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.v).toFixed(1); }).join("");
+    svgEl("path", { d: line + "L" + X(last.t).toFixed(1) + "," + Y(0) + "L" + X(t0).toFixed(1) + "," + Y(0) + "Z", fill: "url(#area)" }, svg);
+    svgEl("path", { d: line, "class": "ln total" }, svg);
+    svgEl("circle", { cx: X(last.t), cy: Y(last.v), r: 4, "class": "ring dot-total" }, svg);
     var cross = svgEl("line", { y1: m.t, y2: m.t + ih, "class": "cross", visibility: "hidden" }, svg);
-    var dots = KEYS.map(function (k) { return svgEl("circle", { r: 4, "class": "ring f" + NUM[k], visibility: "hidden" }, svg); });
+    var dot = svgEl("circle", { r: 4, "class": "ring dot-total", visibility: "hidden" }, svg);
     var tip = document.createElement("div");
     tip.className = "tip";
     tip.hidden = true;
@@ -743,34 +736,23 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     var hit = svgEl("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent" }, svg);
     function hide() {
       cross.setAttribute("visibility", "hidden");
-      dots.forEach(function (d) { d.setAttribute("visibility", "hidden"); });
+      dot.setAttribute("visibility", "hidden");
       tip.hidden = true;
     }
     function move(ev) {
       var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
-      var best = times[0];
-      times.forEach(function (t) { if (Math.abs(X(t) - mx) < Math.abs(X(best) - mx)) best = t; });
-      var px = X(best), total = 0;
+      var best = ser[0];
+      ser.forEach(function (p) { if (Math.abs(X(p.t) - mx) < Math.abs(X(best.t) - mx)) best = p; });
+      var px = X(best.t);
       cross.setAttribute("x1", px);
       cross.setAttribute("x2", px);
       cross.setAttribute("visibility", "visible");
-      var html = "<b>" + stamp(best, true) + "</b>";
-      KEYS.forEach(function (k, i) {
-        var val = valueAt(series[k], best);
-        if (val === null) {
-          dots[i].setAttribute("visibility", "hidden");
-          return;
-        }
-        total += val;
-        dots[i].setAttribute("cx", px);
-        dots[i].setAttribute("cy", Y(val));
-        dots[i].setAttribute("visibility", "visible");
-        html += '<div><i class="key s' + NUM[k] + '"></i>' + NAMES[k] + "<em>" + nf(val) + "</em></div>";
-      });
-      html += "<div>" + T[lang].st_sum + "<em>" + nf(total) + "</em></div>";
-      tip.innerHTML = html;
+      dot.setAttribute("cx", px);
+      dot.setAttribute("cy", Y(best.v));
+      dot.setAttribute("visibility", "visible");
+      tip.innerHTML = "<b>" + dayLabel(best.t) + ", " + stamp(best.t, true).slice(6) + "</b><div>" + T[lang].st_dl + "<em>" + nf(best.v) + "</em></div>";
       tip.hidden = false;
-      tipAt(box, tip, px * r.width / W, (m.t + ih / 2) * r.height / H);
+      tipAt(box, tip, px * r.width / W, Y(best.v) * r.height / H);
     }
     hit.addEventListener("pointermove", move);
     hit.addEventListener("pointerdown", move);
