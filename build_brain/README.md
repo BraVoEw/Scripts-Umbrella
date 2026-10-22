@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.0/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.1/build_brain.lua)**
 
 ## Что умеет
 
@@ -52,7 +52,7 @@
 
 ## Обновления
 
-Скрипт сам проверяет новую версию на GitHub раз в несколько часов. Если в настройках включено «Обновлять автоматически» (включено сразу), он скачает её сам, а заработает она после перезагрузки скриптов, кнопка есть там же. Если автообновление выключить, на вкладке «Настройки» будет кнопка «Обновить».
+Скрипт сам проверяет новую версию на GitHub при каждом запуске и дальше раз в час. Если в настройках включено «Обновлять автоматически» (включено сразу), он скачает её сам, а заработает она после перезагрузки скриптов, кнопка есть там же. Если автообновление выключить, на вкладке «Настройки» будет кнопка «Обновить».
 
 ## Благодарности
 
@@ -65,7 +65,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.0/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.1/build_brain.lua)**
 
 ### Features
 
@@ -85,7 +85,7 @@ Umbrella script for Dota 2. Shows a build for your hero and role in the shop, ba
 
 ### Updates
 
-The script checks GitHub for a new version every few hours. With "Update automatically" on (the default) it downloads it by itself, and the new version starts after you reload scripts, the button is on the Settings tab. With it off, use the Update button there.
+The script checks GitHub for a new version on every start and then hourly. With "Update automatically" on (the default) it downloads it by itself, and the new version starts after you reload scripts, the button is on the Settings tab. With it off, use the Update button there.
 
 ### Credits
 

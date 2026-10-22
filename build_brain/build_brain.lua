@@ -577,7 +577,7 @@ local localization = qLocalization.new({
 		bb_set_scale = "Window size",
 		bb_upd_title = "Updates",
 		bb_set_update = "Update automatically",
-		bb_upd_idle = "Checks GitHub every few hours",
+		bb_upd_idle = "Checks GitHub on start and every hour",
 		bb_upd_checking = "Checking...",
 		bb_upd_latest = "You have the latest version",
 		bb_upd_available = "Version %s is available",
@@ -980,7 +980,7 @@ local localization = qLocalization.new({
 		bb_set_scale = "Размер окна",
 		bb_upd_title = "Обновления",
 		bb_set_update = "Обновлять автоматически",
-		bb_upd_idle = "Проверяю GitHub раз в несколько часов",
+		bb_upd_idle = "Проверяю GitHub при запуске и раз в час",
 		bb_upd_checking = "Проверяю...",
 		bb_upd_latest = "У тебя последняя версия",
 		bb_upd_available = "Доступна версия %s",
@@ -1237,11 +1237,12 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "1.0.0",
+	VERSION = "1.0.1",
+	GRID_OFF = { "Banned", "AlreadyPicked", "Unavailable" },
 	UPD_NAME = "build_brain.lua",
 	UPD_LATEST = "https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/main/build_brain/latest.txt",
 	UPD_FILE = "https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/build-brain-v%s/build_brain/build_brain.lua",
-	UPD_EVERY = 21600,
+	UPD_EVERY = 3600,
 	UPD_RETRY = 600,
 	UPD_MIN = 100000,
 	TABS = { "draft", "build", "fight", "settings" },
@@ -2070,6 +2071,11 @@ local function team_of(player)
 	return ok and team or nil
 end
 
+local function valid_hero(id)
+	local unit = id and id > 0 and hero_unit(id)
+	return type(unit) == "string" and unit:find("^npc_dota_hero_") ~= nil
+end
+
 local function read_draft()
 	local d = state.draft
 	local okm, me = pcall(Players.GetLocal)
@@ -2090,6 +2096,7 @@ local function read_draft()
 			local ok, data = pcall(Player.GetTeamData, p)
 			data = ok and type(data) == "table" and data or {}
 			local id = math.tointeger(tonumber(data.selected_hero_id) or 0) or 0
+			if not valid_hero(id) then id = 0 end
 			if id <= 0 then
 				local ok_hero, hero = pcall(Player.GetAssignedHero, p)
 				id = ok_hero and hero and hero_id(NPC.GetUnitName(hero)) or 0
@@ -2107,7 +2114,8 @@ local function read_draft()
 	local okb, list = pcall(GameRules.GetBannedHeroes)
 	if okb and type(list) == "table" then
 		for _, id in pairs(list) do
-			if tonumber(id) and tonumber(id) > 0 then bans[#bans + 1] = math.tointeger(tonumber(id)) end
+			local bid = math.tointeger(tonumber(id) or 0) or 0
+			if valid_hero(bid) then bans[#bans + 1] = bid end
 		end
 	end
 	local my_hero = nil
@@ -2774,6 +2782,18 @@ local function build_view(view)
 	end
 end
 
+local function grid_off(id)
+	local grid = state.grid
+	local unit = grid and hero_unit(id)
+	local card = unit and grid[unit:sub(15)]
+	if not card then return false end
+	for _, cls in ipairs(K.GRID_OFF) do
+		local ok, has = pcall(card.HasClass, card, cls)
+		if ok and has then return true end
+	end
+	return false
+end
+
 local function compute_view()
 	local d = state.draft
 	local ours, theirs = picked(d.ours), picked(d.theirs)
@@ -2801,7 +2821,7 @@ local function compute_view()
 			for _, id in ipairs(d.bans) do taken[id] = true end
 			local list = {}
 			for id in pairs(state.stats) do
-				if not taken[id] and role_fits(id, pos, shares) then
+				if not taken[id] and role_fits(id, pos, shares) and not grid_off(id) then
 					local with = {}
 					for _, a in ipairs(ours) do with[#with + 1] = a end
 					with[#with + 1] = id
@@ -2911,7 +2931,7 @@ local function want_data()
 	end
 end
 
-local UPD = { st = "idle", latest = nil, err = nil, next_check = 0, path = nil, reload_at = nil, loaded = false, shown = nil, text = nil, tone = nil, title = "Build Brain " .. K.VERSION }
+local UPD = { st = "idle", latest = nil, err = nil, next_check = 0, path = nil, reload_at = nil, loaded = false, first = true, shown = nil, text = nil, tone = nil, title = "Build Brain " .. K.VERSION }
 
 function UPD.num(v)
 	local a, b, c = tostring(v or ""):match("^(%d+)%.(%d+)%.(%d+)$")
@@ -3033,7 +3053,8 @@ function UPD.tick()
 			if setting("update") == 1 then UPD.install() end
 		end
 	end
-	if os.time() - Config.ReadInt(K.CONFIG, "upd_checked", 0) < K.UPD_EVERY then return end
+	if not UPD.first and os.time() - Config.ReadInt(K.CONFIG, "upd_checked", 0) < K.UPD_EVERY then return end
+	UPD.first = false
 	UPD.check(false)
 end
 
@@ -4332,7 +4353,10 @@ function PK.scan()
 			end
 		end
 	end
-	if #PK.stack == 0 and PK.fresh then PK.map, PK.fresh = PK.fresh, nil end
+	if #PK.stack == 0 and PK.fresh then
+		PK.map, PK.fresh = PK.fresh, nil
+		state.grid = PK.map
+	end
 end
 
 function PK.grid(view)
@@ -5708,6 +5732,7 @@ function script.OnGameEnd()
 	state.next_model = 0
 	state.win.closed_by_user = false
 	state.preview_hero = nil
+	state.grid = nil
 	state.route_sig = ""
 	state.draft = { ours = {}, theirs = {}, bans = {}, my_team = nil, my_hero = nil, my_pos = nil, sig = "", phase = false }
 end
