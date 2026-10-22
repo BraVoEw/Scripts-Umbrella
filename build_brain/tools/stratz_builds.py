@@ -134,6 +134,18 @@ def vs_line(data):
     return ",".join(out)
 
 
+def hero_wr(data):
+    g = s = 0.0
+    for week in data:
+        for adv in week or []:
+            for r in adv.get("vs") or []:
+                c = r.get("matchCount") or 0
+                if c > 0 and r.get("winRateHeroId1") is not None:
+                    g += c
+                    s += c * float(r["winRateHeroId1"])
+    return s / g if g else None
+
+
 def hero_vs(hero_id, week_ts, cache):
     vfile = os.path.join(cache, "vs_%d.json" % hero_id) if cache else ""
     if vfile and os.path.exists(vfile):
@@ -474,7 +486,7 @@ def main():
     if args.heroes:
         want = {int(x) for x in args.heroes.split(",")}
         heroes = [h for h in heroes if h["id"] in want]
-    lines, vs_lines = [], []
+    lines, vs_lines, wr_parts = [], [], []
     for i, h in enumerate(heroes):
         cache_file = os.path.join(args.cache, "%d.json" % h["id"]) if args.cache else ""
         data = None
@@ -511,7 +523,11 @@ def main():
         if roles:
             lines.append("%d\t%s" % (h["id"], json.dumps(roles, ensure_ascii=False, separators=(",", ":"))))
         try:
-            vs = vs_line(hero_vs(h["id"], week_ts, args.cache))
+            vsd = hero_vs(h["id"], week_ts, args.cache)
+            vs = vs_line(vsd)
+            wr = hero_wr(vsd)
+            if wr:
+                wr_parts.append("%d:%d" % (h["id"], round(wr * 1000)))
         except Exception as e:
             print("matchups failed", h["shortName"], e, flush=True)
             vs = ""
@@ -520,11 +536,11 @@ def main():
         print("%3d/%d %s %s" % (i + 1, len(heroes), h["shortName"], " ".join("%s:%d/%d" % (k, v["n"], v.get("mg", 0)) for k, v in sorted(roles.items()))), flush=True)
     head = "BB1\t%s\t%d\t%s" % (patch["name"], now, ",".join(str(w) for w in week_ts))
     with open(args.out, "w", encoding="utf-8", newline="\n") as f:
-        f.write(head + "\n" + "\n".join(lines + vs_lines) + "\n")
+        f.write(head + "\n" + "\n".join(lines + vs_lines + (["W\t" + ",".join(wr_parts)] if wr_parts else [])) + "\n")
     if args.version_file:
         with open(args.version_file, "w", encoding="utf-8", newline="\n") as f:
             f.write("%s\t%d\n" % (patch["name"], now))
-    print("wrote", args.out, len(lines), "heroes", len(vs_lines), "matchup rows", os.path.getsize(args.out), "bytes")
+    print("wrote", args.out, len(lines), "heroes", len(vs_lines), "matchup rows", len(wr_parts), "win rates", os.path.getsize(args.out), "bytes")
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.2/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.3/build_brain.lua)**
 
 ## Что умеет
 
@@ -65,7 +65,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.2/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.3/build_brain.lua)**
 
 ### Features
 

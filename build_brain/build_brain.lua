@@ -645,6 +645,7 @@ local localization = qLocalization.new({
 		bb_best_hint = "to win chance",
 		bb_best_vs = "strong vs %s",
 		bb_best_empty = "Waiting for enemy picks",
+		bb_best_loading = "Loading data...",
 		bb_threats = "Their draft",
 		bb_threats_hint = "what to prepare for",
 		bb_danger = "Most dangerous for you",
@@ -717,7 +718,7 @@ local localization = qLocalization.new({
 		bb_status_ready = "Ready",
 		bb_status_wait = "Waiting for the draft",
 		bb_status_loading = "Loading OpenDota stats",
-		bb_status_offline = "OpenDota is not answering, using saved stats",
+		bb_status_offline = "OpenDota is not answering, draft uses STRATZ data",
 		bb_status_quick = "Quick buy: %s",
 		bb_status_buy = "Buying: %s",
 		bb_status_poor = "Not enough gold for %s",
@@ -1050,6 +1051,7 @@ local localization = qLocalization.new({
 		bb_best_hint = "к шансу",
 		bb_best_vs = "сильный против %s",
 		bb_best_empty = "Жду пики врагов",
+		bb_best_loading = "Загружаю данные...",
 		bb_threats = "Их драфт",
 		bb_threats_hint = "к чему готовиться",
 		bb_danger = "Опаснее всего для тебя",
@@ -1122,7 +1124,7 @@ local localization = qLocalization.new({
 		bb_status_ready = "Готово",
 		bb_status_wait = "Жду драфт",
 		bb_status_loading = "Загружаю статистику OpenDota",
-		bb_status_offline = "OpenDota не отвечает, беру сохранённое",
+		bb_status_offline = "OpenDota не отвечает, драфт по данным STRATZ",
 		bb_status_quick = "В квикбай: %s",
 		bb_status_buy = "Покупаю: %s",
 		bb_status_poor = "Не хватает золота на %s",
@@ -1241,7 +1243,7 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "1.0.2",
+	VERSION = "1.0.3",
 	BUY_MIN = 3,
 	GRID_OFF = { "Banned", "AlreadyPicked", "Unavailable" },
 	UPD_NAME = "build_brain.lua",
@@ -2034,7 +2036,10 @@ end
 
 local function base_logit(id)
 	local row = state.stats and state.stats[id]
-	if not row then return 0 end
+	if not row then
+		local wr = state.sz_wr and state.sz_wr[id]
+		return wr and logit(wr) or 0
+	end
 	local rank = setting("rank")
 	local picks, wins = 0, 0
 	for b = 1, 8 do
@@ -2358,6 +2363,16 @@ local function sz_vs(id)
 	local map = {}
 	for h2, v in text:sub(from, stop - 1):gmatch("(%d+):(%-?%d+)") do map[tonumber(h2)] = tonumber(v) / 1000 end
 	sv[id] = map
+end
+
+local function sz_wr()
+	if state.sz_wr then return state.sz_wr end
+	local text = sz_file()
+	if not text then return nil end
+	local map = {}
+	for id, v in (text:match("\nW\t([^\n]+)") or ""):gmatch("(%d+):(%d+)") do map[tonumber(id)] = tonumber(v) / 1000 end
+	state.sz_wr = map
+	return map
 end
 
 local function sz_main(d)
@@ -2826,7 +2841,13 @@ local function compute_view()
 	local view = { ours = ours, theirs = theirs, cells = {}, totals = {}, best = {}, threats = {}, threat_counts = {}, danger = {} }
 	for _, id in ipairs(ours) do sz_vs(id) end
 	for _, id in ipairs(theirs) do sz_vs(id) end
-	if state.stats then
+	sz_wr()
+	local pool = state.stats
+	if not pool then
+		local shares = sz_shares()
+		pool = shares and next(shares.heroes) and shares.heroes or nil
+	end
+	if pool then
 		local x = draft_logit(ours, theirs)
 		if #ours > 0 and #theirs > 0 then view.chance = math.floor(sigmoid(x) * 100 + 0.5) end
 		for _, a in ipairs(ours) do
@@ -2846,7 +2867,7 @@ local function compute_view()
 			for _, id in ipairs(theirs) do taken[id] = true end
 			for _, id in ipairs(d.bans) do taken[id] = true end
 			local list = {}
-			for id in pairs(state.stats) do
+			for id in pairs(pool) do
 				if not taken[id] and role_fits(id, pos, shares) and not grid_off(id) then
 					local with = {}
 					for _, a in ipairs(ours) do with[#with + 1] = a end
@@ -2877,7 +2898,7 @@ local function compute_view()
 		for _, t in ipairs(K.THREATS) do
 			local units = {}
 			for _, id in ipairs(theirs) do
-				local row = state.stats[id]
+				local row = state.stats and state.stats[id]
 				if row and row.r:find(t.role, 1, true) then units[#units + 1] = hero_unit(id) end
 			end
 			view.threat_counts[t.key] = #units
@@ -3681,7 +3702,7 @@ function W.picks(x, y, w, h)
 	W.card(x, y, w, h, string.format(L("bb_pick_title"), L("bb_role_" .. my_position())))
 	if not view or #view.best == 0 then
 		for i = 0, 3 do W.skeleton(x + 14, y + 50 + i * 72, w - 28, 62, i) end
-		text(fonts.w500, 13, L("bb_best_empty"), x + 16, y + 50 + 4 * 72 + 2, C.MUTED)
+		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), x + 16, y + 50 + 4 * 72 + 2, C.MUTED)
 		return
 	end
 	local top = math.max(0.1, view.best[1].gain)
@@ -4610,7 +4631,7 @@ function PK.draw()
 			W.skeleton(16, y, w - 32, 56, i)
 			y = y + 62
 		end
-		text(fonts.w500, 13, L("bb_best_empty"), 16, y + 2, C.MUTED)
+		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), 16, y + 2, C.MUTED)
 		y = y + 22
 	end
 	PK.h = y + 14
@@ -5580,7 +5601,7 @@ local function sz_sync()
 			out:write(body)
 			out:close()
 			Config.WriteString(K.CONFIG, "sz_version", version)
-			state.sz, state.sz_text, state.sz_next, state.sz_pos, state.sz_vs, state.sz_vidx = {}, nil, 0, nil, {}, nil
+			state.sz, state.sz_text, state.sz_next, state.sz_pos, state.sz_vs, state.sz_vidx, state.sz_wr = {}, nil, 0, nil, {}, nil, nil
 			state.next_model = 0
 			log("builds updated " .. version)
 		end, "bb_builds")
