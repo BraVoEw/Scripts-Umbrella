@@ -35,7 +35,7 @@ BUY_SHARE = 0.02
 BUY_COST = 1000
 MU_BRACKETS = "LEGEND_ANCIENT, DIVINE_IMMORTAL"
 MU_PRIOR = 300
-TRIES = 9
+TRIES = 12
 SKIP = {"item_tpscroll", "item_ward_observer", "item_ward_sentry", "item_ward_dispenser", "item_smoke_of_deceit", "item_dust",
         "item_tango", "item_clarity", "item_flask", "item_enchanted_mango", "item_faerie_fire", "item_blood_grenade",
         "item_aghanims_shard_roshan", "item_ultimate_scepter_roshan", "item_cheese", "item_refresher_shard", "item_aegis"}
@@ -63,13 +63,13 @@ def gql(query):
                 raise RuntimeError(json.dumps(d["errors"])[:400])
             return d["data"]
         except urllib.error.HTTPError as e:
-            if e.code in (429, 500, 502, 503, 504) and attempt < TRIES - 1:
-                time.sleep(min(60, 10 * (attempt + 1)))
+            if (e.code == 429 or e.code >= 500) and attempt < TRIES - 1:
+                time.sleep(min(120, 15 * (attempt + 1)))
                 continue
             raise RuntimeError("http %d %s" % (e.code, e.read().decode(errors="replace")[:300]))
         except (urllib.error.URLError, TimeoutError):
             if attempt < TRIES - 1:
-                time.sleep(min(60, 10 * (attempt + 1)))
+                time.sleep(min(120, 15 * (attempt + 1)))
                 continue
             raise
 
