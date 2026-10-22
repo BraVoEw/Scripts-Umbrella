@@ -1,0 +1,56 @@
+name: Build Brain data
+
+on:
+  schedule:
+    - cron: "0 3 * * 1,4"
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-brain-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          ref: build-brain-data
+          path: data
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Decide
+        id: decide
+        env:
+          STRATZ_TOKEN: ${{ secrets.STRATZ_TOKEN }}
+        run: python -I build_brain/tools/stratz_builds.py --decide --event "${{ github.event_name }}" --schedule "${{ github.event.schedule }}" --version-file data/version.txt
+
+      - name: Build
+        if: steps.decide.outputs.run == 'true'
+        env:
+          STRATZ_TOKEN: ${{ secrets.STRATZ_TOKEN }}
+        run: python -I build_brain/tools/stratz_builds.py --out data/builds.txt --version-file data/version.txt
+
+      - name: Publish
+        if: steps.decide.outputs.run == 'true'
+        working-directory: data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add builds.txt version.txt
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "Build Brain data $(cut -f1 version.txt)"
+            git push
+          fi
