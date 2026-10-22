@@ -521,6 +521,7 @@ local localization = qLocalization.new({
 		bb_how_blade_mail = "returns damage to attackers",
 		bb_how_bloodthorn = "silence and attacks that pierce evasion",
 		bb_how_butterfly = "evasion from attacks",
+		bb_how_crellas_crozier = "aura cuts healing of enemies nearby",
 		bb_how_crimson_guard = "blocks physical damage for your team",
 		bb_how_cyclone = "lift yourself and dispel",
 		bb_how_dagon = "pops Linken's and finishes with magic",
@@ -544,6 +545,7 @@ local localization = qLocalization.new({
 		bb_how_mjollnir = "lightning clears illusions and summons",
 		bb_how_monkey_king_bar = "attacks pierce evasion",
 		bb_how_nullifier = "dispels Ghost, Glimmer and buffs for 4 seconds",
+		bb_how_orb_of_corrosion = "attacks cut enemy healing a little, armor and speed",
 		bb_how_orchid = "silence: no casting, no escape",
 		bb_how_pipe = "magic shield for the whole team",
 		bb_how_radiance = "burns illusions and summons around",
@@ -924,6 +926,7 @@ local localization = qLocalization.new({
 		bb_how_blade_mail = "возвращает урон тому, кто тебя бьёт",
 		bb_how_bloodthorn = "сайленс и атаки сквозь уклонение",
 		bb_how_butterfly = "уклонение от атак",
+		bb_how_crellas_crozier = "аура режет лечение врагов рядом",
 		bb_how_crimson_guard = "блокирует физ урон всей команде",
 		bb_how_cyclone = "подкидываешь себя и снимаешь контроль",
 		bb_how_dagon = "сбивает Линку и добивает магией",
@@ -947,6 +950,7 @@ local localization = qLocalization.new({
 		bb_how_mjollnir = "молнии чистят иллюзии и призыв",
 		bb_how_monkey_king_bar = "атаки пробивают уклонение",
 		bb_how_nullifier = "снимает с врага Гост, Глиммер и баффы на 4 секунды",
+		bb_how_orb_of_corrosion = "атаки немного режут лечение, броню и скорость врага",
 		bb_how_orchid = "сайленс: не даст кастовать и убежать",
 		bb_how_pipe = "щит от магии на всю команду",
 		bb_how_radiance = "жжёт иллюзии и юнитов вокруг",
@@ -1237,7 +1241,8 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "1.0.1",
+	VERSION = "1.0.2",
+	BUY_MIN = 3,
 	GRID_OFF = { "Banned", "AlreadyPicked", "Unavailable" },
 	UPD_NAME = "build_brain.lua",
 	UPD_LATEST = "https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/main/build_brain/latest.txt",
@@ -1309,7 +1314,7 @@ local K = {
 	RULES = {
 		{ tag = "brk", items = { "item_silver_edge" } },
 		{ tag = "eva", items = { "item_monkey_king_bar", "item_bloodthorn" } },
-		{ tag = "heal", items = { "item_spirit_vessel", "item_skadi" } },
+		{ tag = "heal", items = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" } },
 		{ tag = "inv", items = { "item_dust", "item_ward_sentry", "item_gem" } },
 		{ tag = "ill", items = { "item_mjollnir", "item_bfury", "item_radiance", "item_shivas_guard", "item_maelstrom" } },
 		{ tag = "save", items = { "item_nullifier", "item_disperser", "item_sheepstick" } },
@@ -1326,7 +1331,7 @@ local K = {
 		item_aeon_disk = { "item_nullifier", "item_disperser" },
 		item_black_king_bar = { "item_abyssal_blade", "item_ghost", "item_force_staff" },
 		item_blade_mail = { "item_black_king_bar" },
-		item_bloodstone = { "item_spirit_vessel", "item_skadi" },
+		item_bloodstone = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" },
 		item_bloodthorn = { "item_manta", "item_lotus_orb", "item_black_king_bar" },
 		item_butterfly = { "item_monkey_king_bar", "item_bloodthorn" },
 		item_cyclone = { "item_sheepstick", "item_abyssal_blade" },
@@ -1337,11 +1342,11 @@ local K = {
 		item_ghost = { "item_nullifier", "item_disperser" },
 		item_glimmer_cape = { "item_nullifier", "item_dust", "item_ward_sentry", "item_disperser" },
 		item_greater_crit = { "item_ghost", "item_heavens_halberd", "item_shivas_guard", "item_butterfly" },
-		item_guardian_greaves = { "item_spirit_vessel", "item_skadi" },
+		item_guardian_greaves = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" },
 		item_gungir = { "item_manta", "item_cyclone", "item_black_king_bar" },
-		item_heart = { "item_spirit_vessel", "item_skadi" },
+		item_heart = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" },
 		item_heavens_halberd = { "item_black_king_bar", "item_sphere", "item_lotus_orb" },
-		item_holy_locket = { "item_spirit_vessel", "item_skadi" },
+		item_holy_locket = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" },
 		item_hurricane_pike = { "item_sheepstick", "item_abyssal_blade", "item_harpoon" },
 		item_invis_sword = { "item_dust", "item_ward_sentry", "item_gem" },
 		item_lotus_orb = { "item_nullifier", "item_disperser" },
@@ -1351,7 +1356,7 @@ local K = {
 		item_orchid = { "item_manta", "item_lotus_orb", "item_black_king_bar", "item_disperser" },
 		item_refresher = { "item_black_king_bar", "item_aeon_disk" },
 		item_rod_of_atos = { "item_manta", "item_cyclone", "item_black_king_bar", "item_disperser" },
-		item_satanic = { "item_spirit_vessel", "item_skadi", "item_heavens_halberd" },
+		item_satanic = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_heavens_halberd" },
 		item_shadow_amulet = { "item_dust", "item_ward_sentry" },
 		item_sheepstick = { "item_sphere", "item_lotus_orb", "item_black_king_bar" },
 		item_silver_edge = { "item_dust", "item_ward_sentry", "item_gem" },
@@ -1368,6 +1373,7 @@ local K = {
 		item_sphere = "c",
 		item_aeon_disk = "c",
 		item_skadi = "c",
+		item_crellas_crozier = "c",
 		item_monkey_king_bar = "c",
 		item_bloodthorn = "c",
 		item_mjollnir = "c",
@@ -1394,6 +1400,11 @@ local K = {
 		item_solar_crest = "s",
 		item_guardian_greaves = "s",
 		item_urn_of_shadows = "s",
+	},
+	ANYONE = {
+		item_dust = true,
+		item_ward_sentry = true,
+		item_gem = true,
 	},
 	UNIVERSAL = {
 		item_dust = true,
@@ -2390,9 +2401,19 @@ local function sz_route(d, pos, unit)
 		if cat.by_name[r[1]] then pop[#pop + 1] = { name = r[1], share = (r[2] or 0) / 100 } end
 	end
 	if #route == 0 then return nil end
+	local buy = nil
+	if type(e.buy) == "string" then
+		for iid, pct in e.buy:gmatch("(%d+):(%d+)") do
+			local name = cat.by_id[tonumber(iid)]
+			if name then
+				buy = buy or {}
+				buy[name] = tonumber(pct)
+			end
+		end
+	end
 	local counts = {}
 	for k, v in pairs(e.talents or {}) do counts[tonumber(k) or k] = v end
-	return { start = start, route = route, pop = pop, pos = shown, n = e.n or 0, src = "sz", skills = e.skills or {}, data = { n = e.n or 0, counts = counts } }
+	return { start = start, route = route, pop = pop, buy = buy, pos = shown, n = e.n or 0, src = "sz", skills = e.skills or {}, data = { n = e.n or 0, counts = counts } }
 end
 
 local function build_position(id)
@@ -2548,13 +2569,18 @@ local function foe_counters(role, hero)
 	local have = {}
 	for _, step in ipairs(role and role.route or K.NONE) do have[step.name] = true end
 	for _, c in ipairs(role and role.pop or K.NONE) do have[c.name] = true end
+	local buy = role and role.buy
+	local function fits(name)
+		if buy and not K.ANYONE[name] then return have[name] == true or (buy[name] or 0) >= K.BUY_MIN end
+		local who = K.ROLE_ITEMS[name] or "a"
+		return who == "a" or (who == "s") == support
+	end
 	local function options(list)
 		local out = {}
 		for pass = 1, 2 do
 			for _, name in ipairs(list) do
-				local who = K.ROLE_ITEMS[name] or "a"
 				local entry = load_catalog().by_name[name]
-				if entry and not entry.gone and (who == "a" or (who == "s") == support) and (have[name] == true) == (pass == 1) then out[#out + 1] = name end
+				if entry and not entry.gone and fits(name) and (have[name] == true) == (pass == 1) then out[#out + 1] = name end
 			end
 		end
 		return out
@@ -2614,7 +2640,7 @@ local function foe_counters(role, hero)
 			if not dup and #mine < 3 then mine[#mine + 1] = avail[1] end
 		end
 		for _, name in ipairs(avail) do
-			if have[name] or K.UNIVERSAL[name] then
+			if buy or have[name] or K.UNIVERSAL[name] then
 				if #units == 0 then
 					add(name, nil, reason, rank)
 				else
@@ -4520,15 +4546,25 @@ function PK.draw()
 		y = y + sh + 5
 	end
 	y = y + 10
-	text(fonts.w600, 14, string.format(L("bb_pick_title"), L("bb_role_" .. my_position())), 16, y, C.TEXT)
+	local mine = d.my_hero and view and view.foes and #view.foes > 0
+	text(fonts.w600, 14, mine and L("bb_foe_title") or string.format(L("bb_pick_title"), L("bb_role_" .. my_position())), 16, y, C.TEXT)
 	y = y + 26
-	if d.my_hero and view and view.foes and #view.foes > 0 then
+	if mine then
 		for i, f in ipairs(view.foes) do
-			if i > 4 then break end
+			if i > 5 then break end
+			local n = math.min(#f.items, 2)
+			local room = w - 130 - n * 38
 			rect(16, y, w - 32, 50, C.ROW, 8)
 			picture(hero_image(f.unit), 24, y + 9, 57, 32, 6)
-			text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(f.unit), w - 130), 90, y + 7, C.TEXT)
-			text(fonts.w500, 13, fit(fonts.w500, 13, f.line, w - 130), 90, y + 27, C.MUTED)
+			text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(f.unit), room), 90, y + 7, C.TEXT)
+			text(fonts.w500, 13, fit(fonts.w500, 13, f.line, room), 90, y + 27, C.MUTED)
+			local px = w - 24
+			for k = n, 1, -1 do
+				px = px - 34
+				W.icon(item_image(f.items[k]), px, y + 13, 34, 25, 5, "pki" .. i .. k)
+				frame_line(px, y + 13, 34, 25, C.VS, 5)
+				px = px - 4
+			end
 			y = y + 56
 		end
 	elseif view and #view.best > 0 then

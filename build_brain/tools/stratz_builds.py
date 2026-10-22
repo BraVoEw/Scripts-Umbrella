@@ -31,6 +31,8 @@ MAIN_MIN_GAMES = 15
 PATCH_GRACE = 2 * 86400
 FULL_CRON = "0 3 * * 1,4"
 SIT_MAX = 12
+BUY_SHARE = 0.02
+BUY_COST = 1000
 MU_BRACKETS = "LEGEND_ANCIENT, DIVINE_IMMORTAL"
 MU_PRIOR = 300
 TRIES = 9
@@ -362,7 +364,8 @@ def summarize(hero, data, weeks, items, ab, mainers=None):
             tm = int(tsum / c) if c else 0
             if any(x["name"] == it["name"] for x in cand):
                 continue
-            cand.append({"name": it["name"], "share": share, "tm": tm, "cost": it["cost"], "boot": iid in d["boot"]})
+            cand.append({"name": it["name"], "share": share, "tm": tm, "cost": it["cost"], "boot": iid in d["boot"], "id": iid})
+        buy = sorted([c for c in cand if c["share"] >= BUY_SHARE and c["cost"] >= BUY_COST], key=lambda c: -c["share"])
         boots = sorted([c for c in cand if c["boot"]], key=lambda c: -c["share"])
         cand = [c for c in cand if not c["boot"]] + boots[:1] + [dict(b, share=min(b["share"], CORE_SHARE - 0.01)) for b in boots[1:]]
 
@@ -400,6 +403,7 @@ def summarize(hero, data, weeks, items, ab, mainers=None):
             "early": [[c["name"], c["tm"], round(c["share"] * 100)] for c in early],
             "core": [[c["name"], c["tm"], round(c["share"] * 100)] for c in core],
             "sit": [[c["name"], round(c["share"] * 100)] for c in sit],
+            "buy": ",".join("%d:%d" % (c["id"], round(c["share"] * 100)) for c in buy),
             "skills": skills,
             "talents": {str(a): c for a, c in d["tal"].items()},
         }

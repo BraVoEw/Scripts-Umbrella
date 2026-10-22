@@ -197,11 +197,8 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
 .chart svg { display: block; width: 100%; }
 .chart .grid line { stroke: var(--edge); stroke-width: 1; shape-rendering: crispEdges; }
 .chart text { fill: var(--dim); font: 500 12px "Inter", sans-serif; }
-.chart text.lbl { fill: var(--muted); font-size: 13.5px; font-weight: 600; }
-.chart text.val { fill: var(--text); font-size: 13px; font-weight: 700; }
 .chart .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .chart .s1 { stroke: var(--s1); } .chart .s2 { stroke: var(--s2); }
-.chart .f1 { fill: var(--s1); } .chart .f2 { fill: var(--s2); }
 .chart .ring { stroke: var(--card); stroke-width: 2; }
 .chart .cross { stroke: var(--dim); stroke-width: 1; }
 .chart .ln.total { stroke: var(--text); stroke-width: 2; }
@@ -212,8 +209,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
 .headline b { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .headline span { color: var(--dim); font-size: 15px; }
 .headline em { font-style: normal; color: var(--win); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
-.chart .bar { transition: opacity .15s; }
-.chart .bar.dim { opacity: .45; }
 .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--edge); border-radius: 10px; padding: 9px 12px; font-size: 13px; box-shadow: var(--shadow); white-space: nowrap; z-index: 3; }
 .tip b { display: block; margin-bottom: 5px; font-size: 13px; color: var(--text); }
 .tip div { display: flex; align-items: center; gap: 8px; color: var(--muted); }
@@ -412,10 +407,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
         </div>
         <div class="chart" id="line-chart"></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-head"><h3 data-i18n="st_versions">По версиям</h3></div>
-        <div class="chart" id="bar-chart"></div>
-      </div>
     </div>
   </section>
  </div>
@@ -436,8 +427,8 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     ru: {
       nav_scripts: "Скрипты", nav_install: "Установка", nav_stats: "Статистика",
       st_title: "Статистика", st_demo: "Превью: на графике демо-данные, настоящие начнут копиться после публикации.",
-      st_total: "Всего загрузок", st_day: "За последние 24 часа", st_time: "Загрузки со временем", st_versions: "По версиям",
-      st_sum: "Всего", st_dl: "загрузок", st_since: "с %s", st_released: "релиз",
+      st_total: "Всего загрузок", st_day: "За последние 24 часа", st_time: "Загрузки со временем",
+      st_sum: "Всего", st_dl: "загрузок", st_since: "с %s",
       hero_title: "Скрипты для <em>Umbrella</em>",
       hero_lead: "Dota 2. Делаю то, чего самому не хватало в игре, и выкладываю для всех. Бесплатно и с открытым кодом.",
       stat_scripts: "скрипта", stat_downloads: "загрузок", stat_updated: "последнее обновление",
@@ -464,8 +455,8 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     en: {
       nav_scripts: "Scripts", nav_install: "Install", nav_stats: "Stats",
       st_title: "Stats", st_demo: "Preview: the chart shows demo data, real history starts after publishing.",
-      st_total: "Total downloads", st_day: "Last 24 hours", st_time: "Downloads over time", st_versions: "By version",
-      st_sum: "Total", st_dl: "downloads", st_since: "since %s", st_released: "released",
+      st_total: "Total downloads", st_day: "Last 24 hours", st_time: "Downloads over time",
+      st_sum: "Total", st_dl: "downloads", st_since: "since %s",
       hero_title: "Scripts for <em>Umbrella</em>",
       hero_lead: "Dota 2. I make what I was missing in the game myself and share it with everyone. Free and open source.",
       stat_scripts: "scripts", stat_downloads: "downloads", stat_updated: "last update",
@@ -620,7 +611,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
 
   var KEYS = ["build-brain", "history-changer"];
   var NAMES = { "build-brain": "Build Brain", "history-changer": "History Changer" };
-  var NUM = { "build-brain": "1", "history-changer": "2" };
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var STATS_URL = LOCAL ? "stats-sample.json" : "https://raw.githubusercontent.com/" + REPO + "/stats/stats.json";
 
@@ -759,51 +749,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     hit.addEventListener("pointerleave", hide);
   }
 
-  function barChart(box) {
-    box.innerHTML = "";
-    var rows = [];
-    (rels || []).forEach(function (r) {
-      KEYS.forEach(function (k) {
-        if (!r.tag_name || r.tag_name.indexOf(k + "-v") !== 0 || r.draft) return;
-        var n = 0;
-        (r.assets || []).forEach(function (a) { if (a.name === SCRIPTS[k]) n += a.download_count || 0; });
-        rows.push({ k: k, ver: r.tag_name.slice(k.length + 2), v: n, at: r.published_at });
-      });
-    });
-    rows.sort(function (a, b) { return KEYS.indexOf(a.k) - KEYS.indexOf(b.k) || (a.at < b.at ? 1 : -1); });
-    var W = box.clientWidth;
-    if (!rows.length || W < 160) return;
-    var narrow = W < 560, rowH = narrow ? 50 : 40, H = rows.length * rowH + 6;
-    var lw = narrow ? 0 : 180, vw = 56, bw = Math.max(40, W - lw - vw);
-    var vmax = Math.max.apply(null, rows.map(function (r) { return r.v; }).concat([1]));
-    var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, height: H, role: "img", "aria-label": T[lang].st_versions }, box);
-    var tip = document.createElement("div");
-    tip.className = "tip";
-    tip.hidden = true;
-    box.appendChild(tip);
-    var bars = [];
-    rows.forEach(function (r, i) {
-      var y = i * rowH + (narrow ? 24 : 10), h = narrow ? 16 : 20, w = Math.max(4, r.v / vmax * bw), x0 = lw;
-      var name = svgEl("text", { x: 0, y: narrow ? y - 7 : y + 15, "class": "lbl" }, svg);
-      name.textContent = NAMES[r.k] + " " + r.ver;
-      var rr = Math.min(4, w);
-      var d = "M" + x0 + "," + y + "h" + (w - rr) + "a" + rr + "," + rr + " 0 0 1 " + rr + "," + rr + "v" + (h - 2 * rr) + "a" + rr + "," + rr + " 0 0 1 -" + rr + "," + rr + "h-" + (w - rr) + "z";
-      var bar = svgEl("path", { d: d, "class": "bar f" + NUM[r.k] }, svg);
-      var val = svgEl("text", { x: x0 + w + 8, y: y + h / 2 + 5, "class": "val" }, svg);
-      val.textContent = nf(r.v);
-      var hit = svgEl("rect", { x: 0, y: i * rowH, width: W, height: rowH, fill: "transparent" }, svg);
-      bars.push(bar);
-      hit.addEventListener("pointermove", function () {
-        bars.forEach(function (b) { b.classList.toggle("dim", b !== bar); });
-        tip.innerHTML = "<b>" + NAMES[r.k] + " " + r.ver + "</b><div>" + T[lang].st_dl + "<em>" + nf(r.v) + "</em></div><div>" + T[lang].st_released + "<em>" + fmt(r.at, false) + "</em></div>";
-        tip.hidden = false;
-        var rc = svg.getBoundingClientRect();
-        tipAt(box, tip, (x0 + w) * rc.width / W, (y + 10) * rc.height / H);
-      });
-      hit.addEventListener("pointerleave", function () { bars.forEach(function (b) { b.classList.remove("dim"); }); tip.hidden = true; });
-    });
-  }
-
   function renderStats() {
     if (hist === null) { loadStats(); return; }
     var pts = points();
@@ -816,7 +761,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     pts.forEach(function (p) { if (p.t <= nowT - 86400e3) then = p; });
     document.getElementById("st-day").textContent = then ? "+" + nf(sum(cur) - sum(then.s)) : "—";
     lineChart(document.getElementById("line-chart"), pts);
-    barChart(document.getElementById("bar-chart"));
   }
 
   function loadStats() {
