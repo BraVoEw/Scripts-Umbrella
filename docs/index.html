@@ -114,6 +114,9 @@ section { padding: 36px 0; }
   overflow: hidden; box-shadow: var(--shadow); margin-bottom: 26px;
 }
 .script.flip { grid-template-columns: 1fr 1.15fr; }
+.script.stack { grid-template-columns: 1fr; }
+.script.stack .groups { grid-template-columns: repeat(4, 1fr); }
+.script.stack .body p.desc { max-width: 760px; }
 .script.flip .media { order: 2; }
 .media { background: #0b0b0d; position: relative; display: flex; flex-direction: column; min-width: 0; }
 .media video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #000; }
@@ -207,18 +210,18 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
 .tip b { display: block; margin-bottom: 5px; font-size: 13px; color: var(--text); }
 .tip div { display: flex; align-items: center; gap: 8px; color: var(--muted); }
 .tip div em { font-style: normal; color: var(--text); font-weight: 700; margin-left: auto; padding-left: 16px; font-variant-numeric: tabular-nums; }
-.chart-note { color: var(--dim); font-size: 14px; margin: 10px 0 0; }
 
 @media (max-width: 900px) {
   .script, .script.flip { grid-template-columns: 1fr; }
   .script.flip .media { order: 0; }
   .steps { grid-template-columns: 1fr 1fr; }
   .tiles { grid-template-columns: 1fr 1fr; }
+  .script.stack .groups { grid-template-columns: 1fr 1fr; }
   .bar { flex-wrap: wrap; height: auto; padding-block: 12px 4px; row-gap: 6px; }
   nav.links { order: 3; width: 100%; margin-left: -12px; }
 }
 @media (max-width: 560px) {
-  .groups { grid-template-columns: 1fr; }
+  .groups, .script.stack .groups { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }
   .body { padding: 22px 20px; }
   .brand small { display: none; }
@@ -269,7 +272,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     <div class="wrap">
       <div class="sec-title"><h2 data-i18n="sec_scripts">Скрипты</h2></div>
 
-      <article class="script" id="build-brain">
+      <article class="script stack" id="build-brain">
         <div class="media">
           <video src="assets/build-brain.mp4" poster="assets/build-brain-poster.webp" muted autoplay loop playsinline controls preload="metadata"></video>
           <div class="thumbs">
@@ -401,7 +404,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
           <div class="legend"><span><i class="key s1"></i>Build Brain</span><span><i class="key s2"></i>History Changer</span></div>
         </div>
         <div class="chart" id="line-chart"></div>
-        <p class="chart-note" id="line-note" hidden data-i18n="st_collect">История только начала копиться, через пару дней тут будет нормальная кривая.</p>
       </div>
       <div class="chart-card">
         <div class="chart-head"><h3 data-i18n="st_versions">По версиям</h3></div>
@@ -428,7 +430,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       nav_scripts: "Скрипты", nav_install: "Установка", nav_stats: "Статистика",
       st_title: "Статистика", st_demo: "Превью: на графике демо-данные, настоящие начнут копиться после публикации.",
       st_total: "Всего загрузок", st_day: "За последние 24 часа", st_time: "Загрузки со временем", st_versions: "По версиям",
-      st_collect: "История только начала копиться, через пару дней тут будет нормальная кривая.", st_sum: "Всего", st_dl: "загрузок", st_released: "релиз",
+      st_sum: "Всего", st_dl: "загрузок", st_released: "релиз",
       hero_title: "Скрипты для <em>Umbrella</em>",
       hero_lead: "Dota 2. Делаю то, чего самому не хватало в игре, и выкладываю для всех. Бесплатно и с открытым кодом.",
       stat_scripts: "скрипта", stat_downloads: "загрузок", stat_updated: "последнее обновление",
@@ -456,7 +458,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       nav_scripts: "Scripts", nav_install: "Install", nav_stats: "Stats",
       st_title: "Stats", st_demo: "Preview: the chart shows demo data, real history starts after publishing.",
       st_total: "Total downloads", st_day: "Last 24 hours", st_time: "Downloads over time", st_versions: "By version",
-      st_collect: "History has just started, give it a couple of days for a proper curve.", st_sum: "Total", st_dl: "downloads", st_released: "released",
+      st_sum: "Total", st_dl: "downloads", st_released: "released",
       hero_title: "Scripts for <em>Umbrella</em>",
       hero_lead: "Dota 2. I make what I was missing in the game myself and share it with everyone. Free and open source.",
       stat_scripts: "scripts", stat_downloads: "downloads", stat_updated: "last update",
@@ -649,17 +651,53 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     tip.style.top = Math.max(0, y - th / 2) + "px";
   }
 
+  var FIRST = { "build-brain": "2026-10-22T13:32:08Z", "history-changer": "2026-10-20T22:11:51Z" };
+  function firstRelease(k) {
+    var best = null;
+    (rels || []).forEach(function (r) {
+      if (r.tag_name && r.tag_name.indexOf(k + "-v") === 0 && !r.draft && (!best || r.published_at < best)) best = r.published_at;
+    });
+    return Date.parse(best || FIRST[k]);
+  }
+  function seriesOf(k, pts) {
+    var t0 = firstRelease(k), out = [{ t: t0, v: 0 }];
+    pts.forEach(function (p) { if (p.t > t0) out.push({ t: p.t, v: p.s[k] || 0 }); });
+    return out;
+  }
+  function valueAt(ser, t) {
+    var v = null;
+    ser.forEach(function (p) { if (p.t <= t) v = p.v; });
+    return v;
+  }
+  function timeTicks(t0, t1, maxN) {
+    var HR = 3600e3, steps = [3 * HR, 6 * HR, 12 * HR, 24 * HR, 48 * HR, 168 * HR, 336 * HR, 720 * HR], step = steps[steps.length - 1];
+    for (var i = 0; i < steps.length; i++) if ((t1 - t0) / steps[i] <= maxN) { step = steps[i]; break; }
+    var d = new Date(t0);
+    d.setHours(0, 0, 0, 0);
+    var t = d.getTime(), ticks = [];
+    while (t < t0) t += step;
+    for (; t <= t1; t += step) ticks.push(t);
+    return { ticks: ticks, step: step };
+  }
+  function tickLabel(t, step) {
+    var d = new Date(t);
+    if (step >= 24 * 3600e3 || d.getHours() === 0) return stamp(t, false);
+    return String(d.getHours()).padStart(2, "0") + ":00";
+  }
+
   function lineChart(box, pts) {
     box.innerHTML = "";
     var W = box.clientWidth, H = W < 560 ? 240 : 300;
     if (W < 160) return;
     var m = { l: 40, r: 44, t: 12, b: 28 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
     var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, height: H, role: "img", "aria-label": T[lang].st_time }, box);
-    if (!pts.length) return;
-    var t0 = pts[0].t, t1 = pts[pts.length - 1].t;
-    if (t1 - t0 < 6 * 3600e3) { var mid = (t0 + t1) / 2; t0 = mid - 6 * 3600e3; t1 = mid + 6 * 3600e3; }
-    var vmax = 1;
-    pts.forEach(function (p) { KEYS.forEach(function (k) { vmax = Math.max(vmax, p.s[k] || 0); }); });
+    var series = {}, t0 = Infinity, t1 = -Infinity, vmax = 1;
+    KEYS.forEach(function (k) {
+      series[k] = seriesOf(k, pts);
+      series[k].forEach(function (p) { t0 = Math.min(t0, p.t); t1 = Math.max(t1, p.t); vmax = Math.max(vmax, p.v); });
+    });
+    if (!isFinite(t0)) return;
+    if (t1 - t0 < 6 * 3600e3) t1 = t0 + 6 * 3600e3;
     var step = niceStep(vmax / 4), ymax = Math.ceil(vmax * 1.08 / step) * step;
     var X = function (t) { return m.l + (t - t0) / (t1 - t0) * iw; };
     var Y = function (v) { return m.t + ih - v / ymax * ih; };
@@ -669,23 +707,33 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       var tx = svgEl("text", { x: m.l - 8, y: Y(v) + 4, "text-anchor": "end" }, svg);
       tx.textContent = compact(v);
     }
-    var span = t1 - t0, n = W < 560 ? 2 : 5, hours = span < 2.5 * 86400e3;
-    for (var i = 0; i <= n; i++) {
-      var tt = t0 + span * i / n, xl = svgEl("text", { x: X(tt), y: H - 8, "text-anchor": i === 0 ? "start" : (i === n ? "end" : "middle") }, svg);
-      xl.textContent = hours ? stamp(tt, true).slice(6) + ((i === 0 || i === n) && W >= 560 ? " " + stamp(tt, false) : "") : stamp(tt, false);
-    }
+    var tk = timeTicks(t0, t1, W < 560 ? 3 : 6);
+    tk.ticks.forEach(function (t, i) {
+      var x = X(t), anchor = x < m.l + 24 ? "start" : (x > m.l + iw - 24 ? "end" : "middle");
+      var xl = svgEl("text", { x: x, y: H - 8, "text-anchor": anchor }, svg);
+      var label = tickLabel(t, tk.step);
+      xl.textContent = i === 0 && label.indexOf(":") > 0 ? stamp(t, false) + " " + label : label;
+    });
     KEYS.forEach(function (k) {
-      var d = pts.map(function (p, i2) { return (i2 ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.s[k] || 0).toFixed(1); }).join("");
+      var d = series[k].map(function (p, i) { return (i ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.v).toFixed(1); }).join("");
       svgEl("path", { d: d, "class": "ln s" + NUM[k] }, svg);
     });
-    var last = pts[pts.length - 1];
-    var ends = KEYS.map(function (k) { return { k: k, v: last.s[k] || 0, y: Y(last.s[k] || 0) }; }).sort(function (a, b) { return a.y - b.y; });
-    for (var j = 1; j < ends.length; j++) if (ends[j].y - (ends[j - 1].ly || ends[j - 1].y) < 16) ends[j].ly = (ends[j - 1].ly || ends[j - 1].y) + 16;
+    var ends = KEYS.map(function (k) {
+      var last = series[k][series[k].length - 1];
+      return { k: k, v: last.v, x: X(last.t), y: Y(last.v) };
+    }).sort(function (a, b) { return a.y - b.y; });
+    for (var j = 1; j < ends.length; j++) {
+      var prev = ends[j - 1].ly || ends[j - 1].y;
+      if (Math.abs(ends[j].x - ends[j - 1].x) < 40 && ends[j].y - prev < 16) ends[j].ly = prev + 16;
+    }
     ends.forEach(function (e) {
-      svgEl("circle", { cx: X(last.t), cy: e.y, r: 4, "class": "ring f" + NUM[e.k] }, svg);
-      var lb = svgEl("text", { x: X(last.t) + 9, y: (e.ly || e.y) + 4, "class": "val" }, svg);
+      svgEl("circle", { cx: e.x, cy: e.y, r: 4, "class": "ring f" + NUM[e.k] }, svg);
+      var lb = svgEl("text", { x: e.x + 9, y: (e.ly || e.y) + 4, "class": "val" }, svg);
       lb.textContent = nf(e.v);
     });
+    var times = [];
+    KEYS.forEach(function (k) { series[k].forEach(function (p) { if (times.indexOf(p.t) < 0) times.push(p.t); }); });
+    times.sort(function (a, b) { return a - b; });
     var cross = svgEl("line", { y1: m.t, y2: m.t + ih, "class": "cross", visibility: "hidden" }, svg);
     var dots = KEYS.map(function (k) { return svgEl("circle", { r: 4, "class": "ring f" + NUM[k], visibility: "hidden" }, svg); });
     var tip = document.createElement("div");
@@ -693,17 +741,33 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     tip.hidden = true;
     box.appendChild(tip);
     var hit = svgEl("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent" }, svg);
-    function hide() { cross.setAttribute("visibility", "hidden"); dots.forEach(function (d) { d.setAttribute("visibility", "hidden"); }); tip.hidden = true; }
+    function hide() {
+      cross.setAttribute("visibility", "hidden");
+      dots.forEach(function (d) { d.setAttribute("visibility", "hidden"); });
+      tip.hidden = true;
+    }
     function move(ev) {
       var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
-      var best = 0;
-      pts.forEach(function (p, i3) { if (Math.abs(X(p.t) - mx) < Math.abs(X(pts[best].t) - mx)) best = i3; });
-      var p = pts[best], px = X(p.t);
-      cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
-      KEYS.forEach(function (k, i4) { dots[i4].setAttribute("cx", px); dots[i4].setAttribute("cy", Y(p.s[k] || 0)); dots[i4].setAttribute("visibility", "visible"); });
-      var html = "<b>" + stamp(p.t, true) + "</b>";
-      KEYS.forEach(function (k) { html += '<div><i class="key s' + NUM[k] + '"></i>' + NAMES[k] + "<em>" + nf(p.s[k] || 0) + "</em></div>"; });
-      html += "<div>" + T[lang].st_sum + "<em>" + nf(sum(p.s)) + "</em></div>";
+      var best = times[0];
+      times.forEach(function (t) { if (Math.abs(X(t) - mx) < Math.abs(X(best) - mx)) best = t; });
+      var px = X(best), total = 0;
+      cross.setAttribute("x1", px);
+      cross.setAttribute("x2", px);
+      cross.setAttribute("visibility", "visible");
+      var html = "<b>" + stamp(best, true) + "</b>";
+      KEYS.forEach(function (k, i) {
+        var val = valueAt(series[k], best);
+        if (val === null) {
+          dots[i].setAttribute("visibility", "hidden");
+          return;
+        }
+        total += val;
+        dots[i].setAttribute("cx", px);
+        dots[i].setAttribute("cy", Y(val));
+        dots[i].setAttribute("visibility", "visible");
+        html += '<div><i class="key s' + NUM[k] + '"></i>' + NAMES[k] + "<em>" + nf(val) + "</em></div>";
+      });
+      html += "<div>" + T[lang].st_sum + "<em>" + nf(total) + "</em></div>";
       tip.innerHTML = html;
       tip.hidden = false;
       tipAt(box, tip, px * r.width / W, (m.t + ih / 2) * r.height / H);
@@ -769,7 +833,6 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
     var nowT = pts.length ? pts[pts.length - 1].t : Date.now(), then = null;
     pts.forEach(function (p) { if (p.t <= nowT - 86400e3) then = p; });
     document.getElementById("st-day").textContent = then ? "+" + nf(sum(cur) - sum(then.s)) : "—";
-    document.getElementById("line-note").hidden = pts.length >= 4;
     lineChart(document.getElementById("line-chart"), pts);
     barChart(document.getElementById("bar-chart"));
   }
