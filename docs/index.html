@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BraVoEw · Скрипты для Umbrella</title>
+<meta name="description" content="Скрипты для Umbrella (Dota 2): Build Brain и History Changer. Бесплатно, с открытым кодом.">
+<meta property="og:title" content="BraVoEw · Скрипты для Umbrella">
+<meta property="og:description" content="Build Brain: кого пикнуть и что собрать прямо в игре. History Changer: настоящий MMR в истории матчей.">
+<meta property="og:image" content="assets/build-brain-poster.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e5484d'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='17' fill='white' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+(function () {
+  var t = null;
+  try { t = localStorage.getItem("theme"); } catch (e) {}
+  if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+})();
+</script>
+<style>
+:root {
+  --bg: #0f0f11;
+  --surface: #151518;
+  --card: #1b1b1f;
+  --card-2: #212126;
+  --edge: #2a2a31;
+  --text: #ededf0;
+  --muted: #a8a8b3;
+  --dim: #74747e;
+  --accent: #e5484d;
+  --accent-hot: #f0626a;
+  --accent-soft: rgba(229, 72, 77, 0.14);
+  --win: #34d399;
+  --lose: #fb7185;
+  --gold: #e8c37a;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #f4f4f6;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card-2: #f1f1f4;
+  --edge: #e2e2e8;
+  --text: #16161a;
+  --muted: #5b5b66;
+  --dim: #8a8a95;
+  --accent: #d93a40;
+  --accent-hot: #e5484d;
+  --accent-soft: rgba(217, 58, 64, 0.10);
+  --win: #0e9a6a;
+  --lose: #dc3f5c;
+  --gold: #b8892f;
+  --shadow: 0 10px 30px rgba(20, 20, 30, 0.08);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; display: block; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+
+header.top {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--edge);
+}
+.bar { display: flex; align-items: center; gap: 18px; height: 62px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+.mark { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 15px; }
+.brand small { color: var(--dim); font-weight: 500; }
+nav.links { display: flex; gap: 4px; margin-left: 12px; }
+nav.links a { color: var(--muted); font-weight: 500; font-size: 15px; padding: 6px 12px; border-radius: 8px; }
+nav.links a:hover { color: var(--text); background: var(--card-2); }
+.tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.seg { display: flex; background: var(--card-2); border: 1px solid var(--edge); border-radius: 9px; padding: 3px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: 600 13px "Inter", sans-serif; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.icon-btn { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--edge); background: var(--card-2); color: var(--muted); cursor: pointer; }
+.icon-btn:hover { color: var(--text); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+.hero { padding-block: 72px 40px; }
+.hero h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.035em; margin: 0 0 18px; font-weight: 800; text-wrap: balance; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p.lead { font-size: 19px; color: var(--muted); max-width: 620px; margin: 0; }
+.stats { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+.stat { background: var(--card); border: 1px solid var(--edge); border-radius: 12px; padding: 14px 20px; min-width: 150px; }
+.stat b { display: block; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--dim); font-size: 14px; }
+
+section { padding: 36px 0; }
+.sec-title { display: flex; align-items: baseline; gap: 12px; margin: 0 0 20px; }
+.sec-title h2 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+.sec-title span { color: var(--dim); font-size: 15px; }
+
+.script {
+  display: grid; grid-template-columns: 1.15fr 1fr; gap: 0;
+  background: var(--card); border: 1px solid var(--edge); border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow); margin-bottom: 26px;
+}
+.script.flip { grid-template-columns: 1fr 1.15fr; }
+.script.flip .media { order: 2; }
+.media { background: #0b0b0d; position: relative; display: flex; flex-direction: column; min-width: 0; }
+.media video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #000; }
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px; background: #0b0b0d; }
+.thumbs button { padding: 0; border: 1px solid #26262c; border-radius: 6px; overflow: hidden; cursor: zoom-in; background: #000; aspect-ratio: 16 / 9; }
+.thumbs img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease, opacity .25s; opacity: .85; }
+.thumbs button:hover img { transform: scale(1.06); opacity: 1; }
+.body { padding: 28px 30px 26px; display: flex; flex-direction: column; min-width: 0; }
+.head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.head h3 { margin: 0; font-size: 28px; letter-spacing: -0.025em; }
+.pill { font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--edge); color: var(--muted); }
+.pill.red { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.body p.desc { color: var(--muted); margin: 12px 0 18px; font-size: 16.5px; }
+.groups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; }
+.group h4 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); font-weight: 700; }
+.group ul { margin: 0; padding: 0; list-style: none; }
+.group li { position: relative; padding-left: 16px; font-size: 14.5px; margin: 4px 0; color: var(--text); }
+.group li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 2px; background: var(--accent); }
+.meta { display: flex; flex-wrap: wrap; gap: 18px; margin: 22px 0 18px; color: var(--muted); font-size: 14px; }
+.meta div { display: flex; align-items: center; gap: 7px; }
+.meta svg { width: 16px; height: 16px; color: var(--dim); }
+.meta b { color: var(--text); font-variant-numeric: tabular-nums; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid var(--edge); background: var(--card-2); color: var(--text); transition: transform .15s, background .15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-hot); }
+.btn svg { width: 17px; height: 17px; }
+
+.mock { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 34px 28px; background:
+  radial-gradient(120% 90% at 20% 0%, #1f2a33 0%, #101317 60%, #0b0c0e 100%); min-height: 360px; }
+.mock .mpill { align-self: flex-start; display: flex; gap: 14px; align-items: center; background: rgba(12,14,17,.85); border: 1px solid #2b333b; border-radius: 10px; padding: 9px 14px; color: #cfd6dd; font-size: 14px; font-weight: 600; }
+.mock .mpill .w { color: #4ade80; } .mock .mpill .l { color: #f87171; } .mock .mpill .s { color: #4ade80; font-weight: 800; }
+.mock table { width: 100%; border-collapse: separate; border-spacing: 0 6px; font-size: 14px; color: #c8ced6; }
+.mock td { background: rgba(255,255,255,0.035); padding: 8px 10px; white-space: nowrap; }
+.mock td:first-child { border-radius: 8px 0 0 8px; display: flex; align-items: center; gap: 10px; }
+.mock td:last-child { border-radius: 0 8px 8px 0; color: #7e8893; }
+.mock td img { width: 52px; height: 29px; border-radius: 4px; object-fit: cover; background: #222; }
+.mock .up { color: #4ade80; font-weight: 700; } .mock .down { color: #f87171; font-weight: 700; }
+.mock .hname { color: #e6eaee; font-weight: 600; }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.step { background: var(--card); border: 1px solid var(--edge); border-radius: 12px; padding: 20px; }
+.step .n { width: 30px; height: 30px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 800; margin-bottom: 12px; }
+.step h4 { margin: 0 0 6px; font-size: 16px; }
+.step p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.step code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px; background: var(--card-2); border: 1px solid var(--edge); padding: 1px 6px; border-radius: 5px; color: var(--text); }
+.note { margin-top: 16px; display: flex; gap: 12px; align-items: flex-start; background: var(--accent-soft); border-radius: 12px; padding: 14px 18px; color: var(--text); font-size: 15px; }
+.note svg { flex: none; width: 20px; height: 20px; color: var(--accent); margin-top: 2px; }
+
+footer { border-top: 1px solid var(--edge); margin-top: 30px; padding: 28px 0 40px; color: var(--dim); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; }
+footer a { color: var(--muted); }
+footer a:hover { color: var(--text); }
+
+.lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(5,5,7,.88); display: grid; place-items: center; padding: 24px; cursor: zoom-out; }
+.lightbox img { max-height: 90vh; border-radius: 10px; box-shadow: 0 20px 80px rgba(0,0,0,.6); }
+
+
+[hidden] { display: none !important; }
+:root { --s1: #3987e5; --s2: #d95926; }
+:root[data-theme="light"] { --s1: #2a78d6; --s2: #eb6834; }
+nav.links a.on { color: var(--text); background: var(--card-2); }
+.stats-page { padding-block: 56px 20px; }
+.demo { background: var(--accent-soft); color: var(--text); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin-bottom: 16px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.tile { background: var(--card); border: 1px solid var(--edge); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tile span { color: var(--dim); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.tile b { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.key { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex: none; }
+.key.s1 { background: var(--s1); } .key.s2 { background: var(--s2); }
+.chart-card { background: var(--card); border: 1px solid var(--edge); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 18px; }
+.chart-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.chart-head h3 { margin: 0; font-size: 18px; letter-spacing: -0.01em; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 14px; }
+.legend span { display: flex; align-items: center; gap: 7px; }
+.chart { position: relative; width: 100%; min-width: 0; }
+.chart svg { display: block; width: 100%; }
+.chart .grid line { stroke: var(--edge); stroke-width: 1; shape-rendering: crispEdges; }
+.chart text { fill: var(--dim); font: 500 12px "Inter", sans-serif; }
+.chart text.lbl { fill: var(--muted); font-size: 13.5px; font-weight: 600; }
+.chart text.val { fill: var(--text); font-size: 13px; font-weight: 700; }
+.chart .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart .s1 { stroke: var(--s1); } .chart .s2 { stroke: var(--s2); }
+.chart .f1 { fill: var(--s1); } .chart .f2 { fill: var(--s2); }
+.chart .ring { stroke: var(--card); stroke-width: 2; }
+.chart .cross { stroke: var(--dim); stroke-width: 1; }
+.chart .bar { transition: opacity .15s; }
+.chart .bar.dim { opacity: .45; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--edge); border-radius: 10px; padding: 9px 12px; font-size: 13px; box-shadow: var(--shadow); white-space: nowrap; z-index: 3; }
+.tip b { display: block; margin-bottom: 5px; font-size: 13px; color: var(--text); }
+.tip div { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.tip div em { font-style: normal; color: var(--text); font-weight: 700; margin-left: auto; padding-left: 16px; font-variant-numeric: tabular-nums; }
+.chart-note { color: var(--dim); font-size: 14px; margin: 10px 0 0; }
+
+@media (max-width: 900px) {
+  .script, .script.flip { grid-template-columns: 1fr; }
+  .script.flip .media { order: 0; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .tiles { grid-template-columns: 1fr 1fr; }
+  .bar { flex-wrap: wrap; height: auto; padding-block: 12px 4px; row-gap: 6px; }
+  nav.links { order: 3; width: 100%; margin-left: -12px; }
+}
+@media (max-width: 560px) {
+  .groups { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .body { padding: 22px 20px; }
+  .brand small { display: none; }
+  .hero { padding-block-start: 48px; }
+  .mock { padding: 22px 14px; }
+  .mock td:nth-child(3), .mock td:nth-child(4) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#"><span class="mark">B</span><span>BraVoEw <small>· Umbrella scripts</small></span></a>
+    <nav class="links">
+      <a href="#scripts" data-nav="home" data-i18n="nav_scripts">Скрипты</a>
+      <a href="#stats" data-nav="stats" data-i18n="nav_stats">Статистика</a>
+      <a href="#install" data-nav="home" data-i18n="nav_install">Установка</a>
+    </nav>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" data-lang="ru">RU</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <button class="icon-btn" type="button" id="theme" aria-label="Theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/BraVoEw/Scripts-Umbrella" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+ <div id="home">
+  <div class="wrap hero">
+    <h1 data-i18n-html="hero_title">Скрипты для <em>Umbrella</em></h1>
+    <p class="lead" data-i18n="hero_lead">Dota 2. Делаю то, чего самому не хватало в игре, и выкладываю для всех. Бесплатно и с открытым кодом.</p>
+    <div class="stats">
+      <div class="stat"><b>2</b><span data-i18n="stat_scripts">скрипта</span></div>
+      <div class="stat"><b id="total-dl">83</b><span data-i18n="stat_downloads">загрузок</span></div>
+      <div class="stat"><b id="last-date">22.10</b><span data-i18n="stat_updated">последнее обновление</span></div>
+    </div>
+  </div>
+
+  <section id="scripts">
+    <div class="wrap">
+      <div class="sec-title"><h2 data-i18n="sec_scripts">Скрипты</h2></div>
+
+      <article class="script" id="build-brain">
+        <div class="media">
+          <video src="assets/build-brain.mp4" poster="assets/build-brain-poster.webp" muted autoplay loop playsinline controls preload="metadata"></video>
+          <div class="thumbs">
+            <button type="button" data-full="assets/bb-pick.webp"><img src="assets/bb-pick.webp" alt="Build Brain: панель на пиках" loading="lazy"></button>
+            <button type="button" data-full="assets/bb-draft.webp"><img src="assets/bb-draft.webp" alt="Build Brain: вкладка Драфт" loading="lazy"></button>
+            <button type="button" data-full="assets/bb-build.webp"><img src="assets/bb-build.webp" alt="Build Brain: вкладка Сборка" loading="lazy"></button>
+            <button type="button" data-full="assets/bb-shop.webp"><img src="assets/bb-shop.webp" alt="Build Brain: панель в магазине" loading="lazy"></button>
+          </div>
+        </div>
+        <div class="body">
+          <div class="head">
+            <h3>Build Brain</h3>
+            <span class="pill red" data-ver="build-brain">v1.0.0</span>
+            <span class="pill" data-i18n="tag_auto">обновляется сам</span>
+          </div>
+          <p class="desc" data-i18n="bb_desc">Кого пикнуть на твою роль и что собрать против именно этих врагов. Сборки по свежим пабам Божества и Титана прямо в магазине.</p>
+          <div class="groups">
+            <div class="group"><h4 data-i18n="bb_g1">Пики</h4><ul data-i18n-list="bb_l1">
+              <li>Панель сама открывается на выборе героев</li>
+              <li>Шанс на победу и пики обеих команд</li>
+              <li>Мета твоей позиции с учётом матчапов</li>
+              <li>Топ-3 подсвечены в сетке героев</li>
+            </ul></div>
+            <div class="group"><h4 data-i18n="bb_g2">Магазин</h4><ul data-i18n-list="bb_l2">
+              <li>Старт, лайнинг и кор с минутами</li>
+              <li>Против врагов: предмет и зачем он</li>
+              <li>Прокачка на 18 уровней и таланты</li>
+              <li>Клик в квикбай, ПКМ покупает</li>
+            </ul></div>
+            <div class="group"><h4 data-i18n="bb_g3">Окно</h4><ul data-i18n-list="bb_l3">
+              <li>Таблица «кто кого» в процентах</li>
+              <li>Следующий предмет с полоской золота</li>
+              <li>Кто тебя убивает и чем</li>
+              <li>Ульты и BKB врагов в кд</li>
+            </ul></div>
+            <div class="group"><h4 data-i18n="bb_g4">Данные</h4><ul data-i18n-list="bb_l4">
+              <li>STRATZ, текущий патч</li>
+              <li>Матчапы от Легенды до Титана</li>
+              <li>Обновление 2 раза в неделю и после патча</li>
+              <li>Русский и английский</li>
+            </ul></div>
+          </div>
+          <div class="meta">
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><b data-dl="build-brain">16</b>&nbsp;<span data-i18n="downloads">загрузок</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><b data-date="build-brain">22.10.2026</b></div>
+          </div>
+          <div class="actions">
+            <a class="btn primary" data-href="build-brain" href="https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.0/build_brain.lua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><span data-i18n="download">Скачать</span></a>
+            <a class="btn" href="https://github.com/BraVoEw/Scripts-Umbrella/tree/main/build_brain" target="_blank" rel="noopener" data-i18n="more">Подробнее</a>
+            <a class="btn" href="https://github.com/BraVoEw/Scripts-Umbrella/blob/main/build_brain/CHANGELOG.md" target="_blank" rel="noopener" data-i18n="changes">Что нового</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="script flip" id="history-changer">
+        <div class="media">
+          <div class="mock" aria-hidden="true">
+            <div class="mpill"><span data-i18n="hc_mock_period">24 часа</span><span class="w">5 W</span><span class="l">2 L</span><span class="s">+79 MMR</span></div>
+            <table>
+              <tr><td><img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/phantom_lancer.png" alt=""><span class="hname">Phantom Lancer</span></td><td class="up">4571 (+27)</td><td>Ranked</td><td>38:12</td></tr>
+              <tr><td><img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/juggernaut.png" alt=""><span class="hname">Juggernaut</span></td><td class="down">4544 (-26)</td><td>Ranked</td><td>45:03</td></tr>
+              <tr><td><img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/luna.png" alt=""><span class="hname">Luna</span></td><td class="up">4570 (+25)</td><td>Ranked</td><td>31:47</td></tr>
+              <tr><td><img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/slark.png" alt=""><span class="hname">Slark</span></td><td class="up">4545 (+26)</td><td>Ranked</td><td>40:20</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="body">
+          <div class="head">
+            <h3>History Changer</h3>
+            <span class="pill red" data-ver="history-changer">v1.0.1</span>
+          </div>
+          <p class="desc" data-i18n="hc_desc">Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.</p>
+          <div class="groups">
+            <div class="group"><h4 data-i18n="hc_g1">История</h4><ul data-i18n-list="hc_l1">
+              <li>MMR и изменение в каждой строке</li>
+              <li>Три формата: 1569 (+25), Победа 1569 (+25), +25</li>
+              <li>Свои цвета для побед и поражений</li>
+              <li>Свой текст вместо имени героя</li>
+            </ul></div>
+            <div class="group"><h4 data-i18n="hc_g2">Плашка</h4><ul data-i18n-list="hc_l2">
+              <li>Вины, лузы и сумма MMR</li>
+              <li>За 24 часа, 7 или 30 дней</li>
+              <li>Сама догружает историю до 120 матчей</li>
+              <li>Видно только тебе</li>
+            </ul></div>
+          </div>
+          <div class="meta">
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><b data-dl="history-changer">67</b>&nbsp;<span data-i18n="downloads">загрузок</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><b data-date="history-changer">21.10.2026</b></div>
+          </div>
+          <div class="actions">
+            <a class="btn primary" data-href="history-changer" href="https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.1/history_changer.lua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><span data-i18n="download">Скачать</span></a>
+            <a class="btn" href="https://github.com/BraVoEw/Scripts-Umbrella/tree/main/history_changer" target="_blank" rel="noopener" data-i18n="more">Подробнее</a>
+            <a class="btn" href="https://github.com/BraVoEw/Scripts-Umbrella/blob/main/history_changer/CHANGELOG.md" target="_blank" rel="noopener" data-i18n="changes">Что нового</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <div class="sec-title"><h2 data-i18n="sec_install">Установка</h2><span data-i18n="sec_install_sub">одинаково для всех скриптов</span></div>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h4 data-i18n="s1_t">Скачай</h4><p data-i18n="s1_d">Кнопка «Скачать» у нужного скрипта, файл <code>.lua</code>.</p></div>
+        <div class="step"><div class="n">2</div><h4 data-i18n="s2_t">Положи в scripts</h4><p data-i18n-html="s2_d">В папку <code>scripts</code> Umbrella.</p></div>
+        <div class="step"><div class="n">3</div><h4 data-i18n="s3_t">Перезагрузи</h4><p data-i18n="s3_d">Перезагрузи Lua-скрипты в меню Umbrella.</p></div>
+        <div class="step"><div class="n">4</div><h4 data-i18n="s4_t">Включи</h4><p data-i18n-html="s4_d">Скрипт появится в <code>Scripts → Scripts</code>.</p></div>
+      </div>
+      <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg><span data-i18n="note_upd">Build Brain обновляется сам: новая версия скачается в фоне и заработает после перезагрузки скриптов. Выключается в его настройках.</span></div>
+    </div>
+  </section>
+ </div>
+
+ <div id="stats-view" hidden>
+  <section class="stats-page">
+    <div class="wrap">
+      <div class="sec-title"><h2 data-i18n="st_title">Статистика</h2></div>
+      <div class="demo" id="st-demo" hidden data-i18n="st_demo">Превью: на графике демо-данные, настоящие начнут копиться после публикации.</div>
+      <div class="tiles">
+        <div class="tile"><span data-i18n="st_total">Всего загрузок</span><b id="st-total">0</b></div>
+        <div class="tile"><span><i class="key s1"></i>Build Brain</span><b id="st-bb">0</b></div>
+        <div class="tile"><span><i class="key s2"></i>History Changer</span><b id="st-hc">0</b></div>
+        <div class="tile"><span data-i18n="st_day">За последние 24 часа</span><b id="st-day">—</b></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <h3 data-i18n="st_time">Загрузки со временем</h3>
+          <div class="legend"><span><i class="key s1"></i>Build Brain</span><span><i class="key s2"></i>History Changer</span></div>
+        </div>
+        <div class="chart" id="line-chart"></div>
+        <p class="chart-note" id="line-note" hidden data-i18n="st_collect">История только начала копиться, через пару дней тут будет нормальная кривая.</p>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><h3 data-i18n="st_versions">По версиям</h3></div>
+        <div class="chart" id="bar-chart"></div>
+      </div>
+    </div>
+  </section>
+ </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>BraVoEw</span>
+    <a href="https://github.com/BraVoEw/Scripts-Umbrella" target="_blank" rel="noopener">github.com/BraVoEw/Scripts-Umbrella</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var REPO = "BraVoEw/Scripts-Umbrella";
+  var SCRIPTS = { "build-brain": "build_brain.lua", "history-changer": "history_changer.lua" };
+  var T = {
+    ru: {
+      nav_scripts: "Скрипты", nav_install: "Установка", nav_stats: "Статистика",
+      st_title: "Статистика", st_demo: "Превью: на графике демо-данные, настоящие начнут копиться после публикации.",
+      st_total: "Всего загрузок", st_day: "За последние 24 часа", st_time: "Загрузки со временем", st_versions: "По версиям",
+      st_collect: "История только начала копиться, через пару дней тут будет нормальная кривая.", st_sum: "Всего", st_dl: "загрузок", st_released: "релиз",
+      hero_title: "Скрипты для <em>Umbrella</em>",
+      hero_lead: "Dota 2. Делаю то, чего самому не хватало в игре, и выкладываю для всех. Бесплатно и с открытым кодом.",
+      stat_scripts: "скрипта", stat_downloads: "загрузок", stat_updated: "последнее обновление",
+      sec_scripts: "Скрипты", tag_auto: "обновляется сам",
+      bb_desc: "Кого пикнуть на твою роль и что собрать против именно этих врагов. Сборки по свежим пабам Божества и Титана прямо в магазине.",
+      bb_g1: "Пики", bb_g2: "Магазин", bb_g3: "Окно", bb_g4: "Данные",
+      bb_l1: ["Панель сама открывается на выборе героев", "Шанс на победу и пики обеих команд", "Мета твоей позиции с учётом матчапов", "Топ-3 подсвечены в сетке героев"],
+      bb_l2: ["Старт, лайнинг и кор с минутами", "Против врагов: предмет и зачем он", "Прокачка на 18 уровней и таланты", "Клик в квикбай, ПКМ покупает"],
+      bb_l3: ["Таблица «кто кого» в процентах", "Следующий предмет с полоской золота", "Кто тебя убивает и чем", "Ульты и BKB врагов в кд"],
+      bb_l4: ["STRATZ, текущий патч", "Матчапы от Легенды до Титана", "Обновление 2 раза в неделю и после патча", "Русский и английский"],
+      hc_desc: "Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.",
+      hc_g1: "История", hc_g2: "Плашка", hc_mock_period: "24 часа",
+      hc_l1: ["MMR и изменение в каждой строке", "Три формата: 1569 (+25), Победа 1569 (+25), +25", "Свои цвета для побед и поражений", "Свой текст вместо имени героя"],
+      hc_l2: ["Вины, лузы и сумма MMR", "За 24 часа, 7 или 30 дней", "Сама догружает историю до 120 матчей", "Видно только тебе"],
+      downloads: "загрузок", download: "Скачать", more: "Подробнее", changes: "Что нового",
+      sec_install: "Установка", sec_install_sub: "одинаково для всех скриптов",
+      s1_t: "Скачай", s1_d: "Кнопка «Скачать» у нужного скрипта, файл .lua.",
+      s2_t: "Положи в scripts", s2_d: "В папку <code>scripts</code> Umbrella.",
+      s3_t: "Перезагрузи", s3_d: "Перезагрузи Lua-скрипты в меню Umbrella.",
+      s4_t: "Включи", s4_d: "Скрипт появится в <code>Scripts → Scripts</code>.",
+      note_upd: "Build Brain обновляется сам: новая версия скачается в фоне и заработает после перезагрузки скриптов. Выключается в его настройках.",
+      foot_data: "данные STRATZ и OpenDota, локализация меню на qLocalization от qfun"
+    },
+    en: {
+      nav_scripts: "Scripts", nav_install: "Install", nav_stats: "Stats",
+      st_title: "Stats", st_demo: "Preview: the chart shows demo data, real history starts after publishing.",
+      st_total: "Total downloads", st_day: "Last 24 hours", st_time: "Downloads over time", st_versions: "By version",
+      st_collect: "History has just started, give it a couple of days for a proper curve.", st_sum: "Total", st_dl: "downloads", st_released: "released",
+      hero_title: "Scripts for <em>Umbrella</em>",
+      hero_lead: "Dota 2. I make what I was missing in the game myself and share it with everyone. Free and open source.",
+      stat_scripts: "scripts", stat_downloads: "downloads", stat_updated: "last update",
+      sec_scripts: "Scripts", tag_auto: "self-updating",
+      bb_desc: "Who to pick for your role and what to buy against these exact enemies. Builds from fresh Divine and Immortal pubs right in the shop.",
+      bb_g1: "Hero pick", bb_g2: "Shop", bb_g3: "Window", bb_g4: "Data",
+      bb_l1: ["Panel opens by itself on hero pick", "Win chance and both teams' picks", "Meta for your position, ranked by matchups", "Top 3 highlighted in the hero grid"],
+      bb_l2: ["Starting, laning and core items with timings", "Counters to your enemies and why", "Skill order for 18 levels and talents", "Click to quick buy, right click buys"],
+      bb_l3: ["Who beats who table in percent", "Next item with a gold bar", "Who kills you and with what", "Enemy ults and BKB on cooldown"],
+      bb_l4: ["STRATZ, current patch", "Matchups from Legend to Immortal", "Updated twice a week and after patches", "Russian and English"],
+      hc_desc: "Your real MMR after every match right in the match history instead of a bare Win or Loss. Plus a pill with totals for a day, week or month.",
+      hc_g1: "History", hc_g2: "Pill", hc_mock_period: "24 hours",
+      hc_l1: ["MMR and change in every row", "Three formats: 1569 (+25), Win 1569 (+25), +25", "Your own colors for wins and losses", "Your own text instead of the hero name"],
+      hc_l2: ["Wins, losses and MMR total", "For 24 hours, 7 or 30 days", "Loads up to 120 matches by itself", "Only you can see it"],
+      downloads: "downloads", download: "Download", more: "Details", changes: "What's new",
+      sec_install: "Install", sec_install_sub: "the same for every script",
+      s1_t: "Download", s1_d: "Hit Download on the script you want, it is a .lua file.",
+      s2_t: "Put into scripts", s2_d: "Into the Umbrella <code>scripts</code> folder.",
+      s3_t: "Reload", s3_d: "Reload Lua scripts in the Umbrella menu.",
+      s4_t: "Turn on", s4_d: "The script shows up in <code>Scripts → Scripts</code>.",
+      note_upd: "Build Brain updates itself: a new version downloads in the background and starts after you reload scripts. You can turn it off in its settings.",
+      foot_data: "data by STRATZ and OpenDota, menu localization uses qLocalization by qfun"
+    }
+  };
+
+  function store(key, value) {
+    try {
+      if (value === undefined) return localStorage.getItem(key);
+      localStorage.setItem(key, value);
+    } catch (e) { return null; }
+  }
+
+  var home = document.getElementById("home"), statsView = document.getElementById("stats-view");
+  var live = null, rels = null, hist = null, statsLoading = false;
+  var lang = store("lang") || ((navigator.language || "ru").toLowerCase().indexOf("ru") === 0 ? "ru" : "en");
+
+  function applyLang(l) {
+    lang = l;
+    var d = T[l];
+    document.documentElement.lang = l;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { var v = d[el.getAttribute("data-i18n")]; if (v) el.textContent = v; });
+    document.querySelectorAll("[data-i18n-html]").forEach(function (el) { var v = d[el.getAttribute("data-i18n-html")]; if (v) el.innerHTML = v; });
+    document.querySelectorAll("[data-i18n-list]").forEach(function (el) {
+      var v = d[el.getAttribute("data-i18n-list")];
+      if (!v) return;
+      el.innerHTML = "";
+      v.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
+    });
+    document.querySelectorAll("[data-lang]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-lang") === l); });
+    document.title = l === "ru" ? "BraVoEw · Скрипты для Umbrella" : "BraVoEw · Scripts for Umbrella";
+    store("lang", l);
+    renderDates();
+    if (statsView && !statsView.hidden) renderStats();
+  }
+
+  document.querySelectorAll("[data-lang]").forEach(function (b) {
+    b.addEventListener("click", function () { applyLang(b.getAttribute("data-lang")); });
+  });
+  document.getElementById("theme").addEventListener("click", function () {
+    var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    store("theme", t);
+  });
+
+  var dates = {};
+  function fmt(iso, short) {
+    var d = new Date(iso);
+    if (isNaN(d)) return "";
+    var dd = String(d.getDate()).padStart(2, "0"), mm = String(d.getMonth() + 1).padStart(2, "0");
+    return short ? dd + "." + mm : dd + "." + mm + "." + d.getFullYear();
+  }
+  function renderDates() {
+    Object.keys(dates).forEach(function (k) {
+      var el = document.querySelector('[data-date="' + k + '"]');
+      if (el) el.textContent = fmt(dates[k], false);
+    });
+  }
+  function nf(n) { return n.toLocaleString(lang === "ru" ? "ru-RU" : "en-US"); }
+
+  function apply(list) {
+    var total = 0, last = null;
+    Object.keys(SCRIPTS).forEach(function (key) {
+      var file = SCRIPTS[key], sum = 0, latest = null;
+      list.forEach(function (r) {
+        if (!r.tag_name || r.tag_name.indexOf(key + "-v") !== 0 || r.draft) return;
+        (r.assets || []).forEach(function (a) { if (a.name === file) sum += a.download_count || 0; });
+        if (!r.prerelease && (!latest || r.published_at > latest.published_at)) latest = r;
+      });
+      total += sum;
+      var dl = document.querySelector('[data-dl="' + key + '"]');
+      if (dl) dl.textContent = nf(sum);
+      if (latest) {
+        var ver = latest.tag_name.slice(key.length + 2);
+        var v = document.querySelector('[data-ver="' + key + '"]');
+        if (v) v.textContent = "v" + ver;
+        var a = document.querySelector('[data-href="' + key + '"]');
+        if (a) a.href = "https://github.com/" + REPO + "/releases/download/" + latest.tag_name + "/" + file;
+        dates[key] = latest.published_at;
+        if (!last || latest.published_at > last) last = latest.published_at;
+      }
+    });
+    live = {};
+    Object.keys(SCRIPTS).forEach(function (key) { live[key] = 0; });
+    list.forEach(function (r) {
+      Object.keys(SCRIPTS).forEach(function (key) {
+        if (r.tag_name && r.tag_name.indexOf(key + "-v") === 0) (r.assets || []).forEach(function (a) { if (a.name === SCRIPTS[key]) live[key] += a.download_count || 0; });
+      });
+    });
+    rels = list;
+    if (!statsView.hidden) renderStats();
+    document.getElementById("total-dl").textContent = nf(total);
+    if (last) document.getElementById("last-date").textContent = fmt(last, true);
+    renderDates();
+  }
+
+  function load() {
+    var cached = null;
+    try { cached = JSON.parse(store("rel") || "null"); } catch (e) {}
+    if (cached && Date.now() - cached.at < 10 * 60 * 1000) { apply(cached.list); return; }
+    fetch("https://api.github.com/repos/" + REPO + "/releases?per_page=100")
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (list) {
+        var slim = list.map(function (r) {
+          return { tag_name: r.tag_name, draft: r.draft, prerelease: r.prerelease, published_at: r.published_at,
+            assets: (r.assets || []).map(function (a) { return { name: a.name, download_count: a.download_count }; }) };
+        });
+        store("rel", JSON.stringify({ at: Date.now(), list: slim }));
+        apply(slim);
+      })
+      .catch(function () { if (cached) apply(cached.list); });
+  }
+
+  document.querySelectorAll(".thumbs button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var box = document.createElement("div");
+      box.className = "lightbox";
+      var img = document.createElement("img");
+      img.src = b.getAttribute("data-full");
+      img.alt = b.querySelector("img").alt;
+      box.appendChild(img);
+      box.addEventListener("click", function () { box.remove(); });
+      document.addEventListener("keydown", function esc(e) { if (e.key === "Escape") { box.remove(); document.removeEventListener("keydown", esc); } });
+      document.body.appendChild(box);
+    });
+  });
+
+  var KEYS = ["build-brain", "history-changer"];
+  var NAMES = { "build-brain": "Build Brain", "history-changer": "History Changer" };
+  var NUM = { "build-brain": "1", "history-changer": "2" };
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var STATS_URL = LOCAL ? "stats-sample.json" : "https://raw.githubusercontent.com/" + REPO + "/stats/stats.json";
+
+  function svgEl(tag, attrs, parent) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(el);
+    return el;
+  }
+  function niceStep(raw) {
+    var p = Math.pow(10, Math.floor(Math.log10(Math.max(raw, 1e-9)))), f = raw / p;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+  }
+  function compact(n) { return n >= 1000 ? (Math.round(n / 100) / 10) + "K" : String(n); }
+  function stamp(t, withTime) {
+    var d = new Date(t), dd = String(d.getDate()).padStart(2, "0"), mm = String(d.getMonth() + 1).padStart(2, "0");
+    return withTime ? dd + "." + mm + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") : dd + "." + mm;
+  }
+  function sum(sv) { var n = 0; KEYS.forEach(function (k) { n += (sv && sv[k]) || 0; }); return n; }
+
+  function points() {
+    var pts = (hist || []).map(function (p) { return { t: Date.parse(p.t), s: p.s || {} }; })
+      .filter(function (p) { return !isNaN(p.t); }).sort(function (a, b) { return a.t - b.t; });
+    if (live && !LOCAL) {
+      var now = Date.now();
+      if (!pts.length || now - pts[pts.length - 1].t > 60000) pts.push({ t: now, s: live });
+    }
+    return pts;
+  }
+
+  function tipAt(box, tip, x, y) {
+    var w = box.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
+    var left = x + 14 + tw > w ? x - tw - 14 : x + 14;
+    tip.style.left = Math.max(0, left) + "px";
+    tip.style.top = Math.max(0, y - th / 2) + "px";
+  }
+
+  function lineChart(box, pts) {
+    box.innerHTML = "";
+    var W = box.clientWidth, H = W < 560 ? 240 : 300;
+    if (W < 160) return;
+    var m = { l: 40, r: 44, t: 12, b: 28 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+    var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, height: H, role: "img", "aria-label": T[lang].st_time }, box);
+    if (!pts.length) return;
+    var t0 = pts[0].t, t1 = pts[pts.length - 1].t;
+    if (t1 - t0 < 6 * 3600e3) { var mid = (t0 + t1) / 2; t0 = mid - 6 * 3600e3; t1 = mid + 6 * 3600e3; }
+    var vmax = 1;
+    pts.forEach(function (p) { KEYS.forEach(function (k) { vmax = Math.max(vmax, p.s[k] || 0); }); });
+    var step = niceStep(vmax / 4), ymax = Math.ceil(vmax * 1.08 / step) * step;
+    var X = function (t) { return m.l + (t - t0) / (t1 - t0) * iw; };
+    var Y = function (v) { return m.t + ih - v / ymax * ih; };
+    var grid = svgEl("g", { "class": "grid" }, svg);
+    for (var v = 0; v <= ymax + 1e-9; v += step) {
+      svgEl("line", { x1: m.l, x2: m.l + iw, y1: Math.round(Y(v)) + 0.5, y2: Math.round(Y(v)) + 0.5 }, grid);
+      var tx = svgEl("text", { x: m.l - 8, y: Y(v) + 4, "text-anchor": "end" }, svg);
+      tx.textContent = compact(v);
+    }
+    var span = t1 - t0, n = W < 560 ? 2 : 5, hours = span < 2.5 * 86400e3;
+    for (var i = 0; i <= n; i++) {
+      var tt = t0 + span * i / n, xl = svgEl("text", { x: X(tt), y: H - 8, "text-anchor": i === 0 ? "start" : (i === n ? "end" : "middle") }, svg);
+      xl.textContent = hours ? stamp(tt, true).slice(6) + ((i === 0 || i === n) && W >= 560 ? " " + stamp(tt, false) : "") : stamp(tt, false);
+    }
+    KEYS.forEach(function (k) {
+      var d = pts.map(function (p, i2) { return (i2 ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.s[k] || 0).toFixed(1); }).join("");
+      svgEl("path", { d: d, "class": "ln s" + NUM[k] }, svg);
+    });
+    var last = pts[pts.length - 1];
+    var ends = KEYS.map(function (k) { return { k: k, v: last.s[k] || 0, y: Y(last.s[k] || 0) }; }).sort(function (a, b) { return a.y - b.y; });
+    for (var j = 1; j < ends.length; j++) if (ends[j].y - (ends[j - 1].ly || ends[j - 1].y) < 16) ends[j].ly = (ends[j - 1].ly || ends[j - 1].y) + 16;
+    ends.forEach(function (e) {
+      svgEl("circle", { cx: X(last.t), cy: e.y, r: 4, "class": "ring f" + NUM[e.k] }, svg);
+      var lb = svgEl("text", { x: X(last.t) + 9, y: (e.ly || e.y) + 4, "class": "val" }, svg);
+      lb.textContent = nf(e.v);
+    });
+    var cross = svgEl("line", { y1: m.t, y2: m.t + ih, "class": "cross", visibility: "hidden" }, svg);
+    var dots = KEYS.map(function (k) { return svgEl("circle", { r: 4, "class": "ring f" + NUM[k], visibility: "hidden" }, svg); });
+    var tip = document.createElement("div");
+    tip.className = "tip";
+    tip.hidden = true;
+    box.appendChild(tip);
+    var hit = svgEl("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent" }, svg);
+    function hide() { cross.setAttribute("visibility", "hidden"); dots.forEach(function (d) { d.setAttribute("visibility", "hidden"); }); tip.hidden = true; }
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
+      var best = 0;
+      pts.forEach(function (p, i3) { if (Math.abs(X(p.t) - mx) < Math.abs(X(pts[best].t) - mx)) best = i3; });
+      var p = pts[best], px = X(p.t);
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
+      KEYS.forEach(function (k, i4) { dots[i4].setAttribute("cx", px); dots[i4].setAttribute("cy", Y(p.s[k] || 0)); dots[i4].setAttribute("visibility", "visible"); });
+      var html = "<b>" + stamp(p.t, true) + "</b>";
+      KEYS.forEach(function (k) { html += '<div><i class="key s' + NUM[k] + '"></i>' + NAMES[k] + "<em>" + nf(p.s[k] || 0) + "</em></div>"; });
+      html += "<div>" + T[lang].st_sum + "<em>" + nf(sum(p.s)) + "</em></div>";
+      tip.innerHTML = html;
+      tip.hidden = false;
+      tipAt(box, tip, px * r.width / W, (m.t + ih / 2) * r.height / H);
+    }
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerdown", move);
+    hit.addEventListener("pointerleave", hide);
+  }
+
+  function barChart(box) {
+    box.innerHTML = "";
+    var rows = [];
+    (rels || []).forEach(function (r) {
+      KEYS.forEach(function (k) {
+        if (!r.tag_name || r.tag_name.indexOf(k + "-v") !== 0 || r.draft) return;
+        var n = 0;
+        (r.assets || []).forEach(function (a) { if (a.name === SCRIPTS[k]) n += a.download_count || 0; });
+        rows.push({ k: k, ver: r.tag_name.slice(k.length + 2), v: n, at: r.published_at });
+      });
+    });
+    rows.sort(function (a, b) { return KEYS.indexOf(a.k) - KEYS.indexOf(b.k) || (a.at < b.at ? 1 : -1); });
+    var W = box.clientWidth;
+    if (!rows.length || W < 160) return;
+    var narrow = W < 560, rowH = narrow ? 50 : 40, H = rows.length * rowH + 6;
+    var lw = narrow ? 0 : 180, vw = 56, bw = Math.max(40, W - lw - vw);
+    var vmax = Math.max.apply(null, rows.map(function (r) { return r.v; }).concat([1]));
+    var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, height: H, role: "img", "aria-label": T[lang].st_versions }, box);
+    var tip = document.createElement("div");
+    tip.className = "tip";
+    tip.hidden = true;
+    box.appendChild(tip);
+    var bars = [];
+    rows.forEach(function (r, i) {
+      var y = i * rowH + (narrow ? 24 : 10), h = narrow ? 16 : 20, w = Math.max(4, r.v / vmax * bw), x0 = lw;
+      var name = svgEl("text", { x: 0, y: narrow ? y - 7 : y + 15, "class": "lbl" }, svg);
+      name.textContent = NAMES[r.k] + " " + r.ver;
+      var rr = Math.min(4, w);
+      var d = "M" + x0 + "," + y + "h" + (w - rr) + "a" + rr + "," + rr + " 0 0 1 " + rr + "," + rr + "v" + (h - 2 * rr) + "a" + rr + "," + rr + " 0 0 1 -" + rr + "," + rr + "h-" + (w - rr) + "z";
+      var bar = svgEl("path", { d: d, "class": "bar f" + NUM[r.k] }, svg);
+      var val = svgEl("text", { x: x0 + w + 8, y: y + h / 2 + 5, "class": "val" }, svg);
+      val.textContent = nf(r.v);
+      var hit = svgEl("rect", { x: 0, y: i * rowH, width: W, height: rowH, fill: "transparent" }, svg);
+      bars.push(bar);
+      hit.addEventListener("pointermove", function () {
+        bars.forEach(function (b) { b.classList.toggle("dim", b !== bar); });
+        tip.innerHTML = "<b>" + NAMES[r.k] + " " + r.ver + "</b><div>" + T[lang].st_dl + "<em>" + nf(r.v) + "</em></div><div>" + T[lang].st_released + "<em>" + fmt(r.at, false) + "</em></div>";
+        tip.hidden = false;
+        var rc = svg.getBoundingClientRect();
+        tipAt(box, tip, (x0 + w) * rc.width / W, (y + 10) * rc.height / H);
+      });
+      hit.addEventListener("pointerleave", function () { bars.forEach(function (b) { b.classList.remove("dim"); }); tip.hidden = true; });
+    });
+  }
+
+  function renderStats() {
+    if (hist === null) { loadStats(); return; }
+    var pts = points();
+    var cur = LOCAL && pts.length ? pts[pts.length - 1].s : (live || (pts.length ? pts[pts.length - 1].s : {}));
+    document.getElementById("st-demo").hidden = !LOCAL;
+    document.getElementById("st-total").textContent = nf(sum(cur));
+    document.getElementById("st-bb").textContent = nf(cur["build-brain"] || 0);
+    document.getElementById("st-hc").textContent = nf(cur["history-changer"] || 0);
+    var nowT = pts.length ? pts[pts.length - 1].t : Date.now(), then = null;
+    pts.forEach(function (p) { if (p.t <= nowT - 86400e3) then = p; });
+    document.getElementById("st-day").textContent = then ? "+" + nf(sum(cur) - sum(then.s)) : "—";
+    document.getElementById("line-note").hidden = pts.length >= 4;
+    lineChart(document.getElementById("line-chart"), pts);
+    barChart(document.getElementById("bar-chart"));
+  }
+
+  function loadStats() {
+    if (statsLoading) return;
+    statsLoading = true;
+    fetch(STATS_URL, { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (d) { hist = (d && d.points) || []; })
+      .catch(function () { hist = []; })
+      .then(function () { statsLoading = false; renderStats(); });
+  }
+
+  function route() {
+    var stats = location.hash === "#stats";
+    home.hidden = stats;
+    statsView.hidden = !stats;
+    document.querySelectorAll("[data-nav]").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === "stats" && stats); });
+    if (stats) {
+      window.scrollTo(0, 0);
+      requestAnimationFrame(renderStats);
+    } else if (location.hash.length > 1) {
+      var el = document.getElementById(location.hash.slice(1));
+      if (el) el.scrollIntoView();
+    }
+  }
+  window.addEventListener("hashchange", route);
+  var resizeTimer = null, lastW = 0;
+  function onWidth(w) {
+    if (w === lastW) return;
+    lastW = w;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { if (!statsView.hidden) renderStats(); }, 120);
+  }
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(function (es) { onWidth(Math.round(es[0].contentRect.width)); }).observe(document.querySelector(".stats-page .wrap"));
+  } else {
+    window.addEventListener("resize", function () { onWidth(window.innerWidth); });
+  }
+  document.getElementById("theme").addEventListener("click", function () { if (!statsView.hidden) renderStats(); });
+
+  applyLang(lang);
+  route();
+  load();
+})();
+</script>
+</body>
+</html>

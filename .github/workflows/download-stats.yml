@@ -1,0 +1,43 @@
+name: Download stats
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: download-stats
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          ref: stats
+          path: stats
+
+      - name: Snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -I .github/scripts/download_stats.py stats/stats.json
+
+      - name: Publish
+        working-directory: stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add stats.json
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "Download stats"
+            git push
+          fi
