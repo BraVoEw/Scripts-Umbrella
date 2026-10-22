@@ -346,6 +346,8 @@ local localization = qLocalization.new({
 		hc_formats_full = "Win 1569 (+25)",
 		hc_word_win = "Win",
 		hc_word_loss = "Loss",
+		hc_calib = "Calibration",
+		hc_calib_short = "calibration",
 		hc_formats_delta = "+25",
 		hc_win_color = "Win color",
 		hc_loss_color = "Loss color",
@@ -384,6 +386,8 @@ local localization = qLocalization.new({
 		hc_formats_full = "Победа 1569 (+25)",
 		hc_word_win = "Победа",
 		hc_word_loss = "Поражение",
+		hc_calib = "Калибровка",
+		hc_calib_short = "калибровка",
 		hc_formats_delta = "+25",
 		hc_win_color = "Цвет победы",
 		hc_loss_color = "Цвет поражения",
@@ -472,6 +476,7 @@ local JSON = require("assets.JSON")
 local K = {
 	MSG_HISTORY_REQUEST = 7408,
 	MSG_HISTORY_RESPONSE = 7409,
+	LOBBY_RANKED = 7,
 	OWN_REQUEST_ID = 24301,
 	MATCHES_REQUESTED = 20,
 	MAX_PAGES = 6,
@@ -504,6 +509,7 @@ local K = {
 	CARD_WIDTH_RATIO = 1.3,
 	PAGE_DEPTH = 16,
 	PAGE_MANAGER = "PageManager",
+	PAGE_VISIBLE = "PageVisible",
 	CHIP_SCALE = 1.46,
 	CHIP_SHIFT_X = 12,
 	CHIP_SHIFT_Y = 64,
@@ -538,10 +544,7 @@ local state = {
 	container = nil,
 	anchor = nil,
 	geo_summary = nil,
-	page_visible = false,
 	left = false,
-	siblings = {},
-	triggers = {},
 	track_error = nil,
 	periods_text = nil,
 	summary = nil,
@@ -571,6 +574,20 @@ local function own_account()
 	return state.own_account
 end
 
+local function link_calibration(account)
+	local list = {}
+	for _, m in pairs(state.matches) do
+		if m.account == account and m.lobby == K.LOBBY_RANKED then
+			list[#list + 1] = m
+		end
+	end
+	table.sort(list, function(a, b) return a.start < b.start end)
+	for i, m in ipairs(list) do
+		local after = list[i + 1]
+		m.final = m.calib and after and after.ranked and after.prev or nil
+	end
+end
+
 local function store_history(resp)
 	local req = state.requests[tonumber(resp.request_id) or 0] or {}
 	local account = req.account or own_account() or 0
@@ -590,6 +607,8 @@ local function store_history(resp)
 		entry.prev = prev
 		entry.change = tonumber(m.rank_change) or 0
 		entry.ranked = prev > 0
+		entry.lobby = tonumber(m.lobby_type) or 0
+		entry.calib = not entry.ranked and entry.lobby == K.LOBBY_RANKED and account == own_account()
 		if not entry.duration then
 			entry.duration = tonumber(m.duration) or 0
 			local list = state.by_duration[entry.duration] or {}
@@ -598,7 +617,12 @@ local function store_history(resp)
 		end
 		count = count + 1
 		if entry.ranked then ranked = ranked + 1 end
+		if ui.debug:Get() and not entry.raw_logged then
+			entry.raw_logged = true
+			log("match " .. id .. " " .. JSON:encode(m))
+		end
 	end
+	link_calibration(account)
 	log("history " .. count .. " matches, ranked " .. ranked .. ", account " .. tostring(account)
 		.. (req.more and ", next page" or ""))
 
@@ -792,11 +816,33 @@ local function restore_label(label)
 end
 
 local function change_color(match)
-	if match.change == 0 then return ui.zero_color:Get() end
+	if match.change == 0 and not match.calib then return ui.zero_color:Get() end
 	return match.win and ui.win_color:Get() or ui.loss_color:Get()
 end
 
+local function result_word(match, label)
+	local word = strip_tags(original_text(label))
+	if word == "" then
+		word = L(match.win and "hc_word_win" or "hc_word_loss")
+	end
+	return word
+end
+
+local function calib_text(match, label)
+	local format = ui.format:Get()
+	local final = match.final and tostring(match.final)
+	if format == 1 then
+		return result_word(match, label) .. (final and (" " .. final) or "") .. " (" .. L("hc_calib_short") .. ")"
+	elseif format == 0 and final then
+		return final .. " (" .. L("hc_calib_short") .. ")"
+	end
+	return L("hc_calib")
+end
+
 local function result_text(match, label)
+	if match.calib then
+		return colored(change_color(match), calib_text(match, label))
+	end
 	local after = tostring(match.prev + match.change)
 	local delta = string.format("%+d", match.change)
 	local format = ui.format:Get()
@@ -804,11 +850,7 @@ local function result_text(match, label)
 	if format == 2 then
 		text = delta
 	elseif format == 1 then
-		local word = strip_tags(original_text(label))
-		if word == "" then
-			word = L(match.win and "hc_word_win" or "hc_word_loss")
-		end
-		text = word .. " " .. after .. " (" .. delta .. ")"
+		text = result_word(match, label) .. " " .. after .. " (" .. delta .. ")"
 	else
 		text = after .. " (" .. delta .. ")"
 	end
@@ -821,7 +863,7 @@ local function apply_row(info, enabled)
 		state.row_accounts[match.account] = (state.row_accounts[match.account] or 0) + 1
 	end
 
-	if match and match.ranked and ui.mmr:Get() then
+	if match and (match.ranked or match.calib) and ui.mmr:Get() then
 		write_label(info.result, result_text(match, info.result))
 	else
 		restore_label(info.result)
@@ -1022,31 +1064,10 @@ end
 
 local function track_pages(container)
 	local page = find_page(container)
-	if not page then return end
-	local manager = page:GetParent()
-
-	local own_visible = page:IsVisible()
-	if own_visible and not state.page_visible then
-		state.left = false
-		state.triggers = {}
-	end
-	state.page_visible = own_visible
-
-	for i = 0, manager:GetChildCount() - 1 do
-		local sibling = manager:GetChild(i)
-		if sibling and not (sibling == page) then
-			local visible = sibling:IsVisible()
-			local was = state.siblings[i]
-			if visible and was == false then
-				state.left = true
-				state.triggers[i] = true
-				log("page opened: " .. sibling:GetPanelType() .. (sibling:HasID() and ("#" .. sibling:GetID()) or ""))
-			elseif not visible and was and state.triggers[i] then
-				state.triggers[i] = nil
-				if next(state.triggers) == nil then state.left = false end
-			end
-			state.siblings[i] = visible
-		end
+	local left = page ~= nil and not page:HasClass(K.PAGE_VISIBLE)
+	if left ~= state.left then
+		state.left = left
+		log(left and "page left" or "page shown")
 	end
 end
 
@@ -1233,7 +1254,6 @@ local function tick()
 			state.container = nil
 			state.anchor = nil
 			state.geo_summary = nil
-			state.page_visible = false
 			state.rows_text = nil
 			log("history panel closed")
 		end

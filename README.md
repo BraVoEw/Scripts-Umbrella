@@ -6,7 +6,7 @@ Lua-скрипты для Umbrella (Dota 2). Автор: BraVoEw.
 
 | Скрипт | Что делает | Скачать |
 | --- | --- | --- |
-| [History Changer](history_changer) | Настоящий MMR в истории матчей и плашка с итогом за сутки, неделю или месяц | [history_changer.lua](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.1/history_changer.lua) |
+| [History Changer](history_changer) | Настоящий MMR в истории матчей и плашка с итогом за сутки, неделю или месяц | [history_changer.lua](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.2/history_changer.lua) |
 | [Build Brain](build_brain) | Сборка по свежим хай-ММР пабам прямо в магазине и что собрать против врагов в этой игре | [build_brain.lua](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.2/build_brain.lua) |
 
 ## Установка
@@ -23,7 +23,7 @@ Lua scripts for Umbrella (Dota 2). Author: BraVoEw.
 
 | Script | What it does | Download |
 | --- | --- | --- |
-| [History Changer](history_changer) | Real MMR in your match history and a pill with totals for a day, week or month | [history_changer.lua](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.1/history_changer.lua) |
+| [History Changer](history_changer) | Real MMR in your match history and a pill with totals for a day, week or month | [history_changer.lua](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.2/history_changer.lua) |
 | [Build Brain](build_brain) | A build from fresh high-MMR pubs right in the shop and what to buy against your enemies in this game | [build_brain.lua](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.2/build_brain.lua) |
 
 Put the `.lua` file into the Umbrella `scripts` folder and reload Lua scripts.

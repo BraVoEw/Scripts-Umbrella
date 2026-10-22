@@ -345,15 +345,15 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
         <div class="body">
           <div class="head">
             <h3>History Changer</h3>
-            <span class="pill red" data-ver="history-changer">v1.0.1</span>
+            <span class="pill red" data-ver="history-changer">v1.0.2</span>
           </div>
           <p class="desc" data-i18n="hc_desc">Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.</p>
           <div class="groups">
             <div class="group"><h4 data-i18n="hc_g1">История</h4><ul data-i18n-list="hc_l1">
               <li>MMR и изменение в каждой строке</li>
               <li>Три формата: 1569 (+25), Победа 1569 (+25), +25</li>
-              <li>Свои цвета для побед и поражений</li>
-              <li>Свой текст вместо имени героя</li>
+              <li>Калибровка с итоговым MMR</li>
+              <li>Свои цвета и текст вместо героя</li>
             </ul></div>
             <div class="group"><h4 data-i18n="hc_g2">Плашка</h4><ul data-i18n-list="hc_l2">
               <li>Вины, лузы и сумма MMR</li>
@@ -364,10 +364,10 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
           </div>
           <div class="meta">
             <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><b data-dl="history-changer">67</b>&nbsp;<span data-i18n="downloads">загрузок</span></div>
-            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><b data-date="history-changer">21.10.2026</b></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><b data-date="history-changer">23.10.2026</b></div>
           </div>
           <div class="actions">
-            <a class="btn primary" data-href="history-changer" href="https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.1/history_changer.lua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><span data-i18n="download">Скачать</span></a>
+            <a class="btn primary" data-href="history-changer" href="https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.2/history_changer.lua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg><span data-i18n="download">Скачать</span></a>
             <a class="btn" href="https://github.com/BraVoEw/Scripts-Umbrella/tree/main/history_changer" target="_blank" rel="noopener" data-i18n="more">Подробнее</a>
             <a class="btn" href="https://github.com/BraVoEw/Scripts-Umbrella/blob/main/history_changer/CHANGELOG.md" target="_blank" rel="noopener" data-i18n="changes">Что нового</a>
           </div>
@@ -441,7 +441,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       bb_l4: ["STRATZ, текущий патч", "Матчапы от Легенды до Титана", "Обновление 2 раза в неделю и после патча", "Русский и английский"],
       hc_desc: "Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.",
       hc_g1: "История", hc_g2: "Плашка", hc_mock_period: "24 часа",
-      hc_l1: ["MMR и изменение в каждой строке", "Три формата: 1569 (+25), Победа 1569 (+25), +25", "Свои цвета для побед и поражений", "Свой текст вместо имени героя"],
+      hc_l1: ["MMR и изменение в каждой строке", "Три формата: 1569 (+25), Победа 1569 (+25), +25", "Калибровка с итоговым MMR", "Свои цвета и текст вместо героя"],
       hc_l2: ["Вины, лузы и сумма MMR", "За 24 часа, 7 или 30 дней", "Сама догружает историю до 120 матчей", "Видно только тебе"],
       downloads: "загрузок", download: "Скачать", more: "Подробнее", changes: "Что нового",
       sec_install: "Установка", sec_install_sub: "одинаково для всех скриптов",
@@ -469,7 +469,7 @@ nav.links a.on { color: var(--text); background: var(--card-2); }
       bb_l4: ["STRATZ, current patch", "Matchups from Legend to Immortal", "Updated twice a week and after patches", "Russian and English"],
       hc_desc: "Your real MMR after every match right in the match history instead of a bare Win or Loss. Plus a pill with totals for a day, week or month.",
       hc_g1: "History", hc_g2: "Pill", hc_mock_period: "24 hours",
-      hc_l1: ["MMR and change in every row", "Three formats: 1569 (+25), Win 1569 (+25), +25", "Your own colors for wins and losses", "Your own text instead of the hero name"],
+      hc_l1: ["MMR and change in every row", "Three formats: 1569 (+25), Win 1569 (+25), +25", "Calibration games with the final MMR", "Your own colors and text instead of the hero"],
       hc_l2: ["Wins, losses and MMR total", "For 24 hours, 7 or 30 days", "Loads up to 120 matches by itself", "Only you can see it"],
       downloads: "downloads", download: "Download", more: "Details", changes: "What's new",
       sec_install: "Install", sec_install_sub: "the same for every script",
