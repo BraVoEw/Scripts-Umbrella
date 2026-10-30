@@ -162,6 +162,29 @@ def hero_vs(hero_id, week_ts, cache):
     return data
 
 
+def pos_stats(week_ts):
+    out = collections.defaultdict(lambda: [0, 0])
+    for w in week_ts:
+        d = gql("{ heroStats { stats(week: %d, bracketBasicIds: [DIVINE_IMMORTAL], groupByPosition: true) "
+                "{ heroId position matchCount winCount } } }" % w)["heroStats"]
+        for r in d.get("stats") or []:
+            if r.get("position") in POSITIONS:
+                e = out[(r["heroId"], POSITIONS.index(r["position"]) + 1)]
+                e[0] += r.get("matchCount") or 0
+                e[1] += r.get("winCount") or 0
+        time.sleep(0.4)
+    return out
+
+
+def with_wins(roles, hero_id, stats):
+    for key in list(roles):
+        g, w = stats.get((hero_id, int(key)), (0, 0))
+        if g > 0:
+            r = roles[key]
+            roles[key] = dict([("n", r["n"]), ("g", g), ("w", w)] + [(k, v) for k, v in r.items() if k != "n"])
+    return roles
+
+
 def item_parts():
     url = "https://raw.githubusercontent.com/odota/dotaconstants/master/build/items.json"
     req = urllib.request.Request(url, headers={"User-Agent": "build-brain"})
@@ -487,6 +510,11 @@ def main():
         want = {int(x) for x in args.heroes.split(",")}
         heroes = [h for h in heroes if h["id"] in want]
     lines, vs_lines, wr_parts = [], [], []
+    try:
+        wins = pos_stats(week_ts)
+    except Exception as e:
+        print("position win rates failed", e, flush=True)
+        wins = {}
     for i, h in enumerate(heroes):
         cache_file = os.path.join(args.cache, "%d.json" % h["id"]) if args.cache else ""
         data = None
@@ -519,7 +547,7 @@ def main():
             if mfile:
                 with open(mfile, "w", encoding="utf-8") as f:
                     json.dump({"version": patch["id"], "at": now, "games": games}, f)
-        roles = summarize(h, data, week_ts, items, ab, mainer_builds(games, items))
+        roles = with_wins(summarize(h, data, week_ts, items, ab, mainer_builds(games, items)), h["id"], wins)
         if roles:
             lines.append("%d\t%s" % (h["id"], json.dumps(roles, ensure_ascii=False, separators=(",", ":"))))
         try:

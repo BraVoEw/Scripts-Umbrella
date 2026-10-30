@@ -18,14 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: build-brain-data
           path: data
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -53,4 +53,7 @@ jobs:
           else
             git commit -m "Build Brain data $(cut -f1 version.txt)"
             git push
+            for f in version.txt builds.txt; do
+              curl -s -m 30 "https://purge.jsdelivr.net/gh/${{ github.repository }}@build-brain-data/$f" || true
+            done
           fi

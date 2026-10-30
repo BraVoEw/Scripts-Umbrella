@@ -13,7 +13,7 @@
   var CATALOG = [
     {
       key: "build-brain", name: "Build Brain", file: "build_brain.lua", folder: "build_brain",
-      ver: "1.0.3", date: "2026-10-23T12:00:00Z", first: "2026-10-22T13:32:08Z",
+      ver: "1.1.0", date: "2026-10-30T12:00:00Z", first: "2026-10-22T13:32:08Z",
       color: ["#3987e5", "#2a78d6"], tags: ["draft", "shop"], auto: true,
       video: "build-brain.mp4", poster: "build-brain-poster.webp",
       shots: ["bb-pick.webp", "bb-draft.webp", "bb-build.webp", "bb-shop.webp"],
@@ -22,9 +22,9 @@
         desc: "Кого пикнуть на твою роль и что собрать против именно этих врагов. Сборки по свежим пабам Божества и Титана прямо в магазине.",
         shots: ["Панель на пиках", "Вкладка Драфт", "Вкладка Сборка", "Панель в магазине"],
         groups: [
-          ["Пики", ["Панель сама открывается на выборе героев", "Шанс на победу и пики обеих команд", "Мета твоей позиции с учётом матчапов", "Топ-3 подсвечены в сетке героев"]],
+          ["Пики", ["Панель сама открывается на выборе героев", "Шанс на победу и пики обеих команд", "Мета позиции или только твои герои", "Топ-3 подсвечены в сетке героев"]],
           ["Магазин", ["Старт, лайнинг и кор с минутами", "Против врагов: предмет и зачем он", "Прокачка на 18 уровней и таланты", "Клик в квикбай, ПКМ покупает"]],
-          ["Окно", ["Таблица «кто кого» в процентах", "Следующий предмет с полоской золота", "Кто тебя убивает и чем", "Ульты и BKB врагов в кд"]],
+          ["Окно", ["Таблица «кто кого» в процентах", "Пропустить или заменить любой предмет", "Кто тебя убивает и чем", "Ульты и BKB врагов в кд"]],
           ["Данные", ["STRATZ, текущий патч", "Матчапы от Легенды до Титана", "Обновление 2 раза в неделю и после патча", "Русский и английский"]]
         ]
       },
@@ -33,9 +33,9 @@
         desc: "Who to pick for your role and what to buy against these exact enemies. Builds from fresh Divine and Immortal pubs right in the shop.",
         shots: ["Hero pick panel", "Draft tab", "Build tab", "Shop panel"],
         groups: [
-          ["Hero pick", ["Panel opens by itself on hero pick", "Win chance and both teams' picks", "Meta for your position, ranked by matchups", "Top 3 highlighted in the hero grid"]],
+          ["Hero pick", ["Panel opens by itself on hero pick", "Win chance and both teams' picks", "Meta for your position or only your heroes", "Top 3 highlighted in the hero grid"]],
           ["Shop", ["Starting, laning and core items with timings", "Counters to your enemies and why", "Skill order for 18 levels and talents", "Click to quick buy, right click buys"]],
-          ["Window", ["Who beats who table in percent", "Next item with a gold bar", "Who kills you and with what", "Enemy ults and BKB on cooldown"]],
+          ["Window", ["Who beats who table in percent", "Skip or replace any item", "Who kills you and with what", "Enemy ults and BKB on cooldown"]],
           ["Data", ["STRATZ, current patch", "Matchups from Legend to Immortal", "Updated twice a week and after patches", "Russian and English"]]
         ]
       }

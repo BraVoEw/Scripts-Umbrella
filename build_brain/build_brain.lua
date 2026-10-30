@@ -316,6 +316,31 @@ local qLocalization = (function()
 	return lib
 end)()
 
+local Config = Config
+do
+	local ok, real = pcall(function()
+		return type(Config.ReadInt) == "function" and type(Config.ReadString) == "function"
+			and type(Config.WriteInt) == "function" and type(Config.WriteString) == "function"
+	end)
+	if not (ok and real) then
+		local mem = {}
+		Config = {
+			mem = true,
+			ReadInt = function(c, k, d)
+				local v = mem[tostring(c) .. "|" .. tostring(k)]
+				return type(v) == "number" and v or d or 0
+			end,
+			ReadString = function(c, k, d)
+				local v = mem[tostring(c) .. "|" .. tostring(k)]
+				return type(v) == "string" and v or d or ""
+			end,
+			WriteInt = function(c, k, v) mem[tostring(c) .. "|" .. tostring(k)] = v end,
+			WriteString = function(c, k, v) mem[tostring(c) .. "|" .. tostring(k)] = v end,
+		}
+		pcall(function() Log.Write("[Build Brain] global Config was replaced by another script, settings will not be saved") end)
+	end
+end
+
 local localization = qLocalization.new({
 	en = {
 		bb_group_main = "Main",
@@ -571,9 +596,90 @@ local localization = qLocalization.new({
 		bb_pick_vs = "strong against %s",
 		bb_foe_title = "Who to watch out for",
 		bb_next_usual = "usually bought at %d min · %d%% of games",
-		bb_shelf_title = "Build",
-		bb_shelf_hint = "minute = when it is usually bought",
-		bb_next_title = "Next item",
+		bb_route_title = "Route",
+		bb_ld_builds = "Hero builds",
+		bb_ld_vs = "Matchups against enemies",
+		bb_ld_wr = "Hero win rates",
+		bb_ld_picks = "Picking heroes for you",
+		bb_ld_wait = "Waiting for enemy picks",
+		bb_ld_offline = "No connection, using saved builds from %s",
+		bb_pool_title = "My heroes",
+		bb_pool_all = "all heroes",
+		bb_pool_count = "%d heroes",
+		bb_pool_pick = "Choose",
+		bb_pool_clear = "Clear",
+		bb_pool_done = "Done",
+		bb_pool_hint = "The draft suggests only these heroes. None marked means all heroes.",
+		bb_attr_str = "Strength",
+		bb_attr_agi = "Agility",
+		bb_attr_int = "Intelligence",
+		bb_attr_all = "Universal",
+		bb_onb_heroes_q = "Who do you play?",
+		bb_onb_heroes_s = "Mark your heroes and the draft will suggest them. Mark nobody and we suggest everyone",
+		bb_next_share = "bought in %d%% of games",
+		bb_card_usual = "Bought in %d%% of games, usually at %d min",
+		bb_card_cost = "%d gold",
+		bb_card_skip = "Skip",
+		bb_card_back = "Bring back",
+		bb_card_replace = "Replace ▾",
+		bb_card_none = "Nothing to swap",
+		bb_card_alts = "Taken instead on this role",
+		bb_card_share = "%d%% of games",
+		bb_card_always = "Remember for this hero",
+		bb_card_from = "Instead of %s",
+		bb_card_skipped = "skip",
+		bb_eta = "~%d min",
+		bb_set_mode = "Game mode",
+		bb_mode_0 = "normal games",
+		bb_mode_1 = "Turbo",
+		bb_mode_2 = "both",
+		bb_set_theme = "Theme",
+		bb_theme_0 = "Classic",
+		bb_theme_1 = "By hero",
+		bb_theme_2 = "Radiant and Dire",
+		bb_theme_3 = "By rank",
+		bb_onb_hello = "Let's set everything up for you",
+		bb_onb_start = "Start",
+		bb_onb_note = "Takes 20 seconds, you can change it any time",
+		bb_onb_skip = "Skip",
+		bb_onb_step = "Step %d of 5",
+		bb_onb_role_q = "Which role do you play?",
+		bb_onb_role_s = "We pick heroes and builds for it",
+		bb_onb_r0 = "Different",
+		bb_onb_r1 = "Carry",
+		bb_onb_r2 = "Mid",
+		bb_onb_r3 = "Offlane",
+		bb_onb_r4 = "Support 4",
+		bb_onb_r5 = "Support 5",
+		bb_onb_rs0 = "role from the lobby",
+		bb_onb_rs1 = "safe lane",
+		bb_onb_rs2 = "middle",
+		bb_onb_rs3 = "hard lane",
+		bb_onb_rs4 = "roamer",
+		bb_onb_rs5 = "full support",
+		bb_onb_lobby = "Role from lobby",
+		bb_onb_mode_q = "Which mode do you play more?",
+		bb_onb_mode_s = "In Turbo items come at other times",
+		bb_onb_m0 = "Normal games",
+		bb_onb_m1 = "Turbo",
+		bb_onb_m2 = "Both",
+		bb_onb_ms0 = "Ranked and unranked All Pick",
+		bb_onb_ms1 = "More gold, items earlier",
+		bb_onb_ms2 = "We check the mode every match",
+		bb_onb_where_q = "Where should we help?",
+		bb_onb_where_s = "The window always opens with its key, these work by themselves",
+		bb_onb_shop = "Shop panel",
+		bb_onb_shop_s = "Our build next to the shop instead of Dota's guide",
+		bb_onb_auto = "Draft hints",
+		bb_onb_auto_s = "Who to pick shows up by itself during picks",
+		bb_onb_back = "Back",
+		bb_onb_next = "Next",
+		bb_onb_finish = "Done",
+		bb_onb_done = "All set",
+		bb_onb_change = "You can change it in the gear",
+		bb_onb_go = "Let's go",
+		bb_onb_shop_on = "Shop panel",
+		bb_onb_shop_off = "No shop panel",
 		bb_chance_title = "Win chance",
 		bb_top = "Top",
 		bb_set_scale = "Window size",
@@ -676,7 +782,6 @@ local localization = qLocalization.new({
 		bb_now = "now",
 		bb_later = "later",
 		bb_new = "new",
-		bb_minutes = "~%d min at your GPM",
 		bb_gold_of = "%d of %d",
 		bb_why_popular = "Popular on this hero at this stage",
 		bb_why_magic = "%d%% of damage to you is magic",
@@ -715,6 +820,7 @@ local localization = qLocalization.new({
 		bb_role_3 = "offlane",
 		bb_role_4 = "soft support",
 		bb_role_5 = "hard support",
+		bb_role_45 = "support",
 		bb_status_ready = "Ready",
 		bb_status_wait = "Waiting for the draft",
 		bb_status_loading = "Loading OpenDota stats",
@@ -977,9 +1083,90 @@ local localization = qLocalization.new({
 		bb_pick_vs = "силён против: %s",
 		bb_foe_title = "Кого опасаться",
 		bb_next_usual = "обычно берут на %d мин · %d%% игр",
-		bb_shelf_title = "Сборка",
-		bb_shelf_hint = "минута = когда обычно берут",
-		bb_next_title = "Следующий предмет",
+		bb_route_title = "Маршрут",
+		bb_ld_builds = "Сборки героев",
+		bb_ld_vs = "Матчапы против врагов",
+		bb_ld_wr = "Винрейты героев",
+		bb_ld_picks = "Подбираем героев под тебя",
+		bb_ld_wait = "Ждём пики врагов",
+		bb_ld_offline = "Нет связи, работаем на сохранённых сборках от %s",
+		bb_pool_title = "Мои герои",
+		bb_pool_all = "все герои",
+		bb_pool_count = "героев: %d",
+		bb_pool_pick = "Выбрать",
+		bb_pool_clear = "Очистить",
+		bb_pool_done = "Готово",
+		bb_pool_hint = "Драфт предлагает только этих героев. Никого не отметил, значит всех.",
+		bb_attr_str = "Сила",
+		bb_attr_agi = "Ловкость",
+		bb_attr_int = "Интеллект",
+		bb_attr_all = "Универсальные",
+		bb_onb_heroes_q = "На ком играешь?",
+		bb_onb_heroes_s = "Отметь своих героев, драфт будет предлагать их. Никого не отметишь, предложим всех",
+		bb_next_share = "берут в %d%% игр",
+		bb_card_usual = "Берут в %d%% игр, обычно на %d мин",
+		bb_card_cost = "%d золота",
+		bb_card_skip = "Пропустить",
+		bb_card_back = "Вернуть",
+		bb_card_replace = "Заменить ▾",
+		bb_card_none = "Заменить нечем",
+		bb_card_alts = "Вместо него на этой роли берут",
+		bb_card_share = "%d%% игр",
+		bb_card_always = "Запомнить для этого героя",
+		bb_card_from = "Вместо %s",
+		bb_card_skipped = "пропуск",
+		bb_eta = "~%d мин",
+		bb_set_mode = "Режим игры",
+		bb_mode_0 = "обычные игры",
+		bb_mode_1 = "Турбо",
+		bb_mode_2 = "оба режима",
+		bb_set_theme = "Тема",
+		bb_theme_0 = "Обычная",
+		bb_theme_1 = "Под героя",
+		bb_theme_2 = "Свет и Тьма",
+		bb_theme_3 = "По рангу",
+		bb_onb_hello = "Давай настроим всё под тебя",
+		bb_onb_start = "Начать",
+		bb_onb_note = "Займёт 20 секунд, поменять можно в любой момент",
+		bb_onb_skip = "Пропустить",
+		bb_onb_step = "Шаг %d из 5",
+		bb_onb_role_q = "На какой роли играешь?",
+		bb_onb_role_s = "Подбираем героев и сборку под неё",
+		bb_onb_r0 = "Разные",
+		bb_onb_r1 = "Керри",
+		bb_onb_r2 = "Мид",
+		bb_onb_r3 = "Оффлейн",
+		bb_onb_r4 = "Саппорт 4",
+		bb_onb_r5 = "Саппорт 5",
+		bb_onb_rs0 = "берём роль из лобби",
+		bb_onb_rs1 = "лёгкая линия",
+		bb_onb_rs2 = "центр",
+		bb_onb_rs3 = "сложная линия",
+		bb_onb_rs4 = "роумер",
+		bb_onb_rs5 = "полный саппорт",
+		bb_onb_lobby = "Роль из лобби",
+		bb_onb_mode_q = "В каком режиме играешь чаще?",
+		bb_onb_mode_s = "В Турбо предметы собирают в другое время",
+		bb_onb_m0 = "Обычные игры",
+		bb_onb_m1 = "Турбо",
+		bb_onb_m2 = "И то и то",
+		bb_onb_ms0 = "Рейтинг и обычный All Pick",
+		bb_onb_ms1 = "Больше золота, предметы раньше",
+		bb_onb_ms2 = "Режим смотрим в каждом матче",
+		bb_onb_where_q = "Где подсказывать?",
+		bb_onb_where_s = "Окно всегда открывается своей клавишей, а это работает само",
+		bb_onb_shop = "Панель в магазине",
+		bb_onb_shop_s = "Наша сборка вместо гайда Доты рядом с магазином",
+		bb_onb_auto = "Подсказки на драфте",
+		bb_onb_auto_s = "Кого пикнуть появляется само, пока идут пики",
+		bb_onb_back = "Назад",
+		bb_onb_next = "Дальше",
+		bb_onb_finish = "Готово",
+		bb_onb_done = "Готово",
+		bb_onb_change = "Поменять можно в шестерёнке",
+		bb_onb_go = "Поехали",
+		bb_onb_shop_on = "Панель в магазине",
+		bb_onb_shop_off = "Без панели в магазине",
 		bb_chance_title = "Шанс на победу",
 		bb_top = "Топ",
 		bb_set_scale = "Размер окна",
@@ -1082,7 +1269,6 @@ local localization = qLocalization.new({
 		bb_now = "сейчас",
 		bb_later = "позже",
 		bb_new = "новое",
-		bb_minutes = "~%d мин при твоём доходе",
 		bb_gold_of = "%d из %d",
 		bb_why_popular = "Популярно на этом герое на этой стадии",
 		bb_why_magic = "%d%% урона по тебе магия",
@@ -1121,6 +1307,7 @@ local localization = qLocalization.new({
 		bb_role_3 = "оффлейн",
 		bb_role_4 = "саппорт 4",
 		bb_role_5 = "саппорт 5",
+		bb_role_45 = "саппорт",
 		bb_status_ready = "Готово",
 		bb_status_wait = "Жду драфт",
 		bb_status_loading = "Загружаю статистику OpenDota",
@@ -1189,6 +1376,8 @@ local K = {
 	ROLE_SHARE = 0.4,
 	ROLE_META = 0.015,
 	ROLE_MIN = 200,
+	POS_PRIOR = 2000,
+	POS_BITS = { 1, 4, 2, 8, 16 },
 	WIN_W = 940,
 	WIN_H = 660,
 	RAIL_W = 56,
@@ -1221,7 +1410,12 @@ local K = {
 	RB_FEW = 3,
 	PT_RETRY = 30,
 	SZ_FILE = "build_brain_builds.txt",
-	SZ_BASE = "https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/build-brain-data/",
+	MIRRORS = {
+		"https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/%s/%s",
+		"https://gcore.jsdelivr.net/gh/BraVoEw/Scripts-Umbrella@%s/%s",
+		"https://fastly.jsdelivr.net/gh/BraVoEw/Scripts-Umbrella@%s/%s",
+		"https://cdn.jsdelivr.net/gh/BraVoEw/Scripts-Umbrella@%s/%s",
+	},
 	SZ_CHECK = 86400,
 	PT_ITEMS = { ["Aghanim's Shard"] = "item_aghanims_shard", ["Aghanim's Blessing"] = "item_ultimate_scepter_2" },
 	RN_POS = { 2, 1, 3, 4, 5 },
@@ -1236,6 +1430,30 @@ local K = {
 	ROLE_ICONS = { "safelane", "midlane", "offlane", "softsupport", "hardsupport" },
 	SHOP_FIND = 2.0,
 	SHOP_GEOM = 0.25,
+	SHOP_SETTLE = 1.5,
+	MORE_MAX = 12,
+	ATTRS = {
+		{ "STRENGTH", "bb_attr_str", Color(236, 92, 76) },
+		{ "AGILITY", "bb_attr_agi", Color(76, 200, 120) },
+		{ "INTELLECT", "bb_attr_int", Color(80, 160, 245) },
+		{ "ALL", "bb_attr_all", Color(176, 128, 236) },
+	},
+	INCOME_BLEND = 180,
+	THEME_TEAM = { [2] = { 98, 196, 104 }, [3] = { 222, 92, 52 } },
+	THEME_GLYPH = { [2] = "\u{f185}", [3] = "\u{f186}" },
+	ATTR_ICONS = {
+		"panorama/images/primary_attribute_icons/primary_attribute_icon_strength_psd.vtex_c",
+		"panorama/images/primary_attribute_icons/primary_attribute_icon_agility_psd.vtex_c",
+		"panorama/images/primary_attribute_icons/primary_attribute_icon_intelligence_psd.vtex_c",
+		"panorama/images/primary_attribute_icons/primary_attribute_icon_all_psd.vtex_c",
+	},
+	THEME_RANK = { { 166, 130, 92 }, { 150, 170, 190 }, { 70, 186, 160 }, { 96, 158, 236 }, { 220, 180, 72 }, { 150, 112, 236 }, { 196, 214, 240 }, { 238, 120, 64 } },
+	THEME_FADE = 0.45,
+	ONB_ROLES = { 1, 2, 3, 4, 5, 0 },
+	ONB_MODE_ICONS = { "\u{f132}", "\u{f0e7}", "\u{f021}" },
+	ONB_CHECK = "\u{f00c}",
+	GUIDE_W = 210,
+	GUIDE_PLUS_W = 540,
 	SHOP_GROW = 1.45,
 	SHOP_MIN = 0.8,
 	VS_MAX = 6,
@@ -1243,12 +1461,10 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "1.0.3",
+	VERSION = "1.1.0",
 	BUY_MIN = 3,
 	GRID_OFF = { "Banned", "AlreadyPicked", "Unavailable" },
 	UPD_NAME = "build_brain.lua",
-	UPD_LATEST = "https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/main/build_brain/latest.txt",
-	UPD_FILE = "https://raw.githubusercontent.com/BraVoEw/Scripts-Umbrella/build-brain-v%s/build_brain/build_brain.lua",
 	UPD_EVERY = 3600,
 	UPD_RETRY = 600,
 	UPD_MIN = 100000,
@@ -1451,8 +1667,10 @@ local K = {
 	SETTINGS = {
 		{ key = "rank", title = "bb_set_rank", count = 9, default = 0, label = "bb_rank_" },
 		{ key = "role", title = "bb_set_role", count = 6, default = 0, label = "bb_role_" },
+		{ key = "mode", title = "bb_set_mode", count = 3, default = 0, label = "bb_mode_" },
 		{ key = "auto", title = "bb_set_auto", count = 2, default = 1, flag = true },
 		{ key = "shop", title = "bb_set_shop", count = 2, default = 1, flag = true },
+		{ key = "theme", title = "bb_set_theme", count = 4, default = 0, label = "bb_theme_", right = true },
 		{ key = "scale", title = "bb_set_scale", count = 5, default = 1, values = { 90, 100, 110, 120, 130 } },
 		{ key = "update", title = "bb_set_update", count = 2, default = 1, flag = true, own = true },
 	},
@@ -1460,7 +1678,7 @@ local K = {
 
 local C = {
 	WHITE = Color(255, 255, 255),
-	BG = Color(22, 22, 24, 242),
+	BG = Color(22, 22, 24),
 	BG_TOP = Color(255, 255, 255, 10),
 	BG_BOTTOM = Color(255, 255, 255, 0),
 	EDGE = Color(255, 255, 255, 20),
@@ -1469,7 +1687,19 @@ local C = {
 	RAIL = Color(17, 17, 19, 252),
 	SLOT = Color(36, 36, 40, 255),
 	ACCENT = Color(229, 72, 77),
+	ONB_LOGO = Color(42, 23, 25),
+	ONB_LOGO_EDGE = Color(92, 42, 45),
+	ONB_PICK = Color(42, 26, 28),
+	ONB_PIC = Color(23, 24, 27),
+	ONB_HL = Color(58, 33, 36),
+	ONB_OK_BG = Color(22, 48, 31),
+	ONB_OK_EDGE = Color(44, 107, 69),
 	ACCENT_HOT = Color(240, 98, 102),
+	BG_CLEAR = Color(22, 22, 24, 0),
+	THEME_GLOW = Color(229, 72, 77, 0),
+	THEME_CLEAR = Color(229, 72, 77, 0),
+	THEME_LINE = Color(229, 72, 77, 0),
+	THEME_CHIP = Color(229, 72, 77, 0),
 	TOGGLE_TRACK = Color(48, 48, 52),
 	TOGGLE_OFF = Color(130, 132, 138),
 	GO_EDGE = Color(52, 211, 153, 70),
@@ -1556,6 +1786,7 @@ local state = {
 	stats = nil,
 	matchups = {},
 	pop = {},
+	edits = {},
 	net = { busy = false, queue = {}, queued = {}, failed = {}, offline = false },
 	draft = { ours = {}, theirs = {}, bans = {}, my_team = nil, my_hero = nil, my_pos = nil, sig = "", phase = false },
 	view = nil,
@@ -1677,7 +1908,8 @@ end
 local function item_image(name)
 	local path = state.item_img[name]
 	if not path then
-		path = "panorama/images/items/" .. short_name(name) .. "_png.vtex_c"
+		local short = short_name(name)
+		path = "panorama/images/items/" .. (short:find("^recipe_") and "recipe" or short) .. "_png.vtex_c"
 		state.item_img[name] = path
 	end
 	return load_image(path)
@@ -2105,7 +2337,7 @@ local function read_draft()
 		return
 	end
 	local ours, theirs = {}, {}
-	local my_pos = nil
+	local my_pos, my_flags = nil, 0
 	for _, p in ipairs(Players.GetAll()) do
 		local team = team_of(p)
 		if team == 2 or team == 3 then
@@ -2118,9 +2350,10 @@ local function read_draft()
 				id = ok_hero and hero and hero_id(NPC.GetUnitName(hero)) or 0
 			end
 			local okslot, slot = pcall(Player.GetPlayerTeamSlot, p)
-			local pos = K.LANE_BITS[math.tointeger(tonumber(data.lane_selection_flags) or 0) or 0]
-			local entry = { id = id > 0 and id or nil, slot = okslot and slot or 9, me = Player.GetPlayerID(p) == my_id, pos = pos }
-			if entry.me then my_pos = pos end
+			local flags = math.tointeger(tonumber(data.lane_selection_flags) or 0) or 0
+			local pos = K.LANE_BITS[flags]
+			local entry = { id = id > 0 and id or nil, slot = okslot and slot or 9, me = Player.GetPlayerID(p) == my_id, pos = pos, flags = flags }
+			if entry.me then my_pos, my_flags = pos, flags end
 			if team == my_team then ours[#ours + 1] = entry else theirs[#theirs + 1] = entry end
 		end
 	end
@@ -2139,7 +2372,7 @@ local function read_draft()
 		if e.me then my_hero = e.id end
 	end
 	local game_state = GameRules.GetGameState()
-	d.ours, d.theirs, d.bans, d.my_team, d.my_hero, d.my_pos = ours, theirs, bans, my_team, my_hero, my_pos
+	d.ours, d.theirs, d.bans, d.my_team, d.my_hero, d.my_pos, d.my_flags = ours, theirs, bans, my_team, my_hero, my_pos, my_flags
 	local pick = game_state == Enum.GameState.DOTA_GAMERULES_STATE_HERO_SELECTION
 		or game_state == Enum.GameState.DOTA_GAMERULES_STATE_STRATEGY_TIME
 	if not pick and game_state ~= Enum.GameState.DOTA_GAMERULES_STATE_PRE_GAME
@@ -2154,7 +2387,7 @@ local function read_draft()
 	if okg and (mode == Enum.GameMode.DOTA_GAMEMODE_CUSTOM or mode == Enum.GameMode.DOTA_GAMEMODE_ABILITY_DRAFT) then pick = false end
 	d.phase = pick
 	local parts = {}
-	for _, e in ipairs(ours) do parts[#parts + 1] = tostring(e.id) .. ":" .. tostring(e.pos) end
+	for _, e in ipairs(ours) do parts[#parts + 1] = tostring(e.id) .. ":" .. tostring(e.pos) .. ":" .. tostring(e.flags) end
 	parts[#parts + 1] = "|"
 	for _, e in ipairs(theirs) do parts[#parts + 1] = tostring(e.id) end
 	parts[#parts + 1] = "|" .. table.concat(bans, ",")
@@ -2186,7 +2419,7 @@ local function role_fits(id, pos, shares)
 	if sh then
 		local n = sh.n[pos] or 0
 		if n < K.ROLE_MIN or n < (shares.total[pos] or 0) * K.ROLE_META then return false end
-		return sh.main == pos or n / sh.total >= K.ROLE_SHARE
+		return sh.main == pos or n / sh.total >= K.ROLE_SHARE or (pos >= 4 and sh.main >= 4)
 	end
 	local row = state.stats and state.stats[id]
 	local roles = row and row.r or ""
@@ -2296,6 +2529,8 @@ local function sz_file()
 	state.sz_text = read_file(dir .. K.SZ_FILE)
 	if not state.sz_text then return nil end
 	state.sz_patch = state.sz_text:match("^BB1\t([^\t\n]+)") or ""
+	state.sz_has_vs = state.sz_text:find("\nV\t", 1, true) ~= nil
+	state.sz_date = tonumber(state.sz_text:match("^BB1\t[^\t\n]+\t(%d+)") or "")
 	log("stratz builds loaded, patch " .. state.sz_patch)
 	return state.sz_text
 end
@@ -2321,22 +2556,56 @@ local function sz_shares()
 		local s, e, id = text:find("\n(%d+)\t", at)
 		if not s then break end
 		local stop = text:find("\n", e + 1, true) or #text + 1
-		local n, total, from, main = {}, 0, e + 1, nil
+		local n, wr, total, from, main = {}, {}, 0, e + 1, nil
 		while true do
 			local p1, p2, pos, count = text:find('"([1-5])":{"n":(%d+)', from)
 			if not p1 or p1 > stop then break end
 			local v, p = tonumber(count) or 0, tonumber(pos)
 			n[p] = v
+			local g, w = text:match('^,"g":(%d+),"w":(%d+)', p2 + 1)
+			if g then wr[p] = { g = tonumber(g), w = tonumber(w) } end
 			total = total + v
 			out.total[p] = (out.total[p] or 0) + v
 			if not main or v > n[main] then main = p end
 			from = p2 + 1
 		end
-		if total > 0 then out.heroes[tonumber(id)] = { n = n, total = total, main = main } end
+		if total > 0 then out.heroes[tonumber(id)] = { n = n, wr = wr, total = total, main = main } end
 		at = stop
 	end
 	state.sz_pos = out
 	return out
+end
+
+local function pos_logit(id, pos, shares)
+	local sh = shares and shares.heroes[id]
+	local r = sh and sh.wr[pos]
+	if not r or r.g <= 0 then return base_logit(id) end
+	return logit((r.w + K.POS_PRIOR * 0.5) / (r.g + K.POS_PRIOR))
+end
+
+local function draft_positions(ours)
+	local role = setting("role")
+	if role > 0 then return { role }, role end
+	local d = state.draft
+	if d.my_pos then return { d.my_pos }, d.my_pos end
+	local shares = sz_shares()
+	local used = {}
+	for _, e in ipairs(ours) do
+		local sh = e.id and not e.me and shares and shares.heroes[e.id]
+		local p = e.id and not e.me and (e.pos or (sh and sh.main))
+		if p then used[p] = true end
+	end
+	local flags = d.my_flags or 0
+	local wanted, open = {}, {}
+	for p = 1, 5 do
+		local ok = flags == 0 or flags & K.POS_BITS[p] ~= 0
+		if ok and flags ~= 0 then wanted[#wanted + 1] = p end
+		if ok and not used[p] then open[#open + 1] = p end
+	end
+	local list = #open > 0 and open or #wanted > 0 and wanted or { 1, 2, 3, 4, 5 }
+	if #list == 1 then return list, list[1] end
+	if #list == 2 and list[1] == 4 and list[2] == 5 then return list, 45 end
+	return list, 0
 end
 
 local function sz_vs(id)
@@ -2743,13 +3012,117 @@ end
 
 local function income()
 	local player = Players.GetLocal()
-	local minutes = math.max(1, (GameRules.GetDOTATime() or 0) / 60)
-	if player and (GameRules.GetDOTATime() or 0) > 180 then
+	local t = GameRules.GetDOTATime() or 0
+	local base = K.GPM_DEFAULT[my_position()] or 500
+	if player and t > 30 then
 		local ok, data = pcall(Player.GetTeamPlayer, player)
 		local earned = ok and data and tonumber(data.totalearned_gold) or 0
-		if earned > 0 then return earned / minutes end
+		if earned > 0 then
+			local b = math.min(1, t / K.INCOME_BLEND)
+			return base * (1 - b) + earned / (t / 60) * b
+		end
 	end
-	return K.GPM_DEFAULT[my_position()] or 500
+	return base
+end
+
+local EDIT = {}
+
+function EDIT.get(id)
+	if not id then return nil end
+	local ed = state.edits[id]
+	if ed then return ed end
+	ed = { skip = {}, repl = {}, share = {}, always = false }
+	local raw = Config.ReadString(K.CONFIG, "ed_" .. id, "")
+	if raw ~= "" then
+		ed.always = true
+		for kind, a, b in raw:gmatch("([sr]):([%w_]+)>?([%w_]*)") do
+			if kind == "s" then
+				ed.skip[a] = true
+			elseif b ~= "" then
+				ed.repl[a] = b
+			end
+		end
+	end
+	state.edits[id] = ed
+	return ed
+end
+
+function EDIT.save(id)
+	local ed = state.edits[id]
+	if not ed then return end
+	if not ed.always then
+		Config.WriteString(K.CONFIG, "ed_" .. id, "")
+		return
+	end
+	local parts = {}
+	for name in pairs(ed.skip) do parts[#parts + 1] = "s:" .. name end
+	for a, b in pairs(ed.repl) do parts[#parts + 1] = "r:" .. a .. ">" .. b end
+	table.sort(parts)
+	Config.WriteString(K.CONFIG, "ed_" .. id, #parts > 0 and table.concat(parts, ",") or "-")
+end
+
+function EDIT.apply(route, id)
+	local ed = EDIT.get(id)
+	if not ed or (next(ed.skip) == nil and next(ed.repl) == nil) then return route end
+	local seen, out = {}, {}
+	for _, step in ipairs(route) do seen[step.name] = true end
+	for _, step in ipairs(route) do
+		local alt = ed.repl[step.name]
+		if alt and not seen[alt] then
+			out[#out + 1] = { name = alt, stage = step.stage, tm = step.tm, early = step.early, share = ed.share[alt], from = step.name,
+				reason = string.format(L("bb_card_from"), item_title(step.name)), skipped = ed.skip[alt] or nil }
+		else
+			step.skipped = ed.skip[step.name] or nil
+			out[#out + 1] = step
+		end
+	end
+	return out
+end
+
+function EDIT.alts(name, view)
+	local role = view and view.role
+	if not role then return K.NONE end
+	local cost = item_cost(name)
+	local boots = K.BOOTS[name] ~= nil
+	local used, cand = {}, {}
+	for _, step in ipairs(view.route or K.NONE) do used[step.name] = true end
+	local function add(n, share)
+		if used[n] or n == name or K.SKIP[n] or (K.BOOTS[n] ~= nil) ~= boots then return end
+		local c = item_cost(n)
+		if c < cost * 0.4 or c > cost * 2.5 then return end
+		local e = cand[n]
+		if e then
+			e.share = math.max(e.share, share)
+		else
+			cand[n] = { name = n, share = share }
+		end
+	end
+	for _, c in ipairs(role.pop or K.NONE) do add(c.name, c.share or 0) end
+	for n, pct in pairs(role.buy or K.NONE) do add(n, pct / 100) end
+	local list = {}
+	for _, e in pairs(cand) do list[#list + 1] = e end
+	table.sort(list, function(a, b) return a.share > b.share end)
+	while #list > 3 do table.remove(list) end
+	return list
+end
+
+function EDIT.act(id, orig, name, kind, alt)
+	local ed = EDIT.get(id)
+	if not ed then return end
+	if kind == "skip" then
+		ed.skip[name] = true
+	elseif kind == "back" then
+		ed.skip[name] = nil
+		ed.repl[orig] = nil
+	elseif kind == "alt" and alt then
+		ed.repl[orig] = alt.name
+		ed.skip[orig] = nil
+		ed.share[alt.name] = alt.share
+	elseif kind == "always" then
+		ed.always = not ed.always
+	end
+	EDIT.save(id)
+	state.next_model = 0
 end
 
 local function build_view(view)
@@ -2760,7 +3133,8 @@ local function build_view(view)
 	local start, route = base_route(id)
 	local role = role_route(id)
 	if role then start, route = role.start, role.route end
-	view.role = role
+	if route then route = EDIT.apply(route, id) end
+	view.role, view.edit_id = role, id
 	local sit, rows, foes = foe_counters(role, hero)
 	view.vs, view.sit, view.vs_rows, view.foes = sit, sit, rows, foes
 	if not route then return end
@@ -2783,6 +3157,8 @@ local function build_view(view)
 		if step.done then
 			spent = spent + step.cost
 			step.minute = nil
+		elseif step.skipped then
+			step.minute = nil
 		else
 			local left = step.cost
 			if not next_step then
@@ -2801,7 +3177,7 @@ local function build_view(view)
 	local finals = {}
 	for i = #route, 1, -1 do
 		local step = route[i]
-		if not K.BOOTS[step.name] or #finals < 5 then table.insert(finals, 1, step) end
+		if not step.skipped and (not K.BOOTS[step.name] or #finals < 5) then table.insert(finals, 1, step) end
 		if #finals >= 6 then break end
 	end
 	view.finals = finals
@@ -2823,6 +3199,80 @@ local function build_view(view)
 	end
 end
 
+local HEROES = { data = nil }
+
+function HEROES.list()
+	if HEROES.data then return HEROES.data end
+	local dir = Engine.GetCheatDirectory() or ""
+	if dir ~= "" and not dir:match("[\\/]$") then dir = dir .. "\\" end
+	local raw = read_file(dir .. "assets\\data\\npc_heroes.json")
+	local groups, index = {}, {}
+	for _, a in ipairs(K.ATTRS) do
+		local g = { attr = a[1], key = a[2], color = a[3], heroes = {} }
+		groups[#groups + 1] = g
+		index[a[1]] = g
+	end
+	if raw then
+		local at = 1
+		while true do
+			local _, e, short = raw:find('\n    "npc_dota_hero_([%w_]+)": {', at)
+			if not e then break end
+			local stop = raw:find('\n    "npc_dota_hero_', e, true) or #raw
+			local block = raw:sub(e, stop)
+			local id = tonumber(block:match('"HeroID": "(%d+)"'))
+			local attr = block:match('"AttributePrimary": "DOTA_ATTRIBUTE_(%u+)"')
+			if id and attr and index[attr] and block:match('"Enabled": "(%d)"') == "1" then
+				local unit = "npc_dota_hero_" .. short
+				table.insert(index[attr].heroes, { id = id, unit = unit, title = hero_title(unit) })
+			end
+			at = stop
+		end
+	end
+	for _, g in ipairs(groups) do table.sort(g.heroes, function(a, b) return a.title < b.title end) end
+	HEROES.data = groups
+	return groups
+end
+
+local POOL = { set = nil, n = 0 }
+
+function POOL.get()
+	if POOL.set then return POOL.set end
+	local set, n = {}, 0
+	for id in Config.ReadString(K.CONFIG, "pool", ""):gmatch("%d+") do
+		set[tonumber(id)] = true
+		n = n + 1
+	end
+	POOL.set, POOL.n = set, n
+	return set
+end
+
+function POOL.save()
+	local ids = {}
+	for id in pairs(POOL.get()) do ids[#ids + 1] = id end
+	table.sort(ids)
+	POOL.n = #ids
+	Config.WriteString(K.CONFIG, "pool", table.concat(ids, ","))
+	state.next_model = 0
+end
+
+function POOL.toggle(id)
+	local set = POOL.get()
+	id = tonumber(id)
+	if not id then return end
+	set[id] = not set[id] or nil
+	POOL.save()
+end
+
+function POOL.clear()
+	POOL.set = {}
+	POOL.save()
+end
+
+function POOL.label()
+	POOL.get()
+	return POOL.n > 0 and string.format(L("bb_pool_count"), POOL.n) or L("bb_pool_all")
+end
+
 local function grid_off(id)
 	local grid = state.grid
 	local unit = grid and hero_unit(id)
@@ -2839,6 +3289,8 @@ local function compute_view()
 	local d = state.draft
 	local ours, theirs = picked(d.ours), picked(d.theirs)
 	local view = { ours = ours, theirs = theirs, cells = {}, totals = {}, best = {}, threats = {}, threat_counts = {}, danger = {} }
+	local positions, label = draft_positions(d.ours)
+	view.pick_role = label
 	for _, id in ipairs(ours) do sz_vs(id) end
 	for _, id in ipairs(theirs) do sz_vs(id) end
 	sz_wr()
@@ -2859,7 +3311,6 @@ local function compute_view()
 			end
 			view.cells[a], view.totals[a] = row, total
 		end
-		local pos = my_position()
 		if not d.my_hero and #theirs > 0 then
 			local shares = sz_shares()
 			local taken = {}
@@ -2867,22 +3318,51 @@ local function compute_view()
 			for _, id in ipairs(theirs) do taken[id] = true end
 			for _, id in ipairs(d.bans) do taken[id] = true end
 			local list = {}
+			local mine = POOL.get()
+			local only = POOL.n > 0
 			for id in pairs(pool) do
-				if not taken[id] and role_fits(id, pos, shares) and not grid_off(id) then
-					local with = {}
-					for _, a in ipairs(ours) do with[#with + 1] = a end
-					with[#with + 1] = id
-					local gain = (sigmoid(draft_logit(with, theirs)) - sigmoid(x)) * 100
+				local pos, best_n, fits = nil, -1, true
+				if not taken[id] and not grid_off(id) then
+					for _, p in ipairs(positions) do
+						if role_fits(id, p, shares) then
+							local sh = shares and shares.heroes[id]
+							local c = sh and sh.n[p] or 0
+							if c > best_n then pos, best_n = p, c end
+						end
+					end
+					if not pos and only and mine[id] then
+						local sh = shares and shares.heroes[id]
+						fits = false
+						for _, p in ipairs(positions) do
+							local c = sh and sh.n[p] or 0
+							if c > best_n then pos, best_n = p, c end
+						end
+					end
+				end
+				if pos then
+					local add = pos_logit(id, pos, shares)
 					local good = {}
 					for _, b in ipairs(theirs) do
 						local v = pair_vs(id, b)
+						add = add + v
 						if v > 0 then good[#good + 1] = { id = b, v = v } end
 					end
+					local gain = (sigmoid(x + add) - sigmoid(x)) * 100
 					table.sort(good, function(p, q) return p.v > q.v end)
-					list[#list + 1] = { id = id, gain = gain, strong = good[1] and good[1].id, strong2 = good[2] and good[2].id }
+					list[#list + 1] = { id = id, pos = pos, gain = gain, fits = fits, strong = good[1] and good[1].id, strong2 = good[2] and good[2].id }
 				end
 			end
-			table.sort(list, function(p, q) return p.gain > q.gain end)
+			if only then
+				local kept = {}
+				for _, b in ipairs(list) do
+					if mine[b.id] then kept[#kept + 1] = b end
+				end
+				if #kept > 0 then list = kept end
+			end
+			table.sort(list, function(p, q)
+				if p.fits ~= q.fits then return p.fits end
+				return p.gain > q.gain
+			end)
 			for i = 1, math.min(4, #list) do
 				local b = list[i]
 				local names = {}
@@ -2978,6 +3458,35 @@ local function want_data()
 	end
 end
 
+local MIRROR = { pick = nil }
+
+function MIRROR.get(ref, file, check, done, tag)
+	local list = K.MIRRORS
+	if not MIRROR.pick then
+		MIRROR.pick = Config.ReadInt(K.CONFIG, "mirror", 1)
+		if not list[MIRROR.pick] then MIRROR.pick = 1 end
+	end
+	local tried = 0
+	local function try(i)
+		tried = tried + 1
+		local function fail()
+			if tried < #list then return try(i % #list + 1) end
+			done(nil)
+		end
+		local ok, sent = pcall(HTTP.Request, "GET", string.format(list[i], ref, file), { timeout = K.NET_TIMEOUT }, function(res)
+			local body = tonumber(res and res.code) == 200 and type(res.response) == "string" and res.response or nil
+			if not body or not check(body) then return fail() end
+			if MIRROR.pick ~= i then
+				MIRROR.pick = i
+				Config.WriteInt(K.CONFIG, "mirror", i)
+			end
+			done(body)
+		end, tag .. i)
+		if not ok or sent == false then fail() end
+	end
+	try(MIRROR.pick)
+end
+
 local UPD = { st = "idle", latest = nil, err = nil, next_check = 0, path = nil, reload_at = nil, loaded = false, first = true, shown = nil, text = nil, tone = nil, title = "Build Brain " .. K.VERSION }
 
 function UPD.num(v)
@@ -3010,13 +3519,6 @@ function UPD.file()
 	return UPD.path or nil
 end
 
-function UPD.get(url, done)
-	local ok, sent = pcall(HTTP.Request, "GET", url, { timeout = K.NET_TIMEOUT }, function(res)
-		done(tonumber(res and res.code) == 200 and type(res.response) == "string" and res.response or nil)
-	end, "bb_update")
-	if not ok or sent == false then done(nil) end
-end
-
 function UPD.save(path, body)
 	local ok, f = pcall(io.open, path, "wb")
 	if not ok or not f then return false end
@@ -3028,7 +3530,9 @@ end
 function UPD.check(manual)
 	if UPD.st == "checking" or UPD.st == "loading" or UPD.st == "done" then return end
 	UPD.st, UPD.err = "checking", nil
-	UPD.get(K.UPD_LATEST, function(body)
+	MIRROR.get("main", "build_brain/latest.txt", function(body)
+		return body:match("^%s*(%d+%.%d+%.%d+)%s*$") ~= nil
+	end, function(body)
 		local v = body and body:match("^%s*(%d+%.%d+%.%d+)%s*$")
 		if not v then
 			UPD.st, UPD.err = manual and "error" or "idle", "bb_upd_err_net"
@@ -3043,7 +3547,7 @@ function UPD.check(manual)
 		end
 		UPD.st = "available"
 		if setting("update") == 1 then UPD.install() end
-	end)
+	end, "bb_update")
 end
 
 function UPD.install()
@@ -3055,14 +3559,11 @@ function UPD.install()
 		return
 	end
 	UPD.st, UPD.err = "loading", nil
-	UPD.get(string.format(K.UPD_FILE, want), function(body)
+	MIRROR.get("build-brain-v" .. want, "build_brain/build_brain.lua", function(body)
+		return #body >= K.UPD_MIN and body:match('\n\tVERSION = "([%d%.]+)",') == want and body:match("return script%s*$") ~= nil
+	end, function(body)
 		if not body then
 			UPD.st, UPD.err = "error", "bb_upd_err_net"
-			return
-		end
-		local found = body:match('\n\tVERSION = "([%d%.]+)",')
-		if #body < K.UPD_MIN or found ~= want or not body:match("return script%s*$") then
-			UPD.st, UPD.err = "error", "bb_upd_err_file"
 			return
 		end
 		local tmp = path .. ".tmp"
@@ -3081,7 +3582,7 @@ function UPD.install()
 		end
 		UPD.st = "done"
 		Log.Write("[Build Brain] updated to " .. want)
-	end)
+	end, "bb_update_file")
 end
 
 function UPD.tick()
@@ -3454,7 +3955,7 @@ function W.glyph(ch, size, x, y, color)
 end
 
 function W.pressed(hot)
-	return hot > 0.5 and Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1)
+	return hot > 0.5 and Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1, true)
 end
 
 function W.btn(key, x, y, w, h)
@@ -3489,9 +3990,149 @@ function W.first_seen(key, value)
 	return state.clock - W.seen_at[key]
 end
 
+W.th = { key = nil, from = nil, to = nil, at = -10, badge = nil, badge_at = -10, attr = nil, badges = {}, pals = {} }
+W.TH_FIELDS = { "ACCENT", "ACCENT_HOT", "TOGGLE_ON_TRACK", "ONB_LOGO", "ONB_LOGO_EDGE", "ONB_PICK", "ONB_HL", "THEME_GLOW", "THEME_CLEAR", "THEME_LINE", "THEME_CHIP" }
+do
+	local base = {}
+	for _, f in ipairs(W.TH_FIELDS) do base[f] = C[f] end
+	W.th.pals[0] = base
+end
+
+function W.palette(key, rgb)
+	local pal = W.th.pals[key]
+	if pal then return pal end
+	local r, g, b = rgb[1], rgb[2], rgb[3]
+	local function over(k)
+		return Color(math.floor(22 + (r - 22) * k + 0.5), math.floor(22 + (g - 22) * k + 0.5), math.floor(24 + (b - 24) * k + 0.5))
+	end
+	pal = {
+		ACCENT = Color(r, g, b),
+		ACCENT_HOT = Color(math.floor(r + (255 - r) * 0.15 + 0.5), math.floor(g + (255 - g) * 0.15 + 0.5), math.floor(b + (255 - b) * 0.15 + 0.5)),
+		TOGGLE_ON_TRACK = Color(r, g, b, 60),
+		ONB_LOGO = over(0.1),
+		ONB_LOGO_EDGE = over(0.34),
+		ONB_PICK = over(0.1),
+		ONB_HL = over(0.17),
+		THEME_GLOW = Color(r, g, b, 58),
+		THEME_CLEAR = Color(r, g, b, 0),
+		THEME_LINE = Color(r, g, b, 170),
+		THEME_CHIP = Color(r, g, b, 34),
+	}
+	W.th.pals[key] = pal
+	return pal
+end
+
+function W.theme_attr(unit)
+	local th = W.th
+	if not th.attr then
+		th.attr = {}
+		for i, grp in ipairs(HEROES.list()) do
+			for _, e in ipairs(grp.heroes) do th.attr[e.unit] = i end
+		end
+	end
+	return th.attr[unit]
+end
+
+function W.theme_target(mode)
+	local th = W.th
+	local hero = Heroes.GetLocal()
+	if mode == 1 then
+		local unit = hero and NPC.GetUnitName(hero)
+		if not unit then
+			local id = state.draft.my_hero or state.preview_hero
+			unit = id and hero_unit(id) or nil
+		end
+		local a = unit and W.theme_attr(unit)
+		if a then
+			local badge = th.badges[unit]
+			if not badge then
+				badge = { kind = "hero", icon = "panorama/images/heroes/icons/" .. unit .. "_png.vtex_c", attr = K.ATTR_ICONS[a] }
+				th.badges[unit] = badge
+			end
+			local c = K.ATTRS[a][3]
+			return 10 + a, { c.r, c.g, c.b }, badge
+		end
+	elseif mode == 2 then
+		local ok, team = false, nil
+		if hero then ok, team = pcall(Entity.GetTeamNum, hero) end
+		team = (ok and tonumber(team)) or state.draft.my_team
+		if K.THEME_TEAM[team] then
+			local key = 20 + team
+			th.badges[key] = th.badges[key] or { kind = "team", glyph = K.THEME_GLYPH[team] }
+			return key, K.THEME_TEAM[team], th.badges[key]
+		end
+	elseif mode == 3 then
+		local rank = setting("rank")
+		if K.THEME_RANK[rank] then
+			local key = 30 + rank
+			th.badges[key] = th.badges[key] or { kind = "rank", icon = "panorama/images/rank_tier_icons/rank" .. rank .. "_psd.vtex_c" }
+			return key, K.THEME_RANK[rank], th.badges[key]
+		end
+	end
+	return 0, nil, nil
+end
+
+function W.theme_tick()
+	local th = W.th
+	local key, rgb, badge = W.theme_target(setting("theme"))
+	if key ~= th.key then
+		local pal = key == 0 and th.pals[0] or W.palette(key, rgb)
+		local now = {}
+		for _, f in ipairs(W.TH_FIELDS) do now[f] = C[f] end
+		th.from, th.to = now, pal
+		th.at = th.key == nil and -10 or state.clock
+		th.key, th.done = key, false
+	end
+	if badge ~= th.badge then
+		th.badge, th.badge_at = badge, state.clock
+	end
+	if th.done or not th.to then return end
+	local k = math.min(1, (state.clock - th.at) / K.THEME_FADE)
+	if k >= 1 then
+		for _, f in ipairs(W.TH_FIELDS) do C[f] = th.to[f] end
+		th.done = true
+	else
+		local e = W.ease(k)
+		for _, f in ipairs(W.TH_FIELDS) do C[f] = mix(th.from[f], th.to[f], e) end
+	end
+end
+
+function W.theme_art(w)
+	local th = W.th
+	if not th.key or th.key == 0 then return end
+	grad(K.RAIL_W, 0, w - K.RAIL_W, 190, C.THEME_CLEAR, C.THEME_GLOW, C.THEME_CLEAR, C.THEME_CLEAR, 12)
+	grad(w * 0.3, 0, w * 0.7 - 12, 1, C.THEME_CLEAR, C.THEME_LINE, C.THEME_CLEAR, C.THEME_LINE)
+end
+
+function W.theme_badge(xr, cy)
+	local b = W.th.badge
+	if not b or not W.th.key or W.th.key == 0 then return end
+	local t = state.clock - W.th.badge_at
+	local sc = W.pop(t)
+	local ba = G.alpha
+	G.alpha = ba * math.min(1, t / 0.2)
+	if b.kind == "hero" then
+		local cw, ch = 54 * sc, 28 * sc
+		local x = xr - 54 + (54 - cw) / 2
+		rect(x, cy - ch / 2, cw, ch, C.THEME_CHIP, ch / 2)
+		local attr, icon = load_image(b.attr), load_image(b.icon)
+		if attr then picture(attr, x + 6 * sc, cy - 9 * sc, 18 * sc, 18 * sc) end
+		if icon then picture(icon, x + 28 * sc, cy - 10 * sc, 20 * sc, 20 * sc, 5) end
+	elseif b.kind == "team" then
+		local r = 15 * sc
+		rect(xr - 15 - r, cy - r, r * 2, r * 2, C.THEME_CHIP, r)
+		W.glyph(b.glyph, 14 * sc, xr - 15, cy, C.ACCENT)
+	elseif b.kind == "rank" then
+		local m = load_image(b.icon)
+		local s = 38 * sc
+		if m then picture(m, xr - 19 - s / 2, cy - s / 2, s, s) end
+	end
+	G.alpha = ba
+end
+
 function W.shell(w, h)
-	W.soft(0, 0, w, h, 12, 36)
 	rect(0, 0, w, h, C.BG, 12)
+	W.theme_art(w)
 	rect(0, 0, K.RAIL_W, h, C.RAIL, 12)
 	rect(K.RAIL_W - 12, 0, 12, h, C.RAIL)
 	rect(12, 0, w - 24, 1, C.TOP_EDGE)
@@ -3543,13 +4184,17 @@ function W.header(w)
 	local right = cx - 16
 	local busy = (state.net.busy and L("bb_status_loading")) or (state.net.offline and L("bb_status_offline"))
 	if win.status or (busy and win.tab ~= "build") then
-		text(fonts.w500, 14, fit(fonts.w500, 14, win.status or busy, 320), right, 20, C.MUTED, "right")
+		local s = fit(fonts.w500, 14, win.status or busy, 320)
+		text(fonts.w500, 14, s, right, 20, C.MUTED, "right")
+		W.theme_badge(right - measure(fonts.w500, 14, s) - 12, 28)
 	elseif win.tab == "build" and view and view.gold then
 		local gpm = W.count("hdr_gpm", math.floor(view.gpm or 0))
 		local label = "GPM " .. gpm
 		text(fonts.w500, 14, label, right, 20, C.MUTED, "right")
 		right = right - measure(fonts.w500, 14, label) - 16
-		text(fonts.w700, 15, tostring(W.count("hdr_gold", view.gold)), right, 19, C.GOLD, "right")
+		local gold = tostring(W.count("hdr_gold", view.gold))
+		text(fonts.w700, 15, gold, right, 19, C.GOLD, "right")
+		W.theme_badge(right - measure(fonts.w700, 15, gold) - 12, 28)
 	else
 		local rank, pos = setting("rank"), my_position()
 		local key = rank * 10 + (tonumber(pos) or 0)
@@ -3558,6 +4203,7 @@ function W.header(w)
 			win.info = L("bb_rank_" .. rank) .. " · " .. L("bb_role") .. " " .. L("bb_role_" .. pos)
 		end
 		text(fonts.w500, 14, win.info, right, 20, C.MUTED, "right")
+		W.theme_badge(right - measure(fonts.w500, 14, win.info) - 12, 28)
 	end
 end
 
@@ -3697,14 +4343,41 @@ function W.chips(b, x, y, room)
 	end
 end
 
+function W.stages(x, y, w)
+	local view = state.view
+	local theirs = view and #view.theirs > 0
+	local rows = {
+		{ "bb_ld_builds", state.sz_text and "done" or (state.sync.busy and "busy" or "wait") },
+		{ "bb_ld_vs", state.sz_has_vs and "done" or "wait" },
+		{ "bb_ld_wr", (state.stats or (state.sz_wr and next(state.sz_wr))) and "done" or (state.net.busy and "busy" or "wait") },
+		{ theirs and "bb_ld_picks" or "bb_ld_wait", theirs and "busy" or "wait" },
+	}
+	for i, r in ipairs(rows) do
+		local ry = y + (i - 1) * 34
+		local cx, cy = x + 11, ry + 11
+		if r[2] == "done" then
+			rect(x, ry, 22, 22, C.PILL_WIN, 11)
+			text(fonts.w800, 12, "✓", cx, ry + 3, C.WIN, "center")
+		elseif r[2] == "busy" then
+			Render.Circle(P(cx, cy), 8 * G.s, A(C.TRACK), 2 * G.s, 0, 1, false, 24)
+			Render.Circle(P(cx, cy), 8 * G.s, A(C.ACCENT), 2 * G.s, (state.clock * 360) % 360, 0.25, true, 24)
+		else
+			Render.Circle(P(cx, cy), 9 * G.s, A(C.TRACK), 2 * G.s, 0, 1, false, 24)
+		end
+		text(r[2] == "busy" and fonts.w600 or fonts.w500, 14, L(r[1]), x + 34, ry + 3, r[2] == "wait" and C.MUTED or C.TEXT)
+	end
+	local ny = y + #rows * 34 + 6
+	if state.sync.failed and state.sz_date then
+		for i, l in ipairs(wrap(fonts.w500, 13, string.format(L("bb_ld_offline"), os.date("%d.%m", state.sz_date)), w, 2)) do
+			text(fonts.w500, 13, l, x, ny + (i - 1) * 18, C.GOLD)
+		end
+	end
+end
+
 function W.picks(x, y, w, h)
 	local view = state.view
-	W.card(x, y, w, h, string.format(L("bb_pick_title"), L("bb_role_" .. my_position())))
-	if not view or #view.best == 0 then
-		for i = 0, 3 do W.skeleton(x + 14, y + 50 + i * 72, w - 28, 62, i) end
-		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), x + 16, y + 50 + 4 * 72 + 2, C.MUTED)
-		return
-	end
+	W.card(x, y, w, h, string.format(L("bb_pick_title"), L("bb_role_" .. (view and view.pick_role or my_position()))))
+	if not view or #view.best == 0 then return W.stages(x + 16, y + 54, w - 32) end
 	local top = math.max(0.1, view.best[1].gain)
 	local ba = G.alpha
 	local ry = y + 50
@@ -3783,52 +4456,58 @@ function W.draft(w, h)
 	W.unblock()
 end
 
-function W.next(x, y, w, h)
+function W.next_strip(x, y, w, h)
 	local view = state.view
 	local win = state.win
-	W.card(x, y, w, h, L("bb_next_title"))
+	W.card(x, y, w, h)
 	local step = view and view.next
-	if not step then return W.note(L("bb_route_empty"), x, y, w) end
+	if not step then return W.note(L("bb_route_empty"), x, y - 10, w) end
 	local can = view.gold >= step.cost
 	if can and win.afford_name ~= step.name then win.afford_name, win.afford_at = step.name, state.clock end
 	if not can then win.afford_name = nil end
 	local pulse = 0.5 + 0.5 * math.sin(state.clock * 3)
-	local ix, iy = x + 16, y + 50
+	local ix, iy = x + 16, y + (h - 58) / 2
 	W.icon(item_image(step.name), ix, iy, 80, 58, 8, "next_icon")
 	W.glow(ix, iy, 80, 58, 8, can and (0.6 + 0.4 * pulse) or 1)
 	button("item", ix, iy, 80, 58, step.name)
-	local tx, tw = ix + 96, w - 128
-	text(fonts.w600, 16, fit(fonts.w600, 16, item_title(step.name), tw), tx, iy, C.TEXT)
+	local bw0 = 190
+	local rx = x + w - 16 - bw0
+	local tx = ix + 96
+	local tw = rx - 18 - tx
+	local name = fit(fonts.w600, 17, item_title(step.name), tw)
+	local nw = measure(fonts.w600, 17, name)
+	text(fonts.w600, 17, name, tx, y + 14, C.TEXT)
 	local why = step.reason or L("bb_why_popular")
-	if step.tm and step.tm > 0 and step.share then why = string.format(L("bb_next_usual"), math.floor(step.tm / 60 + 0.5), math.floor(step.share * 100 + 0.5)) end
-	for i, l in ipairs(wrap(fonts.w500, 14, why, tw, 2)) do text(fonts.w500, 14, l, tx, iy + 24 + (i - 1) * 20, C.MUTED) end
-	local by = y + 126
-	local share = tween("gold_bar", step.cost > 0 and math.min(1, view.gold / step.cost) or 0, 6)
-	rect(x + 16, by, w - 32, 8, C.TRACK, 4)
-	if share > 0.005 then grad(x + 16, by, (w - 32) * share, 8, C.GOLD_LO, C.GOLD_HI, C.GOLD_LO, C.GOLD_HI, 4) end
-	if can then W.shine(x + 16, by, w - 32, 8, (state.clock - (win.afford_at or 0)) / 0.8, C.GSHINE_0, C.GSHINE_1) end
-	text(fonts.w500, 14, string.format(L("bb_gold_of"), W.count("next_gold", math.min(view.gold, step.cost)), step.cost), x + 16, by + 16, C.MUTED)
-	if step.minute then text(fonts.w500, 14, string.format(L("bb_minutes"), step.minute), x + w - 16, by + 16, C.MUTED, "right") end
-	local parts = step.parts or K.NONE
-	local ry = by + 44
-	if #parts > 0 then
-		local px = x + 16
-		for i, part in ipairs(parts) do
-			local label = part.have and "✓" or tostring(part.cost)
-			local lw = measure(fonts.w600, 14, label) + 50
-			if px + lw > x + w - 16 then break end
-			local okp = not part.have and part.cost <= view.gold
-			local bx, bby, bw, bh, hot = W.btn("part" .. i, px, ry, lw, 32)
-			rect(bx, bby, bw, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
-			frame_line(bx, bby, bw, bh, okp and C.WIN or C.CARD_EDGE, 8)
-			picture(item_image(part.name), bx + 4, bby + 4, 32, 24, 4, part.have and 1 or 0)
-			text(fonts.w600, 14, label, bx + 42, bby + 7, okp and C.WIN or C.MUTED)
-			button("item", px, ry, lw, 32, part.name)
-			px = px + lw + 8
-		end
-		ry = ry + 42
+	if state.turbo and step.share then
+		why = string.format(L("bb_next_share"), math.floor(step.share * 100 + 0.5))
+	elseif step.tm and step.tm > 0 and step.share then
+		why = string.format(L("bb_next_usual"), math.floor(step.tm / 60 + 0.5), math.floor(step.share * 100 + 0.5))
 	end
-	local bw0 = math.floor((w - 40) * 0.58)
+	if tw - nw - 12 > 60 then text(fonts.w500, 13, fit(fonts.w500, 13, why, tw - nw - 12), tx + nw + 12, y + 18, C.MUTED) end
+	local by = y + 44
+	local share = tween("gold_bar", step.cost > 0 and math.min(1, view.gold / step.cost) or 0, 6)
+	rect(tx, by, tw, 8, C.TRACK, 4)
+	if share > 0.005 then grad(tx, by, tw * share, 8, C.GOLD_LO, C.GOLD_HI, C.GOLD_LO, C.GOLD_HI, 4) end
+	if can then W.shine(tx, by, tw, 8, (state.clock - (win.afford_at or 0)) / 0.8, C.GSHINE_0, C.GSHINE_1) end
+	local gold = string.format(L("bb_gold_of"), W.count("next_gold", math.min(view.gold, step.cost)), step.cost)
+	if step.minute then gold = gold .. " · " .. string.format(L("bb_eta"), step.minute) end
+	local gy = y + 62
+	text(fonts.w500, 13, gold, tx, gy + 7, C.MUTED)
+	local parts = step.parts or K.NONE
+	local px = tx + measure(fonts.w500, 13, gold) + 14
+	for i, part in ipairs(parts) do
+		local label = part.have and "✓" or tostring(part.cost)
+		local lw = measure(fonts.w600, 13, label) + 48
+		if px + lw > tx + tw then break end
+		local okp = not part.have and part.cost <= view.gold
+		local bx, bby, bw, bh, hot = W.btn("part" .. i, px, gy, lw, 30)
+		rect(bx, bby, bw, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
+		frame_line(bx, bby, bw, bh, okp and C.WIN or C.CARD_EDGE, 8)
+		picture(item_image(part.name), bx + 4, bby + 4, 30, 22, 4, part.have and 1 or 0)
+		text(fonts.w600, 13, label, bx + 40, bby + 7, okp and C.WIN or C.MUTED)
+		button("item", px, gy, lw, 30, part.name)
+		px = px + lw + 6
+	end
 	local main_label = L("bb_buy_all")
 	if not can then
 		for _, part in ipairs(parts) do
@@ -3838,17 +4517,17 @@ function W.next(x, y, w, h)
 			end
 		end
 	end
-	local bx, bby, bw, bh, hb = W.btn("buy", x + 16, ry, bw0, 38)
+	local b1y = y + (h - 84) / 2
+	local bx, bby, bw, bh, hb = W.btn("buy", rx, b1y, bw0, 38)
 	if can then frame_line(bx - 3, bby - 3, bw + 6, bh + 6, alpha(C.ACCENT, 0.25 + 0.35 * pulse), 10, 2) end
 	rect(bx, bby, bw, bh, mix(C.ACCENT, C.ACCENT_HOT, hb), 8)
 	text(fonts.w600, 14, main_label, bx + bw / 2, bby + 10, C.WHITE, "center")
-	button("buy", x + 16, ry, bw0, 38, step.name)
-	local qx, qw = x + 16 + bw0 + 8, w - 40 - bw0
-	local qx2, qy2, qw2, qh2, hq = W.btn("quick", qx, ry, qw, 38)
-	rect(qx2, qy2, qw2, qh2, mix(C.ROW, C.ROW_HOT, hq), 8)
-	frame_line(qx2, qy2, qw2, qh2, C.CARD_EDGE, 8)
-	text(fonts.w600, 14, fit(fonts.w600, 14, L("bb_quick"), qw - 14), qx2 + qw2 / 2, qy2 + 10, C.TEXT, "center")
-	button("quick", qx, ry, qw, 38, step.name)
+	button("buy", rx, b1y, bw0, 38, step.name)
+	local qx, qy, qw, qh, hq = W.btn("quick", rx, b1y + 46, bw0, 38)
+	rect(qx, qy, qw, qh, mix(C.ROW, C.ROW_HOT, hq), 8)
+	frame_line(qx, qy, qw, qh, C.CARD_EDGE, 8)
+	text(fonts.w600, 14, fit(fonts.w600, 14, L("bb_quick"), bw0 - 14), qx + qw / 2, qy + 10, C.TEXT, "center")
+	button("quick", rx, b1y + 46, bw0, 38, step.name)
 end
 
 function W.vs(x, y, w, h)
@@ -3900,20 +4579,27 @@ function W.vs(x, y, w, h)
 	G.alpha = ba
 end
 
-function W.shelf(label, list, x, y, w, key, row0)
+function W.shelf(label, list, x, y, w, key, row0, line)
 	local view = state.view
 	local ba = G.alpha
-	text(fonts.w500, 14, label, x, y, C.MUTED)
+	local top = label and 24 or 0
+	if label then text(fonts.w500, 14, label, x, y, C.MUTED) end
+	if line then
+		rect(x, y + top, w, 3, line, 1)
+		top = top + 12
+	end
 	local iw, ih, gap = 46, 34, 6
 	local per = math.max(1, math.floor((w + gap) / (iw + gap)))
 	local pulse = 0.5 + 0.5 * math.sin(state.clock * 3)
 	for i, step in ipairs(list) do
 		local col, row = (i - 1) % per, math.floor((i - 1) / per)
-		local sx, sy = x + col * (iw + gap), y + 24 + row * (ih + 24)
+		local sx, sy = x + col * (iw + gap), y + top + row * (ih + 24)
 		local e = W.since(state.win.open_at, 0.12 + (row0 + row) * 0.05 + col * 0.02, 0.22)
 		G.alpha = ba * e
 		local now = view and view.next == step
-		local hot = W.icon(item_image(step.name), sx, sy + (1 - e) * 6, iw, ih, 6, key .. i, step.done and 1 or 0, step.done and C.DONE_TINT or nil)
+		local dim = step.done or step.skipped
+		local hot = W.icon(item_image(step.name), sx, sy + (1 - e) * 6, iw, ih, 6, key .. i, dim and 1 or 0, dim and C.DONE_TINT or nil)
+		if hot > 0.5 and (key == "sh_e" or key == "sh_c") then W.hov_cand = { name = step.name, orig = step.from or step.name, x = sx, y = sy, w = iw, h = ih } end
 		if now then
 			W.glow(sx, sy, iw, ih, 6, 0.6 + 0.4 * pulse)
 		else
@@ -3922,66 +4608,125 @@ function W.shelf(label, list, x, y, w, key, row0)
 		if step.count and step.count > 1 then text(fonts.w700, 13, tostring(step.count), sx + iw - 4, sy + ih - 17, C.WHITE, "right") end
 		if step.done then
 			text(fonts.w700, 13, "✓", sx + iw / 2, sy + ih + 4, C.WIN, "center")
-		elseif step.tm and step.tm > 0 then
-			text(fonts.w600, 13, math.floor(step.tm / 60 + 0.5) .. "'", sx + iw / 2, sy + ih + 4, now and C.GOLD or C.MUTED, "center")
+		elseif step.skipped then
+			text(fonts.w600, 12, L("bb_card_skipped"), sx + iw / 2, sy + ih + 4, C.DIM, "center")
+		else
+			local mm = state.turbo and step.minute or (step.tm and step.tm > 0 and math.floor(step.tm / 60 + 0.5))
+			if mm then text(fonts.w600, 13, mm .. "'", sx + iw / 2, sy + ih + 4, now and C.GOLD or C.MUTED, "center") end
 		end
 		button("item", sx, sy, iw, ih, step.name)
 	end
 	G.alpha = ba
 	local rows = math.max(1, math.ceil(#list / per))
-	return y + 24 + rows * (ih + 24) + 8, row0 + rows
+	return y + top + rows * (ih + 24) + 8, row0 + rows
 end
 
-function W.shelves(x, y, w, h)
-	local view = state.view
-	W.card(x, y, w, h, L("bb_shelf_title"), L("bb_shelf_hint"))
-	if not view or not view.route then return W.note(L("bb_route_empty"), x, y, w) end
-	local sh = view.shelves
-	if not sh then
-		sh = { start = {}, early = {}, core = {}, more = {} }
-		local index, used = {}, {}
-		for _, name in ipairs(view.start or {}) do
-			local e = index[name]
-			if e then
-				e.count = e.count + 1
-			else
-				e = { name = name, count = 1 }
-				index[name] = e
-				sh.start[#sh.start + 1] = e
-			end
+function W.shelf_data(view)
+	if view.shelves then return view.shelves end
+	local sh = { start = {}, early = {}, core = {}, more = {} }
+	local index, used, any = {}, {}, false
+	for _, name in ipairs(view.start or K.NONE) do
+		local e = index[name]
+		if e then
+			e.count = e.count + 1
+		else
+			e = { name = name, count = 1 }
+			index[name] = e
+			sh.start[#sh.start + 1] = e
 		end
-		for _, step in ipairs(view.route) do
-			used[step.name] = true
-			if not step.sit then
-				local list = step.early and sh.early or sh.core
-				list[#list + 1] = step
-			end
-		end
-		for _, c in ipairs(view.role and view.role.pop or {}) do
-			if not used[c.name] and #sh.more < 7 then sh.more[#sh.more + 1] = { name = c.name } end
-		end
-		view.shelves = sh
 	end
-	local ry, iw, r0 = y + 50, w - 32, 0
-	local per = math.max(1, math.floor((iw + 6) / 52))
-	if #sh.start > 0 then ry, r0 = W.shelf(L("bb_shelf_start"), sh.start, x + 16, ry, iw, "sh_s", r0) end
-	if #sh.early > 0 then ry, r0 = W.shelf(L("bb_shelf_lane"), sh.early, x + 16, ry, iw, "sh_e", r0) end
-	ry, r0 = W.shelf(L("bb_shelf_core"), sh.core, x + 16, ry, iw, "sh_c", r0)
-	if #sh.more > 0 and ry + 24 + math.ceil(#sh.more / per) * 58 <= y + h - 8 then W.shelf(L("bb_shelf_more"), sh.more, x + 16, ry, iw, "sh_m", r0) end
+	for _, step in ipairs(view.route) do
+		used[step.name] = true
+		if step.done then any = true end
+		if not step.sit then
+			local list = step.early and sh.early or sh.core
+			list[#list + 1] = step
+		end
+	end
+	for _, e in ipairs(sh.start) do e.done = any end
+	for _, c in ipairs(view.role and view.role.pop or K.NONE) do
+		if not used[c.name] and #sh.more < K.MORE_MAX then sh.more[#sh.more + 1] = { name = c.name } end
+	end
+	view.shelves = sh
+	return sh
+end
+
+function W.stage_line(s, view)
+	local all, now = #s.list > 0, false
+	for _, st in ipairs(s.list) do
+		if not st.done and not st.skipped then all = false end
+		if view.next == st then now = true end
+	end
+	if all then return C.WIN end
+	if now then return C.GOLD end
+	return C.TRACK
+end
+
+function W.route_plan(view, cw)
+	local plan = { h = 148 }
+	if not view or not view.route then return plan end
+	local sh = W.shelf_data(view)
+	local stages = {}
+	if #sh.start > 0 then stages[#stages + 1] = { label = L("bb_shelf_start"), list = sh.start, key = "sh_s" } end
+	if #sh.early > 0 then stages[#stages + 1] = { label = L("bb_shelf_lane"), list = sh.early, key = "sh_e" } end
+	stages[#stages + 1] = { label = L("bb_shelf_core"), list = sh.core, key = "sh_c" }
+	local avail = cw - 32 - (#stages - 1) * 16
+	local need = 0
+	for _, s in ipairs(stages) do
+		s.need = math.max(measure(fonts.w500, 14, s.label) + 10, math.max(1, #s.list) * 52 - 6)
+		need = need + s.need
+	end
+	local rows = 1
+	for i, s in ipairs(stages) do
+		if need <= avail then
+			s.w = s.need + (i == #stages and avail - need or 0)
+		else
+			s.w = math.floor(avail * s.need / need)
+		end
+		local per = math.max(1, math.floor((s.w + 6) / 52))
+		rows = math.max(rows, math.ceil(math.max(1, #s.list) / per))
+	end
+	plan.stages = stages
+	plan.h = 50 + 36 + rows * 58 + 4
+	return plan
+end
+
+function W.route(x, y, w, plan)
+	W.card(x, y, w, plan.h, L("bb_route_title"))
+	if not plan.stages then return W.note(L("bb_route_empty"), x, y, w) end
+	local view = state.view
+	local sx = x + 16
+	for _, s in ipairs(plan.stages) do
+		W.shelf(s.label, s.list, sx, y + 50, s.w, s.key, 0, W.stage_line(s, view))
+		sx = sx + s.w + 16
+	end
+end
+
+function W.more(x, y, w, h)
+	local view = state.view
+	W.card(x, y, w, h, L("bb_shelf_more"))
+	if not view or not view.route then return end
+	local sh = W.shelf_data(view)
+	if #sh.more > 0 then W.shelf(nil, sh.more, x + 16, y + 50, w - 32, "sh_m", 1) end
 end
 
 function W.build(w, h)
 	local view = state.view
-	local step = view and view.next
-	local nh = (step and step.parts and #step.parts > 0) and 270 or 228
-	local lx, lw, rx, rw = K.CX, K.COL_L, K.CX + K.COL_L + K.GAP, w - K.CX - K.COL_L - K.GAP - 16
+	local x, cw = K.CX, w - K.CX - 16
 	local top, bottom = K.TOP, h - 16
+	local nh = 106
 	W.block(0)
-	W.next(lx, top, lw, nh)
+	W.next_strip(x, top, cw, nh)
+	local plan = W.route_plan(view, cw)
+	local ry = top + nh + K.GAP
 	W.block(1)
-	W.vs(lx, top + nh + K.GAP, lw, bottom - top - nh - K.GAP)
+	W.route(x, ry, cw, plan)
+	local by = ry + plan.h + K.GAP
+	local half = (cw - K.GAP) / 2
 	W.block(2)
-	W.shelves(rx, top, rw, bottom - top)
+	W.vs(x, by, half, bottom - by)
+	W.block(3)
+	W.more(x + half + K.GAP, by, half, bottom - by)
 	W.unblock()
 end
 
@@ -4216,19 +4961,91 @@ function W.updates(x, y, cw, half, x1, x2)
 	button("toggle", x2 - 8, ry, half + 16, 48, "update")
 end
 
+function W.hero_grid(x, y, w, cell, kind)
+	local sel = POOL.get()
+	local any = POOL.n > 0
+	local gap = 4
+	local per = math.max(1, math.floor((w + gap) / (cell + gap)))
+	W.grid_tip = nil
+	for _, g in ipairs(HEROES.list()) do
+		dot(x + 4, y + 8, 4, g.color)
+		text(fonts.w600, 13, L(g.key), x + 14, y, C.MUTED)
+		y = y + 20
+		for i, hro in ipairs(g.heroes) do
+			local col, row = (i - 1) % per, math.floor((i - 1) / per)
+			local hx, hy = x + col * (cell + gap), y + row * (cell + gap)
+			local on = sel[hro.id]
+			local hot = hover_t(kind .. hro.id, hx, hy, cell, cell)
+			local img = hero_image(hro.unit)
+			if img then
+				picture(img, hx, hy, cell, cell, 6, (any and not on) and 1 or 0, true)
+			else
+				rect(hx, hy, cell, cell, C.SLOT, 6)
+			end
+			if on then
+				frame_line(hx - 1, hy - 1, cell + 2, cell + 2, C.ACCENT, 7, 2)
+			elseif hot > 0.01 then
+				frame_line(hx, hy, cell, cell, alpha(C.WHITE, 0.4 * hot), 6)
+			end
+			button(kind, hx, hy, cell, cell, hro.id)
+			if hot > 0.5 then W.grid_tip = { name = hro.title, x = hx + cell / 2, y = hy } end
+		end
+		y = y + math.ceil(#g.heroes / per) * (cell + gap) + 6
+	end
+	local t = W.grid_tip
+	if t then
+		local tw = measure(fonts.w600, 13, t.name) + 16
+		rect(t.x - tw / 2, t.y - 28, tw, 24, C.TIP, 6)
+		frame_line(t.x - tw / 2, t.y - 28, tw, 24, C.CARD_EDGE, 6)
+		text(fonts.w600, 13, t.name, t.x, t.y - 24, C.TEXT, "center")
+	end
+	return y
+end
+
+function W.pool_page(w, h)
+	local x, cw = K.CX, w - K.CX - 16
+	local top = K.TOP
+	W.block(0)
+	W.card(x, top, cw, h - top - 16, L("bb_pool_title"))
+	local tx = x + 16 + measure(fonts.w600, 16, L("bb_pool_title")) + 12
+	text(fonts.w500, 13, POOL.label(), tx, top + 17, C.MUTED)
+	local bx = x + cw - 16 - 120
+	local dx, dy, dw, dh, hd = W.btn("pool_done", bx, top + 9, 120, 34)
+	rect(dx, dy, dw, dh, mix(C.ACCENT, C.ACCENT_HOT, hd), 8)
+	text(fonts.w600, 14, L("bb_pool_done"), dx + dw / 2, dy + 8, C.WHITE, "center")
+	button("pool_done", bx, top + 9, 120, 34)
+	if POOL.n > 0 then
+		local cx = bx - 8 - 120
+		local qx, qy, qw, qh, hq = W.btn("pool_clear", cx, top + 9, 120, 34)
+		rect(qx, qy, qw, qh, mix(C.ROW, C.ROW_HOT, hq), 8)
+		frame_line(qx, qy, qw, qh, C.CARD_EDGE, 8)
+		text(fonts.w600, 14, L("bb_pool_clear"), qx + qw / 2, qy + 8, C.TEXT, "center")
+		button("pool_clear", cx, top + 9, 120, 34)
+	end
+	text(fonts.w500, 13, L("bb_pool_hint"), x + 16, top + 50, C.MUTED)
+	W.hero_grid(x + 16, top + 80, cw - 32, 40, "pool")
+	W.unblock()
+end
+
+function W.onb_heroes(w)
+	W.onb_title(L("bb_onb_heroes_q"), L("bb_onb_heroes_s"))
+	W.hero_grid(56, 160, w - 112, 34, "pool")
+end
+
 function W.settings(w, h)
+	if state.win.pool_page then return W.pool_page(w, h) end
 	local win = state.win
 	local x, cw = K.CX, w - K.CX - 16
 	local top = K.TOP
 	local half = (cw - 48) / 2
 	local x1, x2, y1, y2 = x + 16, x + 32 + half, top + 52, top + 52
 	W.block(0)
-	W.card(x, top, cw, 52 + 3 * 54 + 10, L("bb_tab_settings"))
+	W.card(x, top, cw, 52 + 5 * 54 + 10, L("bb_tab_settings"))
 	local drop
 	for _, s in ipairs(K.SETTINGS) do
 		if not s.own then
 			local rx, ry = x1, y1
-			if s.flag then rx, ry = x2, y2 end
+			if s.flag or s.right then rx, ry = x2, y2 end
 			local hot = hover_t("set_" .. s.key, rx - 8, ry, half + 16, 48)
 			if hot > 0.01 and not s.values then rect(rx - 8, ry, half + 16, 48, alpha(C.ROW_HOT, hot), 8) end
 			local value = setting(s.key)
@@ -4256,15 +5073,422 @@ function W.settings(w, h)
 					drop.def, drop.x, drop.y, drop.w = s, bx, ry + 44, bw
 				end
 			end
-			if s.flag then y2 = ry + 54 else y1 = ry + 54 end
+			if s.flag or s.right then y2 = ry + 54 else y1 = ry + 54 end
 		end
 	end
+	local ph = hover_t("set_pool", x1 - 8, y1, half + 16, 48)
+	if ph > 0.01 then rect(x1 - 8, y1, half + 16, 48, alpha(C.ROW_HOT, ph), 8) end
+	local pbw = 150
+	text(fonts.w500, 15, L("bb_pool_title"), x1, y1 + 4, C.TEXT)
+	text(fonts.w500, 13, POOL.label(), x1, y1 + 25, C.MUTED)
+	local pbx, pby, pbww, pbh, phot = W.btn("pool_open", x1 + half - pbw, y1 + 7, pbw, 34)
+	rect(pbx, pby, pbww, pbh, mix(C.ROW, C.ROW_HOT, phot), 8)
+	frame_line(pbx, pby, pbww, pbh, C.CARD_EDGE, 8)
+	text(fonts.w600, 14, L("bb_pool_pick"), pbx + pbww / 2, pby + 8, C.TEXT, "center")
+	button("pool_open", x1 + half - pbw, y1 + 7, pbw, 34)
+	y1 = y1 + 54
 	text(fonts.w500, 13, L("bb_set_key_hint"), x2, y2 + 10, C.MUTED)
 	W.block(1)
-	W.updates(x, top + 52 + 3 * 54 + 10 + K.GAP, cw, half, x1, x2)
+	W.updates(x, top + 52 + 5 * 54 + 10 + K.GAP, cw, half, x1, x2)
 	W.block(0)
 	if drop then W.dropdown(drop, h) end
 	W.unblock()
+end
+
+W.onb = { active = nil, step = 0, at = 0, step_at = 0, role = 0, mode = 0, shop = 1, auto = 1 }
+
+function W.onb_start()
+	local o = W.onb
+	o.active, o.step, o.at, o.step_at = true, 0, state.clock, state.clock
+	o.role, o.mode, o.shop, o.auto = setting("role"), setting("mode"), setting("shop"), setting("auto")
+	state.win.visible, state.win.dropdown = true, nil
+end
+
+function W.onb_finish()
+	local o = W.onb
+	set_setting("role", o.role)
+	set_setting("mode", o.mode)
+	set_setting("shop", o.shop)
+	set_setting("auto", o.auto)
+	Config.WriteInt(K.CONFIG, "onboard", 1)
+	o.active = false
+	local win = state.win
+	win.tab = Heroes.GetLocal() and "build" or "draft"
+	win.drawn_tab, win.prev_tab, win.open_at = win.tab, nil, state.clock
+	win.visible, win.closed_by_user = true, false
+	state.next_model, state.next_data = 0, 0
+end
+
+function W.onb_act(v)
+	local o = W.onb
+	local kind, arg = tostring(v):match("^(%a+):?(%w*)$")
+	if kind == "next" then
+		o.step, o.step_at = math.min(5, o.step + 1), state.clock
+	elseif kind == "back" then
+		o.step, o.step_at = math.max(0, o.step - 1), state.clock
+		if o.step == 0 then o.at = state.clock end
+	elseif kind == "skip" then
+		o.step, o.step_at = 5, state.clock
+	elseif kind == "role" then
+		o.role = tonumber(arg) or 0
+	elseif kind == "mode" then
+		o.mode = tonumber(arg) or 0
+	elseif kind == "flip" and (arg == "shop" or arg == "auto") then
+		o[arg] = 1 - o[arg]
+	elseif kind == "go" then
+		W.onb_finish()
+	end
+end
+
+function W.role_icon(pos)
+	local path = state.role_paths[pos]
+	if not path then
+		path = "panorama/images/rank_tier_icons/handicap/" .. K.ROLE_ICONS[pos] .. "icon_psd.vtex_c"
+		state.role_paths[pos] = path
+	end
+	return load_image(path)
+end
+
+function W.onb_rise(t, delay, ba, by0)
+	local k = W.ease((t - delay) / 0.5)
+	G.alpha, G.oy = ba * k, by0 + (1 - k) * 14 * G.s
+end
+
+function W.onb_main_btn(key, label, x, y, w, h, value)
+	local bx, by, bw, bh, hot = W.btn(key, x, y, w, h)
+	rect(bx, by, bw, bh, mix(C.ACCENT, C.ACCENT_HOT, hot), 8)
+	text(fonts.w700, 15, label, bx + bw / 2, by + (bh - 18) / 2, C.WHITE, "center")
+	button("onb", x, y, w, h, value)
+end
+
+function W.onb_card(key, x, y, cw, ch, on, value)
+	local hot = hover_t(key, x, y, cw, ch)
+	local t = tween(key .. "_on", on and 1 or 0, 16)
+	rect(x, y, cw, ch, mix(C.CARD, C.ONB_PICK, t), 10)
+	if hot > 0.01 then rect(x, y, cw, ch, alpha(C.ROW_HOT, hot), 10) end
+	frame_line(x, y, cw, ch, mix(C.CARD_EDGE, C.ACCENT, t), 10, 1 + t * 0.5)
+	button("onb", x, y, cw, ch, value)
+	return t
+end
+
+function W.onb_title(q, s)
+	text(fonts.w700, 26, q, 56, 92, C.TEXT)
+	text(fonts.w500, 15, s, 56, 130, C.MUTED)
+end
+
+function W.onb_intro(w)
+	local o = W.onb
+	local ba, by0 = G.alpha, G.oy
+	local cx, cy = w / 2, 230
+	local t = state.clock - o.at
+	if t > 0.5 then
+		local p = ((t - 0.5) % 1.6) / 1.6
+		local r = 60 * (0.8 + 1.1 * p)
+		frame_line(cx - r, cy - r, r * 2, r * 2, alpha(C.ACCENT, 0.55 * (1 - p)), r, 2)
+	end
+	local e = math.min(1, t / 0.7)
+	local sc = e < 0.6 and 0.55 + 0.51 * W.ease(e / 0.6) or 1.06 - 0.06 * W.ease((e - 0.6) / 0.4)
+	G.alpha = ba * math.min(1, e * 2)
+	local r = 52 * sc
+	rect(cx - r, cy - r, r * 2, r * 2, C.ONB_LOGO, r)
+	frame_line(cx - r, cy - r, r * 2, r * 2, C.ONB_LOGO_EDGE, r)
+	W.glyph(K.LOGO, math.floor(52 * sc + 0.5), cx, cy, C.ACCENT)
+	W.onb_rise(t, 0.35, ba, by0)
+	text(fonts.w800, 40, L("bb_title"), cx, cy + 86, C.TEXT, "center")
+	W.onb_rise(t, 0.55, ba, by0)
+	text(fonts.w500, 18, L("bb_onb_hello"), cx, cy + 140, C.MUTED, "center")
+	W.onb_rise(t, 0.75, ba, by0)
+	W.onb_main_btn("onb_start", L("bb_onb_start"), cx - 100, cy + 188, 200, 46, "next")
+	text(fonts.w500, 13, L("bb_onb_note"), cx, cy + 250, C.DIM, "center")
+	G.alpha, G.oy = ba, by0
+end
+
+function W.onb_roles(w)
+	local o = W.onb
+	W.onb_title(L("bb_onb_role_q"), L("bb_onb_role_s"))
+	local cw, ch = (w - 112 - 24) / 3, 108
+	for i, id in ipairs(K.ONB_ROLES) do
+		local col, row = (i - 1) % 3, math.floor((i - 1) / 3)
+		local x, y = 56 + col * (cw + 12), 168 + row * (ch + 12)
+		local t = W.onb_card("onb_r" .. id, x, y, cw, ch, o.role == id, "role:" .. id)
+		rect(x + 18, y + 16, 36, 36, mix(C.SEG, C.ACCENT, t), 8)
+		local icon = id > 0 and W.role_icon(id)
+		if icon then
+			picture(icon, x + 25, y + 23, 22, 22, nil, 0, false, mix(C.ROLE_DIM, C.WHITE, t))
+		else
+			text(fonts.w800, 16, id > 0 and tostring(id) or "A", x + 36, y + 24, mix(C.MUTED, C.WHITE, t), "center")
+		end
+		text(fonts.w700, 16, L("bb_onb_r" .. id), x + 18, y + 62, C.TEXT)
+		text(fonts.w500, 13, fit(fonts.w500, 13, L("bb_onb_rs" .. id), cw - 36), x + 18, y + 84, C.MUTED)
+	end
+end
+
+function W.onb_modes(w)
+	local o = W.onb
+	W.onb_title(L("bb_onb_mode_q"), L("bb_onb_mode_s"))
+	local cw, ch = (w - 112 - 24) / 3, 210
+	for m = 0, 2 do
+		local x, y = 56 + m * (cw + 12), 168
+		local t = W.onb_card("onb_m" .. m, x, y, cw, ch, o.mode == m, "mode:" .. m)
+		rect(x + 20, y + 22, 52, 52, mix(C.SEG, C.ACCENT, t), 12)
+		W.glyph(K.ONB_MODE_ICONS[m + 1], 22, x + 46, y + 48, mix(C.MUTED, C.WHITE, t))
+		text(fonts.w700, 18, L("bb_onb_m" .. m), x + 20, y + 140, C.TEXT)
+		for k, l in ipairs(wrap(fonts.w500, 13, L("bb_onb_ms" .. m), cw - 40, 2)) do text(fonts.w500, 13, l, x + 20, y + 166 + (k - 1) * 19, C.MUTED) end
+	end
+end
+
+function W.onb_where(w)
+	local o = W.onb
+	W.onb_title(L("bb_onb_where_q"), L("bb_onb_where_s"))
+	local cw, ch = (w - 112 - 16) / 2, 260
+	for i, key in ipairs({ "shop", "auto" }) do
+		local x, y = 56 + (i - 1) * (cw + 16), 168
+		local on = o[key] == 1
+		local t = W.onb_card("onb_w" .. key, x, y, cw, ch, on, "flip:" .. key)
+		rect(x + 1, y + 1, cw - 2, 150, C.ONB_PIC, 10)
+		local a, b = i == 1 and 96 or 150, i == 1 and 150 or 96
+		local ix = x + (cw - a - b - 8) / 2
+		rect(ix, y + 20, a, 110, mix(C.SEG, C.ONB_HL, t), 6)
+		rect(ix + a + 8, y + 20, b, 110, C.SEG, 6)
+		text(fonts.w700, 16, L("bb_onb_" .. key), x + 20, y + 170, C.TEXT)
+		for k, l in ipairs(wrap(fonts.w500, 13, L("bb_onb_" .. key .. "_s"), cw - 100, 2)) do text(fonts.w500, 13, l, x + 20, y + 196 + (k - 1) * 19, C.MUTED) end
+		W.toggle("onb_" .. key, x + cw - 60, y + 184, on)
+	end
+end
+
+function W.onb_nav(w, h)
+	local o = W.onb
+	local y = h - 62
+	local bx, by, bw, bh, hot = W.btn("onb_back", 56, y, 110, 42)
+	rect(bx, by, bw, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
+	frame_line(bx, by, bw, bh, C.CARD_EDGE, 8)
+	text(fonts.w600, 14, L("bb_onb_back"), bx + bw / 2, by + 12, C.TEXT, "center")
+	button("onb", 56, y, 110, 42, "back")
+	local dx = w / 2 - 46
+	for i = 1, 5 do
+		local dw = tween("onb_dot" .. i, i == o.step and 28 or 8, 14)
+		rect(dx, y + 17, dw, 8, i <= o.step and C.ACCENT or C.SEG, 4)
+		dx = dx + dw + 8
+	end
+	W.onb_main_btn("onb_next", L(o.step == 4 and "bb_onb_finish" or "bb_onb_next"), w - 56 - 140, y, 140, 42, "next")
+end
+
+function W.onb_done(w)
+	local o = W.onb
+	local ba, by0 = G.alpha, G.oy
+	local t = state.clock - o.step_at
+	local cx, cy = w / 2, 240
+	local sc = W.pop(t)
+	G.alpha = ba * math.min(1, t / 0.2)
+	local r = 42 * sc
+	rect(cx - r, cy - r, r * 2, r * 2, C.ONB_OK_BG, r)
+	frame_line(cx - r, cy - r, r * 2, r * 2, C.ONB_OK_EDGE, r)
+	W.glyph(K.ONB_CHECK, math.floor(30 * sc + 0.5), cx, cy, C.WIN)
+	W.onb_rise(t, 0.2, ba, by0)
+	text(fonts.w800, 30, L("bb_onb_done"), cx, cy + 62, C.TEXT, "center")
+	W.onb_rise(t, 0.35, ba, by0)
+	local pills = { o.role > 0 and L("bb_onb_r" .. o.role) or L("bb_onb_lobby"), L("bb_onb_m" .. o.mode), L(o.shop == 1 and "bb_onb_shop_on" or "bb_onb_shop_off"), POOL.label() }
+	local ws, total = {}, -8
+	for i, p in ipairs(pills) do
+		ws[i] = measure(fonts.w600, 14, p) + 28
+		total = total + ws[i] + 8
+	end
+	local px = cx - total / 2
+	for i, p in ipairs(pills) do
+		rect(px, cy + 110, ws[i], 34, C.CARD, 17)
+		frame_line(px, cy + 110, ws[i], 34, C.CARD_EDGE, 17)
+		text(fonts.w600, 14, p, px + ws[i] / 2, cy + 118, C.TEXT, "center")
+		px = px + ws[i] + 8
+	end
+	text(fonts.w500, 14, L("bb_onb_change"), cx, cy + 160, C.MUTED, "center")
+	W.onb_rise(t, 0.5, ba, by0)
+	W.onb_main_btn("onb_go", L("bb_onb_go"), cx - 100, cy + 200, 200, 46, "go")
+	G.alpha, G.oy = ba, by0
+end
+
+function W.onboard(w, h)
+	local o = W.onb
+	local ba, bx0 = G.alpha, G.ox
+	rect(0, 0, w, h, C.BG, 12)
+	rect(12, 0, w - 24, 1, C.TOP_EDGE)
+	frame_line(0, 0, w, h, C.EDGE, 12)
+	rect(0, 56, w, 1, C.LINE_FAINT)
+	button("header", 0, 0, w - 160, 56)
+	W.glyph(K.LOGO, 18, 34, 28, C.ACCENT)
+	text(fonts.w600, 15, L("bb_title"), 52, 19, C.MUTED)
+	if o.step >= 1 and o.step <= 4 then text(fonts.w500, 13, string.format(L("bb_onb_step"), o.step), w / 2, 21, C.MUTED, "center") end
+	if o.step < 5 then
+		local label = L("bb_onb_skip")
+		local lw = measure(fonts.w600, 13, label)
+		local hot = hover_t("onb_skip", w - 32 - lw, 12, lw + 16, 32)
+		text(fonts.w600, 13, label, w - 24, 21, mix(C.MUTED, C.TEXT, hot), "right")
+		button("onb", w - 32 - lw, 12, lw + 16, 32, "skip")
+	end
+	if o.step == 0 then
+		W.onb_intro(w)
+	elseif o.step == 5 then
+		W.onb_done(w)
+	else
+		local e = W.ease((state.clock - o.step_at) / 0.35)
+		G.alpha, G.ox = ba * e, bx0 + (1 - e) * 24 * G.s
+		if o.step == 1 then
+			W.onb_roles(w)
+		elseif o.step == 2 then
+			W.onb_heroes(w)
+		elseif o.step == 3 then
+			W.onb_modes(w)
+		else
+			W.onb_where(w)
+		end
+		G.alpha, G.ox = ba, bx0
+		W.onb_nav(w, h)
+	end
+	G.alpha, G.ox = ba, bx0
+end
+
+function W.item_vs(view, name)
+	for _, t in ipairs(view.vs_rows or K.NONE) do
+		for _, o in ipairs(t.options or K.NONE) do
+			if o == name then return t.text end
+		end
+	end
+	return nil
+end
+
+function W.item_card(w, h)
+	local c = W.cardst
+	local cand = W.hov_cand
+	local now = state.clock
+	local view = state.view
+	if cand then
+		if not c or c.name ~= cand.name then
+			c = { name = cand.name, orig = cand.orig, at = now, menu = false, alts = EDIT.alts(cand.orig, view) }
+			W.cardst = c
+		end
+		c.x, c.y, c.iw, c.ih, c.seen = cand.x, cand.y, cand.w, cand.h, now
+	elseif c then
+		local r = c.rect
+		local cx, cy = Input.GetCursorPos()
+		if r and cx >= r.x1 and cx <= r.x2 and cy >= r.y1 and cy <= r.y2 then
+			c.seen = now
+		elseif now - c.seen > 0.3 then
+			W.cardst = nil
+			return
+		end
+	end
+	if not c or now - c.at < 0.25 then return end
+	local step = nil
+	for _, st in ipairs(view and view.route or K.NONE) do
+		if st.name == c.name then step = st end
+	end
+	if not step then
+		W.cardst = nil
+		return
+	end
+	local ed = EDIT.get(view.edit_id)
+	local cw = 300
+	local lines = {}
+	if step.from then lines[#lines + 1] = { string.format(L("bb_card_from"), item_title(step.from)), C.MUTED } end
+	if step.share and state.turbo then
+		lines[#lines + 1] = { string.format(L("bb_next_share"), math.floor(step.share * 100 + 0.5)), C.MUTED }
+	elseif step.share and step.tm and step.tm > 0 then
+		lines[#lines + 1] = { string.format(L("bb_card_usual"), math.floor(step.share * 100 + 0.5), math.floor(step.tm / 60 + 0.5)), C.MUTED }
+	end
+	local vs = W.item_vs(view, step.name)
+	if vs then lines[#lines + 1] = { vs, C.TEXT } end
+	local wrapped = {}
+	for _, l in ipairs(lines) do
+		for _, part in ipairs(wrap(fonts.w500, 13, l[1], cw - 28, 2)) do wrapped[#wrapped + 1] = { part, l[2] } end
+	end
+	local alts = c.alts or K.NONE
+	local menu = c.menu and #alts > 0
+	local ch = 14 + 42 + 12 + #wrapped * 19 + 10 + 34 + (menu and (12 + 18 + #alts * 42) or 0) + 12 + 20 + 14
+	local x = math.max(K.CX, math.min(w - 16 - cw, c.x - 20))
+	local y = c.y + c.ih + 24
+	if y + ch > h - 8 then
+		y = c.y - ch - 8
+		if y < 8 then
+			y = math.max(8, math.min(h - 8 - ch, c.y - 60))
+			x = c.x + c.iw + 12
+			if x + cw > w - 8 then x = c.x - cw - 12 end
+		end
+	end
+	local ba = G.alpha
+	G.alpha = ba * W.ease((now - c.at - 0.25) / 0.15)
+	rect(x, y, cw, ch, C.TIP, 10)
+	frame_line(x, y, cw, ch, C.CARD_EDGE, 10)
+	picture(item_image(step.name), x + 14, y + 14, 56, 41, 6)
+	text(fonts.w700, 15, fit(fonts.w700, 15, item_title(step.name), cw - 96), x + 82, y + 16, C.TEXT)
+	text(fonts.w600, 13, string.format(L("bb_card_cost"), step.cost or item_cost(step.name)), x + 82, y + 38, C.GOLD)
+	local ly = y + 68
+	for _, l in ipairs(wrapped) do
+		text(fonts.w500, 13, l[1], x + 14, ly, l[2])
+		ly = ly + 19
+	end
+	ly = ly + 10
+	local bw = (cw - 36) / 2
+	local back = step.skipped or step.from
+	local bx, by, bww, bh, hot = W.btn("card_a", x + 14, ly, bw, 34)
+	rect(bx, by, bww, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
+	frame_line(bx, by, bww, bh, C.CARD_EDGE, 8)
+	text(fonts.w600, 13, L(back and "bb_card_back" or "bb_card_skip"), bx + bww / 2, by + 9, C.TEXT, "center")
+	button("card", x + 14, ly, bw, 34, back and "back" or "skip")
+	local rx = x + 22 + bw
+	if #alts > 0 then
+		local qx, qy, qw, qh, hq = W.btn("card_b", rx, ly, bw, 34)
+		rect(qx, qy, qw, qh, mix(C.ROW, C.ROW_HOT, hq), 8)
+		frame_line(qx, qy, qw, qh, menu and C.ACCENT or C.CARD_EDGE, 8)
+		text(fonts.w600, 13, L("bb_card_replace"), qx + qw / 2, qy + 9, C.TEXT, "center")
+		button("card", rx, ly, bw, 34, "menu")
+	else
+		text(fonts.w500, 13, L("bb_card_none"), rx + bw / 2, ly + 9, C.DIM, "center")
+	end
+	ly = ly + 34
+	if menu then
+		ly = ly + 12
+		rect(x + 14, ly - 6, cw - 28, 1, C.LINE_FAINT)
+		text(fonts.w600, 12, L("bb_card_alts"), x + 14, ly, C.MUTED)
+		ly = ly + 18
+		for i, a in ipairs(alts) do
+			local ah = hover_t("card_alt" .. i, x + 8, ly, cw - 16, 40)
+			if ah > 0.01 then rect(x + 8, ly, cw - 16, 40, alpha(C.ROW_HOT, ah), 8) end
+			picture(item_image(a.name), x + 14, ly + 5, 40, 29, 4)
+			text(fonts.w600, 13, fit(fonts.w600, 13, item_title(a.name), cw - 150), x + 64, ly + 11, C.TEXT)
+			text(fonts.w500, 12, string.format(L("bb_card_share"), math.floor(a.share * 100 + 0.5)), x + cw - 16, ly + 12, C.MUTED, "right")
+			button("card", x + 8, ly, cw - 16, 40, "alt:" .. i)
+			ly = ly + 42
+		end
+	end
+	ly = ly + 12
+	local on = ed and ed.always
+	local kh = hover_t("card_keep", x + 10, ly - 2, cw - 20, 24)
+	rect(x + 14, ly + 2, 16, 16, on and C.ACCENT or C.ROW, 4)
+	frame_line(x + 14, ly + 2, 16, 16, on and C.ACCENT or mix(C.CARD_EDGE, C.MUTED, kh), 4)
+	if on then text(fonts.w800, 11, "✓", x + 22, ly + 3, C.WHITE, "center") end
+	text(fonts.w500, 13, L("bb_card_always"), x + 40, ly + 2, mix(C.MUTED, C.TEXT, kh))
+	button("card", x + 10, ly - 2, cw - 20, 24, "always")
+	local a, b = P(x, y), P(x + cw, y + ch)
+	c.rect = { x1 = a.x, y1 = a.y, x2 = b.x, y2 = b.y }
+	G.alpha = ba
+end
+
+function W.card_act(v)
+	local c = W.cardst
+	local view = state.view
+	if not c or not view then return end
+	local kind, arg = tostring(v):match("^(%a+):?(%d*)$")
+	if kind == "menu" then
+		c.menu = not c.menu
+		return
+	end
+	if kind == "alt" then
+		local a = c.alts and c.alts[tonumber(arg) or 0]
+		if not a then return end
+		EDIT.act(view.edit_id, c.orig, c.name, "alt", a)
+	else
+		EDIT.act(view.edit_id, c.orig, c.name, kind)
+	end
+	if kind ~= "always" then W.cardst = nil end
 end
 
 function W.tab(name, w, h)
@@ -4288,6 +5512,13 @@ local function draw_window()
 	local win = state.win
 	local list = win.buttons
 	for i = #list, 1, -1 do list[i] = nil end
+	if W.onb.active == nil then
+		W.onb.active = false
+		if not Config.mem and Config.ReadInt(K.CONFIG, "onboard", 0) == 0 then W.onb_start() end
+	elseif W.onb.active and not win.visible then
+		W.onb.active = false
+		Config.WriteInt(K.CONFIG, "onboard", 1)
+	end
 	local open = tween("win", win.visible and 1 or 0, 14)
 	if open < 0.01 then
 		win.was_open = false
@@ -4323,6 +5554,12 @@ local function draw_window()
 	local base_y = win.y + (1 - open) * 8 * s
 	G.ox, G.oy, G.s, G.alpha = win.x, base_y, s, open
 	G.buttons = list
+	if W.onb.active then
+		W.base_a, W.base_y = open, base_y
+		W.onboard(w, h)
+		G.alpha, G.oy = 1, base_y
+		return
+	end
 	W.shell(w, h)
 	W.rail(h)
 	W.header(w)
@@ -4339,7 +5576,9 @@ local function draw_window()
 		win.prev_tab = nil
 	end
 	W.base_a, W.base_y = open, base_y
+	W.hov_cand = nil
 	W.tab(win.tab, w, h)
+	if win.tab == "build" then W.item_card(w, h) else W.cardst = nil end
 	G.alpha, G.oy = 1, base_y
 end
 
@@ -4514,7 +5753,6 @@ function PK.draw()
 	G.ox, G.oy, G.s, G.alpha = ox, oy, s, vis
 	G.buttons = list
 	PK.x1, PK.y1, PK.x2, PK.y2 = ox, oy, ox + w * s, oy + h * s
-	W.soft(0, 0, w, h, 12, 30)
 	rect(0, 0, w, h, C.BG, 12)
 	rect(12, 0, w - 24, 1, C.TOP_EDGE)
 	frame_line(0, 0, w, h, C.EDGE, 12)
@@ -4568,7 +5806,7 @@ function PK.draw()
 	end
 	y = y + 10
 	local mine = d.my_hero and view and view.foes and #view.foes > 0
-	text(fonts.w600, 14, mine and L("bb_foe_title") or string.format(L("bb_pick_title"), L("bb_role_" .. my_position())), 16, y, C.TEXT)
+	text(fonts.w600, 14, mine and L("bb_foe_title") or string.format(L("bb_pick_title"), L("bb_role_" .. (view and view.pick_role or my_position()))), 16, y, C.TEXT)
 	y = y + 26
 	if mine then
 		for i, f in ipairs(view.foes) do
@@ -4725,12 +5963,27 @@ local function click(key)
 			elseif b.kind == "tab" and left then
 				if win.tab ~= b.value then state.anim.tab = 0 end
 				win.tab = b.value
+				win.pool_page = nil
 				win.status = nil
 				win.dropdown = nil
 			elseif b.kind == "hero" and left then
 				state.preview_hero = b.value
 				state.next_model = 0
 				state.next_data = 0
+			elseif b.kind == "pool" and left then
+				POOL.toggle(b.value)
+			elseif b.kind == "pool_open" and left then
+				win.pool_page = true
+				state.win.open_at = state.clock
+			elseif b.kind == "pool_done" and left then
+				win.pool_page = nil
+				state.win.open_at = state.clock
+			elseif b.kind == "pool_clear" and left then
+				POOL.clear()
+			elseif b.kind == "card" and left then
+				W.card_act(b.value)
+			elseif b.kind == "onb" and left then
+				W.onb_act(b.value)
 			elseif b.kind == "upd" and left then
 				UPD.act(b.value)
 			elseif state.clock >= state.next_click and (b.kind == "item" or b.kind == "buy" or b.kind == "quick") then
@@ -4829,7 +6082,7 @@ do
 	function shop.shop_panels()
 		local s = state.shop
 		local p = s.panels
-		if p and p.area and p.area:IsValid() then return p end
+		if p and p.area and p.area:IsValid() and p.flyout:IsValid() then return p end
 		if state.clock < s.next_find then return nil end
 		s.next_find = state.clock + K.SHOP_FIND
 		local root = shop.shop_root()
@@ -5127,11 +6380,11 @@ do
 		if cached and cached.view == view then return cached.list end
 		local list = {}
 		for _, step in ipairs(view and view.route or {}) do
-			if not step.sit and (step.early == true) == early then
+			if not step.sit and not step.skipped and (step.early == true) == early then
 				local i = #list + 1
 				local tip = step.share and string.format(L("bb_shop_popular"), math.floor(step.share * 100 + 0.5), math.floor((step.tm or 0) / 60 + 0.5)) or step.reason
 				list[i] = { name = step.name, key = key .. i, done = step.done, next = view.next == step,
-					minute = not step.done and step.tm and step.tm > 0 and math.floor(step.tm / 60 + 0.5) or nil, tip = tip }
+					minute = not step.done and (state.turbo and step.minute or (step.tm and step.tm > 0 and math.floor(step.tm / 60 + 0.5))) or nil, tip = tip }
 			end
 		end
 		s.lists[key] = { view = view, list = list }
@@ -5361,6 +6614,39 @@ do
 		state.shop.rect = { x = a.x, y = a.y, w = b.x - a.x, h = b.y - a.y }
 	end
 
+	function shop.measure(p)
+		local s = state.shop
+		local screen = Render.ScreenSize()
+		local key = screen.x .. "x" .. screen.y
+		if s.screen ~= key then
+			s.screen, s.geom, s.settle = key, nil, state.clock + K.SHOP_SETTLE
+		end
+		if not s.open then
+			s.open, s.settle = true, state.clock + K.SHOP_SETTLE
+		end
+		if s.geom and state.clock < s.next_geom then return end
+		local f = p.flyout
+		local pos = f:GetPositionWithinWindow()
+		if not pos then return end
+		local w, h = f:GetLayoutWidth() or 0, f:GetLayoutHeight() or 0
+		local plus, q = false, f:GetParent()
+		for _ = 1, 4 do
+			if not q then break end
+			if q:HasClass("PlusGuide") then
+				plus = true
+				break
+			end
+			q = q:GetParent()
+		end
+		local g = { x = pos.x, y = pos.y, w = w, h = h, ui = w / (plus and K.GUIDE_PLUS_W or K.GUIDE_W), left = pos.x + w / 2 < screen.x / 2 }
+		local old = s.geom
+		if old and (math.abs(old.x - g.x) > 1 or math.abs(old.y - g.y) > 1 or math.abs(old.w - g.w) > 1 or math.abs(old.h - g.h) > 1) then
+			s.settle = state.clock + K.SHOP_SETTLE
+		end
+		s.geom = g
+		s.next_geom = state.clock < (s.settle or 0) and state.clock or state.clock + K.SHOP_GEOM
+	end
+
 	function shop.body(bw, bh)
 		local s = state.shop
 		local view = state.view
@@ -5385,7 +6671,7 @@ do
 		s.buttons, s.rect, s.tip = {}, nil, nil
 		if not Engine.IsShopOpen() then
 			state.anim.shop = 0
-			s.press = nil
+			s.press, s.open = nil, false
 			return
 		end
 		local p = shop.shop_panels()
@@ -5393,14 +6679,10 @@ do
 		local on = setting("shop") == 1
 		shop.guide_hidden(p, on and not s.off)
 		if not on then return end
-		if not s.geom or state.clock >= s.next_geom then
-			s.next_geom = state.clock + K.SHOP_GEOM
-			local pos = p.area:GetPositionWithinWindow()
-			s.geom = pos and { x = pos.x, y = pos.y, w = p.area:GetLayoutWidth() or 0, h = p.area:GetLayoutHeight() or 0 } or nil
-		end
+		shop.measure(p)
 		local g = s.geom
 		if not g or g.w < 60 or g.h < 120 then return end
-		local base = g.w / K.SHOP_BASE_W
+		local base = g.ui * K.GUIDE_W / K.SHOP_BASE_W
 		G.buttons = s.buttons
 		if s.off then
 			G.ox, G.oy, G.s, G.alpha = g.x, g.y, base, 1
@@ -5410,7 +6692,7 @@ do
 		local want = s.content_h and (g.h - 6) / (s.content_h + 14) or base
 		local scale = tween("shop_scale", math.max(base * K.SHOP_MIN, math.min(base * K.SHOP_GROW, want)), 8)
 		local pw = K.SHOP_BASE_W * scale
-		local px = math.max(4, g.x + g.w - pw)
+		local px = g.left and g.x or math.max(4, g.x + g.w - pw)
 		local t = tween("shop", 1, 10)
 		G.ox, G.oy, G.s, G.alpha = px - (1 - t) * 14 * scale, g.y, scale, t
 		s.rect = { x = px, y = g.y, w = pw, h = g.h }
@@ -5482,8 +6764,8 @@ do
 		if not press then return end
 		local cx, cy = Input.GetCursorPos()
 		if not press.drag and math.abs(cx - press.x) + math.abs(cy - press.y) > K.DRAG_MIN then press.drag = true end
-		if not Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1) then
-			if press.drag then shop.release() else s.press = nil end
+		if not Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1, true) then
+			shop.release()
 			return
 		end
 		if not press.drag then return end
@@ -5574,10 +6856,12 @@ local function sz_sync()
 		return
 	end
 	sync.busy = true
-	local ok = pcall(HTTP.Request, "GET", K.SZ_BASE .. "version.txt", { timeout = K.NET_TIMEOUT }, function(res)
-		local version = tonumber(res and res.code) == 200 and tostring(res.response or ""):match("^%s*(.-)%s*$") or ""
+	MIRROR.get("build-brain-data", "version.txt", function(body)
+		return body:match("^%s*[^\t\n]+\t%d+%s*$") ~= nil
+	end, function(body)
+		local version = body and body:match("^%s*(.-)%s*$") or ""
 		if version == "" then
-			sync.busy, sync.done = false, true
+			sync.busy, sync.done, sync.failed = false, true, true
 			log("builds version check failed")
 			return
 		end
@@ -5586,10 +6870,12 @@ local function sz_sync()
 			sync.busy, sync.done = false, true
 			return
 		end
-		local ok2 = pcall(HTTP.Request, "GET", K.SZ_BASE .. "builds.txt", { timeout = K.NET_TIMEOUT }, function(res2)
+		MIRROR.get("build-brain-data", "builds.txt", function(b)
+			return b:match("^BB1\t") ~= nil and select(2, b:gsub("\n", "")) >= 100
+		end, function(body)
 			sync.busy, sync.done = false, true
-			local body = tonumber(res2 and res2.code) == 200 and res2.response or nil
-			if type(body) ~= "string" or not body:match("^BB1\t") or select(2, body:gsub("\n", "")) < 100 then
+			if not body then
+				sync.failed = true
 				log("builds download failed")
 				return
 			end
@@ -5600,14 +6886,12 @@ local function sz_sync()
 			end
 			out:write(body)
 			out:close()
-			Config.WriteString(K.CONFIG, "sz_version", version)
+			Config.WriteString(K.CONFIG, "sz_version", body:match("^BB1\t([^\t\n]+\t%d+)") or version)
 			state.sz, state.sz_text, state.sz_next, state.sz_pos, state.sz_vs, state.sz_vidx, state.sz_wr = {}, nil, 0, nil, {}, nil, nil
 			state.next_model = 0
 			log("builds updated " .. version)
 		end, "bb_builds")
-		if not ok2 then sync.busy, sync.done = false, true end
 	end, "bb_builds_version")
-	if not ok then sync.busy, sync.done = false, true end
 end
 
 local function report(tag, err)
@@ -5642,6 +6926,9 @@ local function frame()
 		local okd, errd = pcall(read_draft)
 		if not okd then report("draft", errd) end
 	end
+	local okm, gm = pcall(GameRules.GetGameMode)
+	gm = okm and gm or 0
+	state.turbo = gm == Enum.GameMode.DOTA_GAMEMODE_TURBO or (gm == 0 and setting("mode") == 1)
 	local in_shop = Engine.IsInGame() and Engine.IsShopOpen() and setting("shop") == 1
 	if win.visible or state.draft.phase or in_shop then
 		if state.clock >= state.next_data then
@@ -5655,6 +6942,8 @@ local function frame()
 			if not okv then report("model", errv) end
 		end
 	end
+	local okt, errt = pcall(W.theme_tick)
+	if not okt then report("theme", errt) end
 	draw_window()
 	pcall(draw_pick)
 	if Engine.IsInGame() then
@@ -5783,6 +7072,7 @@ function script.OnGameEnd()
 	if state.shop.hidden then pcall(shop.guide_hidden, state.shop.panels, false) end
 	state.shop = { buttons = {}, rect = nil, panels = nil, next_find = 0, next_geom = 0, geom = nil, hidden = nil, off = false, tip = nil }
 	state.abilities = {}
+	state.edits = {}
 	state.dmg = new_damage()
 	state.foes = {}
 	state.view = nil

@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.3/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.1.0/build_brain.lua)**
 
 ## Что умеет
 
@@ -17,13 +17,13 @@
 
 **Панель на пиках** появляется сама, когда начинается выбор героев:
 - Шанс на победу и пики обеих команд.
-- Кого взять на твою роль: только мета-герои этой позиции, отсортированные по тому, как они играют против уже выбранных врагов.
+- Кого взять на твою роль: мета-герои этой позиции, отсортированные по винрейту на ней и по тому, как они играют против уже выбранных врагов. Если отметил своих героев, советуются только они.
 - Топ-3 подсвечиваются прямо в сетке героев Доты.
 - Панель можно перетащить за шапку, место запоминается. Кнопка справа открывает полное окно.
 
 **Окно** (по клавише):
 - Драфт: кого пикнуть на твою роль и почему, кого опасаться у врагов и что против них брать, шанс на победу и таблица «кто кого».
-- Сборка: следующий предмет с полоской золота, вся сборка по этапам, против каждой угрозы несколько вариантов предметов и кто тебя убивает в этой игре.
+- Сборка: следующий предмет сверху, вся сборка одной лентой по этапам с минутами по твоему доходу, против каждой угрозы несколько вариантов предметов и кто тебя убивает в этой игре. Любой предмет можно пропустить или заменить, наведя на него.
 - Бой: какой урон ты получаешь, от кого, у кого из врагов ульта или BKB на кулдауне и кого можно бить прямо сейчас.
 
 Если тебя в основном бьют магией или ты часто стоишь в контроле, скрипт это заметит и подскажет защиту.
@@ -32,7 +32,7 @@
 
 - Сборки считаются по матчам Божества и Титана на текущем патче, данные STRATZ.
 - Робот на GitHub пересобирает их два раза в неделю, а после нового патча, как только наберутся игры.
-- Скрипт сам скачивает свежий файл раз в сутки, около 0.7 МБ. Если интернета нет, работает с последним скачанным.
+- Скрипт сам скачивает свежий файл раз в сутки, около 0.7 МБ. Если интернета нет, работает с последним скачанным. Если GitHub недоступен, файл качается через зеркало jsDelivr.
 - Матчапы в драфте и роли героев считаются по пабам высокого рейтинга (STRATZ), общий винрейт героя на твоём ранге берётся из OpenDota.
 - Скрипт ничего не отправляет о тебе и твоём аккаунте.
 
@@ -44,11 +44,11 @@
 4. В `Scripts → Scripts → Build Brain` назначь клавишу окна.
 5. Открой магазин в игре.
 
-При первом запуске скрипт скачает файл со сборками, это занимает пару секунд.
+При первом запуске откроется короткая настройка (роль, свои герои, режим игры), а скрипт скачает файл со сборками, это занимает пару секунд.
 
 ## Настройки
 
-В меню Umbrella: «Включить» и клавиша окна. Остальное в самом окне на вкладке «Настройки»: роль, ранг для статистики, панель на стадии пиков, панель в магазине и размер окна.
+В меню Umbrella: «Включить» и клавиша окна. Остальное в самом окне на вкладке «Настройки»: роль, ранг для статистики, режим игры, свои герои, тема оформления, панель на стадии пиков, панель в магазине и размер окна.
 
 ## Обновления
 
@@ -65,7 +65,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.0.3/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.1.0/build_brain.lua)**
 
 ### Features
 
@@ -73,7 +73,10 @@ Umbrella script for Dota 2. Shows a build for your hero and role in the shop, ba
 - Click puts an item into quick buy, drag it onto quick buy, right click buys what you can afford.
 - A draft panel that opens by itself on hero pick: win chance, both teams' picks and who to pick for your role (meta heroes of that position only, ranked by matchups against the enemy picks). The top 3 are highlighted in the Dota hero grid, and the panel can be dragged.
 - A window (on a key) with Draft, Build and Fight tabs: who to pick, who to watch out for, what kills you, enemy ult and BKB cooldowns and when you can fight.
-- Builds come from Divine and Immortal matches on the current patch, matchups from Legend to Immortal pubs over two weeks (STRATZ data). A GitHub bot rebuilds them twice a week and after a new patch, the script downloads the file once a day.
+- Skip or replace any item of the build from its hover card, and remember the choice for the hero. Item minutes follow your real income, Turbo gets its own minutes.
+- Your own hero pool: mark the heroes you play and the draft suggests only them.
+- A short first-run setup (role, heroes, game mode) and themes: Classic, By hero, Radiant and Dire, By rank.
+- Builds come from Divine and Immortal matches on the current patch, matchups from Legend to Immortal pubs over two weeks (STRATZ data). A GitHub bot rebuilds them twice a week and after a new patch, the script downloads the file once a day, through the jsDelivr mirror when GitHub is not reachable.
 
 ### Install
 
