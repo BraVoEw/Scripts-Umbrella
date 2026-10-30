@@ -7,7 +7,7 @@
 <meta name="description" content="Скрипты для Umbrella (Dota 2): Build Brain и History Changer. Бесплатно, с открытым кодом.">
 <meta property="og:title" content="BraVoEw · Скрипты для Umbrella">
 <meta property="og:description" content="Build Brain: кого пикнуть и что собрать прямо в игре. History Changer: настоящий MMR в истории матчей.">
-<meta property="og:image" content="https://bravoew.github.io/Scripts-Umbrella/assets/build-brain-poster.webp">
+<meta property="og:image" content="https://bravoew.github.io/Scripts-Umbrella/assets/build-brain-poster-1080.webp">
 <meta name="theme-color" content="#090b10">
 <link rel="icon" href="logo/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="logo/favicon.ico" sizes="48x48">
@@ -23,7 +23,7 @@
   document.documentElement.setAttribute("data-theme", t);
 })();
 </script>
-<link rel="stylesheet" href="core.css?v=6">
+<link rel="stylesheet" href="core.css?v=7">
 <style>
 /* Night blue + soft gold: video hero, card grid, details in a side sheet. */
 :root {
@@ -92,7 +92,7 @@ header.top.over .seg button.on { color: var(--on-accent); }
 
 /* hero */
 .hero { position: relative; margin: calc(8px - var(--hdr) - var(--hpad)) 8px 0; border-radius: 30px; border: 1px solid rgba(255, 255, 255, .06); min-height: min(84vh, 740px); display: flex; align-items: flex-end; overflow: hidden; background: #07080c; color: #f5f2ea; isolation: isolate; }
-.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); filter: blur(4px) saturate(1.15) brightness(.55); z-index: -2; }
+.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.5); transform-origin: 100% 50%; filter: blur(4px) saturate(1.15) brightness(.55); z-index: -2; }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: -1;
   background:
     radial-gradient(70% 60% at 12% 85%, rgba(232, 195, 122, .22), transparent 60%),
@@ -124,34 +124,39 @@ section { padding: 70px 0 10px; }
 .sec-title h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); }
 .sec-title span { color: var(--dim); font-size: 15px; }
 .sec-title .count { font: 600 15px var(--font-display); color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 10px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 22px; }
-.card { position: relative; display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden; background: var(--card); border: 1px solid var(--edge);
-  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .35s, box-shadow .35s; animation: card-in .5s cubic-bezier(.2, .8, .2, 1) backwards; }
-.card:nth-child(2) { animation-delay: .06s; } .card:nth-child(3) { animation-delay: .12s; } .card:nth-child(4) { animation-delay: .18s; }
+.grid { display: flex; flex-direction: column; gap: 22px; }
+.row { position: relative; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); border-radius: 26px; overflow: hidden; background: var(--card); border: 1px solid var(--edge);
+  transition: border-color .35s, box-shadow .35s; animation: card-in .5s cubic-bezier(.2, .8, .2, 1) backwards; }
+.row:nth-child(2) { animation-delay: .08s; } .row:nth-child(3) { animation-delay: .16s; }
 @keyframes card-in { from { opacity: 0; transform: translateY(14px); } }
-.card:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--accent) 45%, var(--edge)); box-shadow: var(--shadow); }
-.card-media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #0b0c10; }
-.card-media > img, .card-media > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2, .8, .2, 1), opacity .4s; }
-.card-media > .mock { position: absolute; inset: 0; padding-top: 54px; transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
-.card:hover .card-media > img, .card:hover .card-media > .mock { transform: scale(1.04); }
-.card-media > video.hover-vid { opacity: 0; }
-.card-media > video.hover-vid.on { opacity: 1; }
-.card-media::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(transparent, color-mix(in srgb, var(--card) 70%, transparent)); pointer-events: none; }
-.badges { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 6px; z-index: 2; }
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #f5f2ea; background: rgba(10, 11, 15, .62); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(8px); }
-.badge.ver { color: #e8c37a; }
-.badge svg { width: 13px; height: 13px; }
-.card-body { display: flex; flex-direction: column; gap: 8px; padding: 18px 22px 20px; flex: 1; }
-.card h3 { margin: 0; font-size: 21px; display: flex; align-items: center; gap: 10px; }
-.card h3::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--c); flex: none; }
-.card p { margin: 0; color: var(--muted); font-size: 15.5px; }
-.card-foot { margin-top: auto; padding-top: 12px; display: flex; align-items: center; gap: 14px; color: var(--dim); font-size: 14px; }
-.card-foot .dl { display: inline-flex; align-items: center; gap: 6px; }
-.card-foot .dl svg { width: 15px; height: 15px; }
-.card-foot .dl b { color: var(--text); font-variant-numeric: tabular-nums; }
-.go { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--edge); color: var(--muted); transition: background .25s, color .25s, border-color .25s, transform .25s; }
-.go svg { width: 16px; height: 16px; }
-.card:hover .go { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: translateX(2px); }
+.row:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--edge)); box-shadow: var(--shadow); }
+.row::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--c); z-index: 2; }
+.row-media { position: relative; display: block; aspect-ratio: 16 / 9; background: #07080c; overflow: hidden; }
+.row-media > video, .row-media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+.row-media > .mock { position: absolute; inset: 0; transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+.row:hover .row-media > video, .row:hover .row-media > .mock { transform: scale(1.03); }
+.row-info { display: flex; flex-direction: column; gap: 12px; padding: 28px 30px 26px; min-width: 0; }
+.row-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; }
+.row-head h3 { margin: 0; font-size: 26px; }
+.ver { font-size: 12.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; }
+.auto { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; color: var(--muted); background: var(--card-2); border-radius: 999px; padding: 3px 10px; }
+.auto svg { width: 13px; height: 13px; }
+.row-info > p { margin: 0; color: var(--muted); font-size: 16px; }
+.top3 { list-style: none; margin: 2px 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.top3 li { display: flex; gap: 11px; align-items: flex-start; font-size: 15px; }
+.top3 li::before { content: ""; flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 7px;
+  background: color-mix(in srgb, var(--c) 26%, transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center / 12px no-repeat; }
+.row-foot { margin-top: auto; padding-top: 8px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.row-foot .btn { padding: 11px 20px; }
+.row-dl { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; color: var(--dim); font-size: 14px; }
+.row-dl svg { width: 15px; height: 15px; }
+.row-dl b { color: var(--text); font-variant-numeric: tabular-nums; }
+@media (max-width: 860px) {
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .row::before { inset: 0 0 auto 0; width: auto; height: 3px; }
+  .row-info { padding: 22px 22px 22px; }
+  .row-head h3 { font-size: 22px; }
+}
 
 /* install */
 .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
@@ -347,7 +352,6 @@ footer a:hover { color: var(--text); }
   <section class="hero">
     <video class="hero-bg" id="hero-bg" muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
     <div class="wrap hero-in">
-      <span class="kicker"><i></i>Dota 2 · Umbrella</span>
       <h1 data-i18n-html="hero_title"></h1>
       <p class="lead" data-i18n="hero_lead"></p>
       <div class="hero-cta">
@@ -456,12 +460,12 @@ footer a:hover { color: var(--text); }
   </aside>
 </div>
 
-<script src="core.js?v=6"></script>
+<script src="core.js?v=7"></script>
 <script>
 (function () {
   var grid = document.getElementById("grid"), sheet = document.getElementById("sheet"), body = document.getElementById("sheet-body");
   var header = document.querySelector("header.top"), xBtn = sheet.querySelector(".sheet-x");
-  var openKey = null, canHover = window.matchMedia("(hover: hover)").matches;
+  var openKey = null;
   var esc = Site.esc;
 
   var heroSrc = Site.catalog.filter(function (e) { return e.video; })[0];
@@ -469,34 +473,34 @@ footer a:hover { color: var(--text); }
     var hv = document.getElementById("hero-bg");
     hv.poster = Site.asset(heroSrc.poster);
     hv.src = Site.asset(heroSrc.video);
-    // skip the title card at the start of the video, also on every loop
-    hv.addEventListener("timeupdate", function () { if (hv.currentTime < 4) hv.currentTime = 4; });
   }
   xBtn.innerHTML = Site.icon("close");
 
+  // A wide showcase row per script, media always on the left: the video plays right away, three key features, download and details.
   function card(e) {
-    return '<a class="card k-' + e.key + '" href="#' + e.key + '" data-card="' + e.key + '">' +
-      '<div class="card-media">' + Site.cover(e) +
-      '<div class="badges"><span class="badge ver" data-ver="' + e.key + '"></span>' + (e.auto ? '<span class="badge">' + Site.icon("refresh") + Site.t("tag_auto") + "</span>" : "") + "</div></div>" +
-      '<div class="card-body"><h3>' + esc(e.name) + "</h3><p>" + Site.L(e).tagline + "</p>" +
-      '<div class="card-foot"><span class="dl">' + Site.icon("download") + '<b data-dl="' + e.key + '"></b></span><span>' + Site.tagNames(e).join(" · ") + '</span><span class="go">' + Site.icon("arrow") + "</span></div></div></a>";
+    var L = Site.L(e);
+    var media = e.video
+      ? '<video src="' + Site.asset(e.video) + '" poster="' + Site.asset(e.poster) + '" muted loop playsinline preload="metadata"></video>'
+      : Site.cover(e);
+    return '<article class="row k-' + e.key + '"><a class="row-media" href="#' + e.key + '" aria-label="' + esc(e.name) + '">' + media + "</a>" +
+      '<div class="row-info"><div class="row-head"><h3>' + esc(e.name) + '</h3><span class="ver" data-ver="' + e.key + '"></span>' +
+      (e.auto ? '<span class="auto">' + Site.icon("refresh") + Site.t("tag_auto") + "</span>" : "") + "</div>" +
+      "<p>" + L.tagline + '</p><ul class="top3">' + (L.top || []).map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul>" +
+      '<div class="row-foot"><a class="btn gold" data-href="' + e.key + '" href="' + Site.info[e.key].href + '">' + Site.icon("download") + "<span>" + Site.t("download") + "</span></a>" +
+      '<a class="btn ghost" href="#' + e.key + '">' + Site.t("more") + "</a>" +
+      '<span class="row-dl">' + Site.icon("download") + '<b data-dl="' + e.key + '"></b></span></div></div></article>';
   }
-  function hoverVideo(a) {
-    var e = Site.byKey(a.getAttribute("data-card")), v = null;
-    if (!e.video || !canHover) return;
-    var media = a.querySelector(".card-media");
-    a.addEventListener("pointerenter", function () {
-      if (!v) {
-        v = document.createElement("video");
-        v.className = "hover-vid";
-        v.muted = true; v.loop = true; v.playsInline = true;
-        v.src = Site.asset(e.video) + "#t=3";
-        media.insertBefore(v, media.querySelector(".badges"));
-      }
-      var p = v.play();
-      if (p && p.then) p.then(function () { v.classList.add("on"); }).catch(function () {});
+  // play row videos only while they are on screen
+  var seenVideos = "IntersectionObserver" in window ? new IntersectionObserver(function (list) {
+    list.forEach(function (it) {
+      var v = it.target;
+      if (it.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause();
     });
-    a.addEventListener("pointerleave", function () { if (v) { v.classList.remove("on"); v.pause(); } });
+  }, { threshold: 0.25 }) : null;
+  function watchVideos() {
+    Array.prototype.forEach.call(grid.querySelectorAll("video"), function (v) {
+      if (seenVideos) seenVideos.observe(v); else v.autoplay = true;
+    });
   }
   function sheetHtml(e) {
     var L = Site.L(e);
@@ -706,7 +710,7 @@ footer a:hover { color: var(--text); }
   Site.mount({
     render: function () {
       grid.innerHTML = Site.catalog.map(card).join("");
-      Array.prototype.forEach.call(grid.querySelectorAll(".card"), hoverVideo);
+      watchVideos();
       if (openKey) { body.innerHTML = sheetHtml(Site.byKey(openKey)); }
       if (fbOpen) { fbBody.innerHTML = fbHtml(); fbBind(); }
       var cfg = Site.cfg;

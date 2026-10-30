@@ -15,10 +15,11 @@
       key: "build-brain", name: "Build Brain", file: "build_brain.lua", folder: "build_brain",
       ver: "1.1.0", date: "2026-10-30T12:00:00Z", first: "2026-10-22T13:32:08Z",
       color: ["#3987e5", "#2a78d6"], tags: ["draft", "shop"], auto: true,
-      video: "build-brain.mp4", poster: "build-brain-poster.webp",
+      video: "build-brain-1080.mp4", poster: "build-brain-poster-1080.webp",
       shots: ["bb-pick.webp", "bb-draft.webp", "bb-build.webp", "bb-shop.webp"],
       ru: {
         tagline: "Кого пикнуть и что собрать против этих врагов",
+        top: ["Пики по мете твоей позиции и матчапам", "Сборка с минутами прямо в магазине", "Контрпредметы против каждого врага"],
         desc: "Кого пикнуть на твою роль и что собрать против именно этих врагов. Сборки по свежим пабам Божества и Титана прямо в магазине.",
         shots: ["Панель на пиках", "Вкладка Драфт", "Вкладка Сборка", "Панель в магазине"],
         groups: [
@@ -30,6 +31,7 @@
       },
       en: {
         tagline: "Who to pick and what to buy against these enemies",
+        top: ["Picks by your position's meta and matchups", "Build with timings right in the shop", "Counter items for every enemy"],
         desc: "Who to pick for your role and what to buy against these exact enemies. Builds from fresh Divine and Immortal pubs right in the shop.",
         shots: ["Hero pick panel", "Draft tab", "Build tab", "Shop panel"],
         groups: [
@@ -46,6 +48,7 @@
       color: ["#d95926", "#eb6834"], tags: ["profile"], mock: "history",
       ru: {
         tagline: "Настоящий MMR в истории матчей",
+        top: ["MMR и изменение в каждой строке истории", "Плашка с итогом за сутки, неделю или месяц", "Видно только тебе"],
         desc: "Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.",
         groups: [
           ["История", ["MMR и изменение в каждой строке", "Три формата: 1569 (+25), Победа 1569 (+25), +25", "Калибровка с итоговым MMR", "Свои цвета и текст вместо героя"]],
@@ -54,6 +57,7 @@
       },
       en: {
         tagline: "Your real MMR in the match history",
+        top: ["MMR and change in every history row", "A pill with totals for a day, week or month", "Only you can see it"],
         desc: "Your real MMR after every match right in the match history instead of a bare Win or Loss. Plus a pill with totals for a day, week or month.",
         groups: [
           ["History", ["MMR and change in every row", "Three formats: 1569 (+25), Win 1569 (+25), +25", "Calibration games with the final MMR", "Your own colors and text instead of the hero"]],
