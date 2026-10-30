@@ -46,9 +46,11 @@
     {
       key: "history-changer", name: "History Changer", file: "history_changer.lua", folder: "history_changer",
       ver: "1.0.3", date: "2026-10-30T03:10:00Z", first: "2026-10-20T22:11:51Z",
-      color: ["#d95926", "#eb6834"], tags: ["profile"], mock: "history",
+      color: ["#d95926", "#eb6834"], tags: ["profile"],
+      image: "hc-history.webp", poster: "hc-history.webp", focus: "50% 0%", shots: ["hc-history.webp"],
       ru: {
         tagline: "Настоящий MMR в истории матчей",
+        shots: ["История матчей с MMR в каждой строке"],
         top: ["MMR и изменение в каждой строке истории", "Плашка с итогом за сутки, неделю или месяц", "Неон и RGB с переливом цветов"],
         desc: "Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.",
         groups: [
@@ -59,6 +61,7 @@
       },
       en: {
         tagline: "Your real MMR in the match history",
+        shots: ["Match history with MMR in every row"],
         top: ["MMR and change in every history row", "A pill with totals for a day, week or month", "Neon and RGB with a color flow"],
         desc: "Your real MMR after every match right in the match history instead of a bare Win or Loss. Plus a pill with totals for a day, week or month.",
         groups: [
@@ -265,11 +268,13 @@
       return "<video src=\"" + Site.asset(e.video) + "\" poster=\"" + Site.asset(e.poster) + "\" muted loop playsinline preload=\"metadata\"" +
         (o.autoplay ? " autoplay" : "") + (o.controls ? " controls" : "") + "></video>";
     }
+    if (e.image) return "<img src=\"" + Site.asset(e.image) + "\" alt=\"\" loading=\"lazy\"" + focusStyle(e) + ">";
     return e.mock === "history" ? mockHistory(o.compact) : "";
   };
   // Still preview for cards: poster image, or the compact mock.
+  function focusStyle(e) { return e.focus ? " style=\"object-position:" + e.focus + "\"" : ""; }
   Site.cover = function (e) {
-    if (e.poster) return "<img src=\"" + Site.asset(e.poster) + "\" alt=\"\" loading=\"lazy\">";
+    if (e.poster) return "<img src=\"" + Site.asset(e.poster) + "\" alt=\"\" loading=\"lazy\"" + focusStyle(e) + ">";
     return e.mock === "history" ? mockHistory(true) : "";
   };
   Site.thumbs = function (e) {
