@@ -338,6 +338,22 @@ local localization = qLocalization.new({
 		hc_chip_week = "7 days",
 		hc_chip_month = "30 days",
 		hc_chip_record = "%d W · %d L",
+		hc_fx = "Effect",
+		hc_fx_tip = "Neon makes MMR and the pill glow,\nRGB cycles through every color",
+		hc_gear_fx = "Effect settings",
+		hc_fx_glow = "Glow strength",
+		hc_fx_glow_tip = "How bright MMR and the pill glow",
+		hc_fx_speed = "Color flow speed",
+		hc_fx_speed_tip = "How fast RGB colors flow",
+		hc_fx_palette = "Flow colors",
+		hc_palette_rainbow = "Rainbow",
+		hc_palette_custom = "Custom colors",
+		hc_fx_color1 = "Color 1",
+		hc_fx_color2 = "Color 2",
+		hc_fx_color3 = "Color 3",
+		hc_fx_none = "None",
+		hc_fx_neon = "Neon",
+		hc_fx_rgb = "RGB",
 		hc_mmr = "MMR in result",
 		hc_mmr_tip = "Shows MMR after the match and the change\ninstead of Win or Loss",
 		hc_gear_mmr = "Result",
@@ -378,6 +394,22 @@ local localization = qLocalization.new({
 		hc_chip_week = "7 дней",
 		hc_chip_month = "30 дней",
 		hc_chip_record = "%d вин · %d луз",
+		hc_fx = "Эффект",
+		hc_fx_tip = "Неон подсвечивает MMR и плашку,\nRGB переливается всеми цветами",
+		hc_gear_fx = "Настройка эффекта",
+		hc_fx_glow = "Сила свечения",
+		hc_fx_glow_tip = "Насколько ярко светятся MMR и плашка",
+		hc_fx_speed = "Скорость перелива",
+		hc_fx_speed_tip = "Как быстро бегут цвета в RGB",
+		hc_fx_palette = "Цвета перелива",
+		hc_palette_rainbow = "Радуга",
+		hc_palette_custom = "Свои цвета",
+		hc_fx_color1 = "Цвет 1",
+		hc_fx_color2 = "Цвет 2",
+		hc_fx_color3 = "Цвет 3",
+		hc_fx_none = "Без эффекта",
+		hc_fx_neon = "Неон",
+		hc_fx_rgb = "RGB",
 		hc_mmr = "MMR в результате",
 		hc_mmr_tip = "Показывает MMR после матча и изменение\nвместо Win или Loss",
 		hc_gear_mmr = "Результат",
@@ -403,6 +435,7 @@ local UI = localization.WrapLibrary(Menu)
 local L = localization.Get
 
 local ui = {}
+local FX = { NONE = 0, NEON = 1, RGB = 2, CUSTOM = 1 }
 
 do
 	local tab = UI.Create("Scripts", "Scripts", "History Changer")
@@ -424,6 +457,21 @@ do
 	ui.day:ToolTip("hc_day_tip")
 	ui.period = g_main:Combo("hc_period", { "hc_periods_day", "hc_periods_week", "hc_periods_month" }, 1)
 	ui.period:Icon("\u{f017}")
+	ui.fx = g_main:Combo("hc_fx", { "hc_fx_none", "hc_fx_neon", "hc_fx_rgb" }, 0)
+	ui.fx:Icon("\u{f0d0}")
+	ui.fx:ToolTip("hc_fx_tip")
+	local g_fx = ui.fx:Gear("hc_gear_fx")
+	ui.fx_glow = g_fx:Slider("hc_fx_glow", 1, 10, 5, "%d")
+	ui.fx_glow:Icon("\u{f0eb}")
+	ui.fx_glow:ToolTip("hc_fx_glow_tip")
+	ui.fx_speed = g_fx:Slider("hc_fx_speed", 1, 10, 3, "%d")
+	ui.fx_speed:Icon("\u{f3fd}")
+	ui.fx_speed:ToolTip("hc_fx_speed_tip")
+	ui.fx_palette = g_fx:Combo("hc_fx_palette", { "hc_palette_rainbow", "hc_palette_custom" }, 0)
+	ui.fx_palette:Icon("\u{f53f}")
+	ui.fx_color1 = g_fx:ColorPicker("hc_fx_color1", Color(255, 60, 200), "\u{f1fc}")
+	ui.fx_color2 = g_fx:ColorPicker("hc_fx_color2", Color(60, 200, 255), "\u{f1fc}")
+	ui.fx_color3 = g_fx:ColorPicker("hc_fx_color3", Color(150, 90, 255), "\u{f1fc}")
 
 	ui.mmr = g_rows:Switch("hc_mmr", true, "\u{f201}")
 	ui.mmr:ToolTip("hc_mmr_tip")
@@ -450,6 +498,16 @@ local function refresh_disabled()
 	ui.dump_key:Disabled(not on)
 	ui.day:Disabled(not on)
 	ui.period:Disabled(not on or not ui.day:Get())
+	ui.fx:Disabled(not on)
+	local fx = ui.fx:Get()
+	local rgb = on and fx == FX.RGB
+	local custom = rgb and ui.fx_palette:Get() == FX.CUSTOM
+	ui.fx_glow:Disabled(not on or fx == FX.NONE)
+	ui.fx_speed:Disabled(not rgb)
+	ui.fx_palette:Disabled(not rgb)
+	ui.fx_color1:Disabled(not custom)
+	ui.fx_color2:Disabled(not custom)
+	ui.fx_color3:Disabled(not custom)
 	ui.mmr:Disabled(not on)
 	ui.format:Disabled(not mmr)
 	ui.win_color:Disabled(not on)
@@ -463,6 +521,8 @@ ui.enable:SetCallback(refresh_disabled, true)
 ui.day:SetCallback(refresh_disabled)
 ui.mmr:SetCallback(refresh_disabled)
 ui.custom:SetCallback(refresh_disabled)
+ui.fx:SetCallback(refresh_disabled)
+ui.fx_palette:SetCallback(refresh_disabled)
 
 local function log(text)
 	if ui.debug:Get() then
@@ -522,6 +582,24 @@ local K = {
 	TEXT = Color(240, 240, 242),
 	GRAY = Color(150, 154, 160),
 	SEPARATOR = Color(255, 255, 255, 46),
+	FX_INTERVAL = 0.08,
+	RGB_SPEED_UNIT = 0.08,
+	RGB_STEP = 0.07,
+	RGB_ROW = 0.06,
+	RGB_HERO_SHIFT = 4,
+	RGB_SAT = 0.75,
+	GLOW_BLUR_BASE = 1,
+	GLOW_BLUR_UNIT = 0.5,
+	GLOW_STRENGTH_UNIT = 0.12,
+	GLOW_TEXT_ALPHA_BASE = 60,
+	GLOW_TEXT_ALPHA_UNIT = 15,
+	TEXT_LIGHTEN = 0.4,
+	GLOW_LAYERS = 6,
+	GLOW_STEP_BASE = 0.5,
+	GLOW_STEP_UNIT = 0.16,
+	GLOW_ALPHA_UNIT = 24,
+	BORDER = 1.5,
+	NO_GLOW = "text-shadow: 0px 0px 0px 0.0 #00000000;",
 }
 
 local fonts = {
@@ -555,6 +633,8 @@ local state = {
 	frame_error = nil,
 	rows_text = nil,
 	search_text = nil,
+	fx_rows = {},
+	next_fx = 0,
 }
 
 local function decode(name, buffer, size)
@@ -813,6 +893,10 @@ local function restore_label(label)
 	end
 	label:SetAttribute("hc_set", "")
 	label:SetAttribute("hc_seen", "")
+	if (label:GetAttribute("hc_glow", "") or "") ~= "" then
+		label:SetStyle(K.NO_GLOW)
+		label:SetAttribute("hc_glow", "")
+	end
 end
 
 local function change_color(match)
@@ -841,30 +925,123 @@ end
 
 local function result_text(match, label)
 	if match.calib then
-		return colored(change_color(match), calib_text(match, label))
+		return calib_text(match, label)
 	end
 	local after = tostring(match.prev + match.change)
 	local delta = string.format("%+d", match.change)
 	local format = ui.format:Get()
-	local text
 	if format == 2 then
-		text = delta
+		return delta
 	elseif format == 1 then
-		text = result_word(match, label) .. " " .. after .. " (" .. delta .. ")"
-	else
-		text = after .. " (" .. delta .. ")"
+		return result_word(match, label) .. " " .. after .. " (" .. delta .. ")"
 	end
-	return colored(change_color(match), text)
+	return after .. " (" .. delta .. ")"
 end
 
-local function apply_row(info, enabled)
+local function hue_color(h, alpha)
+	h = (h % 1) * 6
+	local i = math.floor(h)
+	local f = h - i
+	local rgb
+	if i == 0 then rgb = { 1, f, 0 }
+	elseif i == 1 then rgb = { 1 - f, 1, 0 }
+	elseif i == 2 then rgb = { 0, 1, f }
+	elseif i == 3 then rgb = { 0, 1 - f, 1 }
+	elseif i == 4 then rgb = { f, 0, 1 }
+	else rgb = { 1, 0, 1 - f } end
+	local base = 255 * (1 - K.RGB_SAT)
+	return Color(math.floor(base + rgb[1] * 255 * K.RGB_SAT), math.floor(base + rgb[2] * 255 * K.RGB_SAT),
+		math.floor(base + rgb[3] * 255 * K.RGB_SAT), alpha or 255)
+end
+
+local function with_alpha(color, alpha)
+	return Color(math.floor(color.r), math.floor(color.g), math.floor(color.b), math.floor(alpha))
+end
+
+local function palette_color(h, alpha)
+	if ui.fx_palette:Get() ~= FX.CUSTOM then return hue_color(h, alpha) end
+	local colors = { ui.fx_color1:Get(), ui.fx_color2:Get(), ui.fx_color3:Get() }
+	local pos = (h % 1) * #colors
+	local i = math.floor(pos)
+	local f = pos - i
+	local a, b = colors[i + 1], colors[(i + 1) % #colors + 1]
+	return Color(math.floor(a.r + (b.r - a.r) * f), math.floor(a.g + (b.g - a.g) * f),
+		math.floor(a.b + (b.b - a.b) * f), alpha or 255)
+end
+
+local function rgb_time()
+	return state.clock * ui.fx_speed:Get() * K.RGB_SPEED_UNIT
+end
+
+local function rgb_phase(row)
+	return rgb_time() + row * K.RGB_ROW
+end
+
+local function lighten(color)
+	local k = K.TEXT_LIGHTEN
+	return Color(math.floor(color.r + (255 - color.r) * k), math.floor(color.g + (255 - color.g) * k),
+		math.floor(color.b + (255 - color.b) * k))
+end
+
+local function rainbow(text, phase)
+	local parts, i = {}, 0
+	for _, code in utf8.codes(text) do
+		local ch = utf8.char(code)
+		parts[#parts + 1] = ch == " " and ch or colored(lighten(palette_color(phase - i * K.RGB_STEP)), escape(ch))
+		i = i + 1
+	end
+	return table.concat(parts)
+end
+
+local function set_glow(label, color)
+	local style = K.NO_GLOW
+	if color then
+		local glow = ui.fx_glow:Get()
+		style = string.format("text-shadow: 0px 0px %dpx %.2f #%02x%02x%02x%02x;",
+			math.floor(K.GLOW_BLUR_BASE + glow * K.GLOW_BLUR_UNIT + 0.5), glow * K.GLOW_STRENGTH_UNIT,
+			math.floor(color.r), math.floor(color.g), math.floor(color.b),
+			math.floor(K.GLOW_TEXT_ALPHA_BASE + glow * K.GLOW_TEXT_ALPHA_UNIT))
+	end
+	local current = label:GetAttribute("hc_glow", "") or ""
+	if style == current or (current == "" and not color) then return end
+	label:SetStyle(style)
+	label:SetAttribute("hc_glow", color and style or "")
+end
+
+local function paint(label, color, text, row)
+	local mode = ui.fx:Get()
+	if mode == FX.RGB then
+		local phase = rgb_phase(row)
+		local ok, painted = pcall(rainbow, text, phase)
+		write_label(label, ok and painted or colored(color, escape(text)))
+		set_glow(label, palette_color(phase))
+		state.fx_rows[#state.fx_rows + 1] = { label = label, text = text, row = row, color = color }
+	elseif mode == FX.NEON then
+		write_label(label, colored(lighten(color), escape(text)))
+		set_glow(label, color)
+	else
+		write_label(label, colored(color, escape(text)))
+		set_glow(label, nil)
+	end
+end
+
+local function animate_rows()
+	for _, entry in ipairs(state.fx_rows) do
+		if entry.label:IsValid() then
+			local ok, painted = pcall(rainbow, entry.text, rgb_phase(entry.row))
+			write_label(entry.label, ok and painted or colored(entry.color, escape(entry.text)))
+		end
+	end
+end
+
+local function apply_row(info, enabled, row)
 	local match = enabled and match_for_row(info)
 	if match then
 		state.row_accounts[match.account] = (state.row_accounts[match.account] or 0) + 1
 	end
 
 	if match and (match.ranked or match.calib) and ui.mmr:Get() then
-		write_label(info.result, result_text(match, info.result))
+		paint(info.result, change_color(match), result_text(match, info.result), row)
 	else
 		restore_label(info.result)
 	end
@@ -872,7 +1049,7 @@ local function apply_row(info, enabled)
 	if info.hero then
 		local text = ui.custom_text:Get() or ""
 		if enabled and ui.custom:Get() and text ~= "" then
-			write_label(info.hero, colored(ui.custom_color:Get(), escape(text)))
+			paint(info.hero, ui.custom_color:Get(), text, row + K.RGB_HERO_SHIFT)
 		else
 			restore_label(info.hero)
 		end
@@ -892,6 +1069,7 @@ end
 
 local function apply_rows(container, enabled)
 	state.row_accounts = {}
+	state.fx_rows = {}
 	local rows, matched, ranked = 0, 0, 0
 	for i = 0, container:GetChildCount() - 1 do
 		local row = container:GetChild(i)
@@ -899,7 +1077,7 @@ local function apply_rows(container, enabled)
 			local info = parse_row(row)
 			if info then
 				rows = rows + 1
-				local match = apply_row(info, enabled)
+				local match = apply_row(info, enabled, rows)
 				if match then
 					matched = matched + 1
 					if match.ranked then ranked = ranked + 1 end
@@ -1145,7 +1323,37 @@ local function draw_chip()
 	local y = math.floor(anchor.y - h - K.CHIP_ABOVE * s + K.CHIP_SHIFT_Y * ui_scale + 0.5)
 	local cy = y + r
 
+	local mode = ui.fx:Get()
+	local corners
+	if mode == FX.RGB then
+		local t = rgb_time()
+		corners = { palette_color(t), palette_color(t + 0.25), palette_color(t + 0.75), palette_color(t + 0.5) }
+	end
+	local glow = mmr_color(stats.mmr)
+	if mode ~= FX.NONE then
+		local power = ui.fx_glow:Get()
+		local step = (K.GLOW_STEP_BASE + power * K.GLOW_STEP_UNIT) * s
+		for i = K.GLOW_LAYERS, 1, -1 do
+			local d = i * step
+			local a = power * K.GLOW_ALPHA_UNIT * (1 - (i - 1) / K.GLOW_LAYERS) ^ 2
+			local p0, p1 = Vec2(x - d, y - d), Vec2(x + w + d, y + h + d)
+			local thick = step + 1
+			if corners then
+				Render.OutlineGradient(p0, p1, with_alpha(corners[1], a), with_alpha(corners[2], a),
+					with_alpha(corners[3], a), with_alpha(corners[4], a), r + d, Enum.DrawFlags.RoundCornersAll, thick)
+			else
+				Render.Rect(p0, p1, with_alpha(glow, a), r + d, Enum.DrawFlags.RoundCornersAll, thick)
+			end
+		end
+	end
+
 	Render.FilledRect(Vec2(x, y), Vec2(x + w, y + h), K.BG, r, Enum.DrawFlags.RoundCornersAll)
+	if corners then
+		Render.OutlineGradient(Vec2(x, y), Vec2(x + w, y + h), corners[1], corners[2], corners[3], corners[4],
+			r, Enum.DrawFlags.RoundCornersAll, K.BORDER * s)
+	elseif mode == FX.NEON then
+		Render.Rect(Vec2(x, y), Vec2(x + w, y + h), glow, r, Enum.DrawFlags.RoundCornersAll, K.BORDER * s)
+	end
 	Render.PushClip(Vec2(x, y), Vec2(x + w, y + h), true)
 	Render.Text(fonts.icon, icon_size, icon, Vec2(x + r - icon_sz.x / 2, cy - icon_sz.y / 2), K.TEXT)
 
@@ -1281,6 +1489,10 @@ local function tick()
 				state.track_error = err
 				log("page tracking: " .. tostring(err))
 			end
+		end
+		if ui.fx:Get() == FX.RGB and not state.left and state.clock >= state.next_fx then
+			state.next_fx = state.clock + K.FX_INTERVAL
+			animate_rows()
 		end
 		if ui.day:Get() and not state.left then
 			draw_chip()

@@ -6,12 +6,13 @@
 
 Все изменения видны только у тебя на экране. В чужом клиенте, на Dotabuff и OpenDota и в самом рейтинге ничего не меняется.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.2/history_changer.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.3/history_changer.lua)**
 
 ## Возможности
 
 - MMR после матча и изменение вместо Win или Loss. Три формата: `1569 (+25)`, `Победа 1569 (+25)` и `+25`.
 - Калибровочные игры подписаны «Калибровка», на последней из них виден итоговый MMR.
+- Эффекты «Неон» и «RGB»: MMR и плашка светятся или переливаются. Сила свечения, скорость и цвета перелива настраиваются.
 - Свои цвета для победы, поражения и матча без изменения MMR.
 - Плашка MMR над карточкой профиля: вины, лузы и сумма MMR за 24 часа, 7 или 30 дней. Матч считается по времени окончания.
 - Свой текст вместо имени героя в каждой строке, со своим цветом.
@@ -34,6 +35,7 @@
 | Включить | Включает скрипт. В шестеренке: отладка в лог и клавиша, которая пишет устройство панели истории в лог |
 | Плашка MMR | Плашка с итогом над карточкой профиля |
 | Период | За сутки, за неделю или за месяц |
+| Эффект | Без эффекта, Неон или RGB. В шестеренке сила свечения, скорость перелива и цвета перелива: радуга или три своих цвета |
 | MMR в результате | MMR и изменение вместо Win или Loss. В шестеренке формат |
 | Цвет победы, поражения, без изменения | Цвета текста результата и суммы MMR на плашке |
 | Свой текст вместо героя | Заменяет имя героя твоим текстом. Цвет справа от переключателя |
@@ -57,12 +59,13 @@ Umbrella script for Dota 2. Shows your real MMR after every match and its change
 
 Everything changes only on your screen. Other clients, Dotabuff, OpenDota and your actual rank stay the same.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.2/history_changer.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/history-changer-v1.0.3/history_changer.lua)**
 
 ### Features
 
 - MMR after the match and the change instead of Win or Loss, in three formats: `1569 (+25)`, `Win 1569 (+25)` and `+25`.
 - Calibration games say "Calibration", and the last one shows your final MMR.
+- Neon and RGB effects: MMR and the pill glow or flow through colors. Glow strength, flow speed and colors are adjustable.
 - Your own colors for wins, losses and matches with no change.
 - MMR pill above the profile card with wins, losses and the MMR total for 24 hours, 7 or 30 days.
 - Your own text instead of the hero name in every row.

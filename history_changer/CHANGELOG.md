@@ -1,5 +1,10 @@
 # История изменений
 
+## 1.0.3 (30.10.2026)
+
+- Эффекты: «Неон» и «RGB». В неоне MMR в истории и твой текст вместо героя светятся цветом победы или поражения, у плашки светящаяся рамка. В RGB цифры переливаются по строкам, а по рамке плашки бежит перелив.
+- В шестеренке у «Эффекта»: сила свечения, скорость перелива и цвета перелива, радуга или три своих цвета.
+
 ## 1.0.2 (23.10.2026)
 
 - Калибровка и перекалибровка: вместо голого Win или Loss в таких играх пишется «Калибровка» цветом победы или поражения. На последней калибровочной игре виден итоговый MMR, например `1494 (калибровка)`. Сервер Dota не отдает рейтинг по каждой калибровочной игре, поэтому цифры есть только у итога.
@@ -24,6 +29,11 @@
 ---
 
 # Changelog
+
+## 1.0.3 (2026-10-30)
+
+- Effects: Neon and RGB. Neon makes the MMR in the history and your custom hero text glow in the win or loss color, and gives the pill a glowing frame. RGB makes the numbers flow through colors row by row and runs a color flow around the pill frame.
+- In the Effect gear: glow strength, color flow speed and flow colors, rainbow or three colors of your own.
 
 ## 1.0.2 (2026-10-23)
 

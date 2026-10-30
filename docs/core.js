@@ -45,24 +45,26 @@
     },
     {
       key: "history-changer", name: "History Changer", file: "history_changer.lua", folder: "history_changer",
-      ver: "1.0.2", date: "2026-10-23T03:00:00Z", first: "2026-10-20T22:11:51Z",
+      ver: "1.0.3", date: "2026-10-30T03:10:00Z", first: "2026-10-20T22:11:51Z",
       color: ["#d95926", "#eb6834"], tags: ["profile"], mock: "history",
       ru: {
         tagline: "Настоящий MMR в истории матчей",
-        top: ["MMR и изменение в каждой строке истории", "Плашка с итогом за сутки, неделю или месяц", "Видно только тебе"],
+        top: ["MMR и изменение в каждой строке истории", "Плашка с итогом за сутки, неделю или месяц", "Неон и RGB с переливом цветов"],
         desc: "Настоящий MMR после каждой игры прямо в истории матчей, вместо голого Win или Loss. Сверху плашка с итогом за сутки, неделю или месяц.",
         groups: [
           ["История", ["MMR и изменение в каждой строке", "Три формата: 1569 (+25), Победа 1569 (+25), +25", "Калибровка с итоговым MMR", "Свои цвета и текст вместо героя"]],
-          ["Плашка", ["Вины, лузы и сумма MMR", "За 24 часа, 7 или 30 дней", "Сама догружает историю до 120 матчей", "Видно только тебе"]]
+          ["Плашка", ["Вины, лузы и сумма MMR", "За 24 часа, 7 или 30 дней", "Сама догружает историю до 120 матчей", "Видно только тебе"]],
+          ["Эффекты", ["Неон: светятся MMR и плашка", "RGB: перелив по строкам и рамке", "Радуга или три своих цвета", "Сила свечения и скорость перелива"]]
         ]
       },
       en: {
         tagline: "Your real MMR in the match history",
-        top: ["MMR and change in every history row", "A pill with totals for a day, week or month", "Only you can see it"],
+        top: ["MMR and change in every history row", "A pill with totals for a day, week or month", "Neon and RGB with a color flow"],
         desc: "Your real MMR after every match right in the match history instead of a bare Win or Loss. Plus a pill with totals for a day, week or month.",
         groups: [
           ["History", ["MMR and change in every row", "Three formats: 1569 (+25), Win 1569 (+25), +25", "Calibration games with the final MMR", "Your own colors and text instead of the hero"]],
-          ["Pill", ["Wins, losses and MMR total", "For 24 hours, 7 or 30 days", "Loads up to 120 matches by itself", "Only you can see it"]]
+          ["Pill", ["Wins, losses and MMR total", "For 24 hours, 7 or 30 days", "Loads up to 120 matches by itself", "Only you can see it"]],
+          ["Effects", ["Neon: MMR and the pill glow", "RGB: color flow across rows and the frame", "Rainbow or three colors of your own", "Glow strength and flow speed"]]
         ]
       }
     }
