@@ -23,7 +23,7 @@
   document.documentElement.setAttribute("data-theme", t);
 })();
 </script>
-<link rel="stylesheet" href="core.css?v=7">
+<link rel="stylesheet" href="core.css?v=8">
 <style>
 /* Night blue + soft gold: video hero, card grid, details in a side sheet. */
 :root {
@@ -92,7 +92,7 @@ header.top.over .seg button.on { color: var(--on-accent); }
 
 /* hero */
 .hero { position: relative; margin: calc(8px - var(--hdr) - var(--hpad)) 8px 0; border-radius: 30px; border: 1px solid rgba(255, 255, 255, .06); min-height: min(84vh, 740px); display: flex; align-items: flex-end; overflow: hidden; background: #07080c; color: #f5f2ea; isolation: isolate; }
-.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.5); transform-origin: 100% 50%; filter: blur(4px) saturate(1.15) brightness(.55); z-index: -2; }
+.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); filter: blur(4px) saturate(1.15) brightness(.55); z-index: -2; }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: -1;
   background:
     radial-gradient(70% 60% at 12% 85%, rgba(232, 195, 122, .22), transparent 60%),
@@ -350,7 +350,7 @@ footer a:hover { color: var(--text); }
 <main>
  <div id="home">
   <section class="hero">
-    <video class="hero-bg" id="hero-bg" muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
+    <video class="hero-bg" id="hero-bg" muted loop playsinline preload="none" aria-hidden="true"></video>
     <div class="wrap hero-in">
       <h1 data-i18n-html="hero_title"></h1>
       <p class="lead" data-i18n="hero_lead"></p>
@@ -460,7 +460,7 @@ footer a:hover { color: var(--text); }
   </aside>
 </div>
 
-<script src="core.js?v=7"></script>
+<script src="core.js?v=8"></script>
 <script>
 (function () {
   var grid = document.getElementById("grid"), sheet = document.getElementById("sheet"), body = document.getElementById("sheet-body");
@@ -468,11 +468,26 @@ footer a:hover { color: var(--text); }
   var openKey = null;
   var esc = Site.esc;
 
-  var heroSrc = Site.catalog.filter(function (e) { return e.video; })[0];
+  // Hero background: a light still first, the small looped video only after the page has loaded,
+  // never with reduced motion or data saver, and paused while the hero is off screen.
+  var heroSrc = Site.catalog.filter(function (e) { return e.bg; })[0];
   if (heroSrc) {
     var hv = document.getElementById("hero-bg");
-    hv.poster = Site.asset(heroSrc.poster);
-    hv.src = Site.asset(heroSrc.video);
+    hv.poster = Site.asset(heroSrc.bgPoster);
+    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches || (navigator.connection && navigator.connection.saveData);
+    var heroOn = true;
+    var playHero = function () { if (hv.src && heroOn) { var p = hv.play(); if (p && p.catch) p.catch(function () {}); } };
+    if (!calm) {
+      var startHero = function () { hv.src = Site.asset(heroSrc.bg); playHero(); };
+      if (document.readyState === "complete") setTimeout(startHero, 300);
+      else window.addEventListener("load", function () { setTimeout(startHero, 300); });
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (list) {
+          heroOn = list[0].isIntersecting;
+          if (heroOn) playHero(); else hv.pause();
+        }).observe(hv.parentNode);
+      }
+    }
   }
   xBtn.innerHTML = Site.icon("close");
 
@@ -480,7 +495,7 @@ footer a:hover { color: var(--text); }
   function card(e) {
     var L = Site.L(e);
     var media = e.video
-      ? '<video src="' + Site.asset(e.video) + '" poster="' + Site.asset(e.poster) + '" muted loop playsinline preload="metadata"></video>'
+      ? '<video src="' + Site.asset(e.preview || e.video) + '" poster="' + Site.asset(e.poster) + '" muted loop playsinline preload="none"></video>'
       : Site.cover(e);
     return '<article class="row k-' + e.key + '"><a class="row-media" href="#' + e.key + '" aria-label="' + esc(e.name) + '">' + media + "</a>" +
       '<div class="row-info"><div class="row-head"><h3>' + esc(e.name) + '</h3><span class="ver" data-ver="' + e.key + '"></span>' +
