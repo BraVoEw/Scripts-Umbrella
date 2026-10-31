@@ -4,13 +4,22 @@
 //   CHAT_ID       secret, your numeric Telegram id (from @userinfobot)
 //   SETUP_KEY     secret, any password you make up (used once to connect the bot buttons)
 //   ALLOW_ORIGIN  text, https://bravoew.github.io
-// KV binding (Worker → Bindings → KV namespace): DB  — keeps bans, the Thanks list and button info.
+//   DA_CLIENT_ID, DA_CLIENT_SECRET  secrets, DonationAlerts API client (then open /da-login?key=SETUP_KEY once)
+//   DONATELLO_TOKEN                 secret, API key from your Donatello profile
+// KV binding (Worker → Bindings → KV namespace): DB  — keeps bans, the Thanks list, button info and tokens.
 // Without DB the form still works, just without buttons and bans.
 
 const LIMIT = 5;                       // messages per IP
 const WINDOW = 60 * 60e3;              // per hour
 const MSG_TTL = 60 * 60 * 24 * 90;     // buttons keep working for 90 days
 const seen = new Map();                // rate limit memory (per instance)
+const FEED_TTL = 120e3;                // donations are re-read at most every 2 minutes
+const FEED_MAX = 10;
+const FEED_SINCE = Date.parse("2026-10-31T00:00:00Z"); // older donations on the accounts are not for the scripts
+let feedCache = null;
+const DN_EVERY = 300e3;                // Donatello answers 429 quickly: ask at most every 5 minutes, across all instances
+let donatelloIssue = "";               // why Donatello failed, shown only in the bot's /dons
+let donatelloWait = 0;                 // Retry-After from the last 429, ms
 
 const HELP = [
   "Команды:",
@@ -19,6 +28,8 @@ const HELP = [
   "/thanks — список «Спасибо» на сайте",
   "/addthanks @nick за что — добавить вручную",
   "/unthanks 2 — убрать из «Спасибо»",
+  "/dons — последние донаты на сайте",
+  "/hidedon 2 — скрыть донат с сайта",
   "/help — эта подсказка",
   "",
   "Под каждым сообщением с сайта:",
@@ -35,6 +46,8 @@ const COMMANDS = [
   { command: "thanks", description: "Список «Спасибо»" },
   { command: "addthanks", description: "Добавить: /addthanks @nick за что" },
   { command: "unthanks", description: "Убрать: /unthanks 2" },
+  { command: "dons", description: "Последние донаты на сайте" },
+  { command: "hidedon", description: "Скрыть донат: /hidedon 2" },
 ];
 
 export default {
@@ -54,6 +67,12 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { headers: cors });
     if (url.pathname === "/tg") return telegram(req, env);
     if (url.pathname === "/setup") return setup(url, env);
+    if (url.pathname === "/da-login") return daLogin(url, env);
+    if (url.pathname === "/da-callback") return daCallback(url, env);
+    if (url.pathname === "/donations" && req.method === "GET") {
+      const feed = await donations(env);
+      return reply({ donations: feed.list.map(({ id, ...x }) => x), sources: feed.sources }, 200, { "Cache-Control": "public, max-age=60" });
+    }
     if (url.pathname === "/thanks" && req.method === "GET") {
       const list = (await getThanks(env)).map((x) => ({ name: x.name, link: x.link, ru: x.ru, en: x.en }));
       return reply({ thanks: list }, 200, { "Cache-Control": "public, max-age=60" });
@@ -201,6 +220,136 @@ async function removeThanks(env, tg) {
   return rest.length !== list.length;
 }
 
+/* ---------- donations: DonationAlerts + Donatello, cleaned up for a public page ---------- */
+
+const LINK = /(https?:\/\/|www\.|t\.me\/|discord\.gg\/)\S*|\b[\w-]+\.(com|ru|net|org|gg|tv|me|io|xyz|ua|su|cc)\b\S*/gi;
+const BAD = /(?<![а-яё])(ху[йеёя]|пизд|еба[нтл]|ёба|бля|сук[аи]|муда|долбо[её]|гандон|пид[оа]р|нахуй|заеб|уеб[аоик])|\b(fuck|shit|bitch|cunt|nigg|faggot)/i;
+
+function cleanName(v) {
+  const t = String(v || "").trim();
+  if (!t || /^(anonymous|аноним)$/i.test(t) || BAD.test(t) || t.search(LINK) >= 0) return "";
+  return t.slice(0, 32);
+}
+function cleanMessage(v) {
+  const t = String(v || "").replace(LINK, "").replace(/\s+/g, " ").trim();
+  return !t || BAD.test(t) ? "" : t.slice(0, 120);
+}
+function when(v) {
+  const t = Date.parse(String(v || "").replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(v || "")) ? "" : "Z"));
+  return isNaN(t) ? 0 : t;
+}
+
+async function daRefresh(env, tok) {
+  const r = await fetch("https://www.donationalerts.com/oauth/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: tok.refresh, client_id: env.DA_CLIENT_ID, client_secret: env.DA_CLIENT_SECRET, scope: "oauth-donation-index" }),
+  });
+  if (!r.ok) return null;
+  const d = await r.json();
+  const next = { access: d.access_token, refresh: d.refresh_token || tok.refresh, exp: Date.now() + (d.expires_in || 0) * 1000 };
+  await env.DB.put("da_token", JSON.stringify(next));
+  return next;
+}
+
+async function fromDonationAlerts(env) {
+  if (!env.DB) return null;
+  let tok = await getJSON(env, "da_token", null);
+  if (!tok) return null;
+  if (tok.exp && tok.exp - Date.now() < 86400e3) tok = (await daRefresh(env, tok)) || tok;
+  const get = () => fetch("https://www.donationalerts.com/api/v1/alerts/donations", { headers: { Authorization: "Bearer " + tok.access } });
+  let r = await get();
+  if (r.status === 401) {
+    tok = await daRefresh(env, tok);
+    if (!tok) return null;
+    r = await get();
+  }
+  if (!r.ok) return null;
+  const d = await r.json();
+  return (d.data || []).map((x) => ({
+    id: "da:" + x.id,
+    name: cleanName(x.username),
+    amount: Number(x.amount) || 0,
+    currency: String(x.currency || ""),
+    message: x.message_type === "audio" ? "" : cleanMessage(x.message),
+    at: when(x.created_at),
+  }));
+}
+
+async function fromDonatello(env) {
+  donatelloIssue = "";
+  donatelloWait = 0;
+  const r = await fetch("https://donatello.to/api/v1/donates?size=" + FEED_MAX, { headers: { "X-Token": String(env.DONATELLO_TOKEN).trim(), "User-Agent": "scripts-umbrella-site", Accept: "application/json" } });
+  if (!r.ok) {
+    donatelloIssue = "Donatello ответил " + r.status;
+    if (r.status === 429) donatelloWait = (Number(r.headers.get("Retry-After")) || 0) * 1000;
+    return null;
+  }
+  const d = await r.json();
+  const list = d.content || d.data || d.donates || [];
+  return list.map((x) => ({
+    id: "dn:" + (x.pubId || x.id || x.createdAt),
+    name: cleanName(x.clientName || x.name || x.username),
+    amount: Number(x.amount) || 0,
+    currency: String(x.currency || "UAH"),
+    message: cleanMessage(x.message),
+    at: when(x.createdAt || x.created_at || x.date),
+  }));
+}
+
+// Keeps the last good answer in KV, so a 429 or a short outage doesn't empty the feed.
+async function donatelloSaved(env) {
+  if (!env.DONATELLO_TOKEN) {
+    donatelloIssue = "воркер не видит DONATELLO_TOKEN";
+    return null;
+  }
+  const saved = env.DB ? await getJSON(env, "dn_cache", null) : null;
+  if (saved && Date.now() < saved.next) {
+    donatelloIssue = saved.issue;
+    return saved.list;
+  }
+  const got = await fromDonatello(env).catch((e) => { donatelloIssue = "ошибка запроса: " + e.name; return null; });
+  const list = got || (saved && saved.list) || null;
+  if (env.DB) await env.DB.put("dn_cache", JSON.stringify({ next: Date.now() + Math.max(DN_EVERY, donatelloWait), list, issue: donatelloIssue }));
+  return list;
+}
+
+async function donations(env, fresh) {
+  if (!fresh && feedCache && Date.now() - feedCache.at < FEED_TTL) return feedCache.value;
+  const [da, dn] = await Promise.all([fromDonationAlerts(env).catch(() => null), donatelloSaved(env).catch(() => null)]);
+  const hidden = env.DB ? await getJSON(env, "hidden_donations", []) : [];
+  const list = [...(da || []), ...(dn || [])].filter((x) => x.at >= FEED_SINCE && !hidden.includes(x.id)).sort((a, b) => b.at - a.at).slice(0, FEED_MAX);
+  const value = { list, sources: { donationalerts: da ? da.length : null, donatello: dn ? dn.length : null } };
+  feedCache = { at: Date.now(), value };
+  return value;
+}
+
+// One-time DonationAlerts sign-in: the worker keeps and refreshes the token itself.
+const html = (text, status = 200) => new Response("<!doctype html><meta charset=utf-8><body style='background:#000;color:#fff;font:18px system-ui;padding:40px'>" + text, { status, headers: { "Content-Type": "text/html; charset=utf-8" } });
+
+async function daLogin(url, env) {
+  if (!env.SETUP_KEY || url.searchParams.get("key") !== env.SETUP_KEY) return html("Неверный ключ", 403);
+  if (!env.DB || !env.DA_CLIENT_ID || !env.DA_CLIENT_SECRET) return html("Нет DB, DA_CLIENT_ID или DA_CLIENT_SECRET", 500);
+  const q = new URLSearchParams({ client_id: env.DA_CLIENT_ID, redirect_uri: url.origin + "/da-callback", response_type: "code", scope: "oauth-donation-index", state: await sha("da:" + env.SETUP_KEY) });
+  return Response.redirect("https://www.donationalerts.com/oauth/authorize?" + q, 302);
+}
+
+async function daCallback(url, env) {
+  if (!env.SETUP_KEY || url.searchParams.get("state") !== (await sha("da:" + env.SETUP_KEY))) return html("Неверный запрос", 403);
+  const code = url.searchParams.get("code");
+  if (!code) return html("DonationAlerts не дал доступ", 400);
+  const r = await fetch("https://www.donationalerts.com/oauth/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "authorization_code", client_id: env.DA_CLIENT_ID, client_secret: env.DA_CLIENT_SECRET, redirect_uri: url.origin + "/da-callback", code }),
+  });
+  if (!r.ok) return html("Не получилось получить доступ (" + r.status + ")", 502);
+  const d = await r.json();
+  await env.DB.put("da_token", JSON.stringify({ access: d.access_token, refresh: d.refresh_token, exp: Date.now() + (d.expires_in || 0) * 1000 }));
+  feedCache = null;
+  return html("DonationAlerts подключён, можно закрыть страницу.");
+}
+
 /* ---------- bot ---------- */
 
 async function keyboard(env, id, meta) {
@@ -301,6 +450,26 @@ async function onMessage(env, m) {
     if (!item) return say("Такого номера нет. Список: /thanks");
     await removeThanks(env, item.tg);
     return say(`Убран из «Спасибо»: ${item.name}`);
+  }
+
+  if (cmd === "/dons") {
+    const { list, sources } = await donations(env, true);
+    const off = Object.keys(sources).filter((k) => sources[k] === null);
+    const notes = [off.length ? "Не подключено: " + off.join(", ") : "", donatelloIssue ? "Donatello: " + donatelloIssue : ""].filter(Boolean);
+    const head = notes.length ? notes.join("\n") + "\n\n" : "";
+    if (!list.length) return say(head + "Донатов пока нет.");
+    return say(head + ["Донаты на сайте:", ...list.map((x, i) => `${i + 1}. ${x.name || "Аноним"} · ${x.amount} ${x.currency}${x.message ? " · " + x.message : ""}`), "", "Скрыть: /hidedon номер"].join("\n"));
+  }
+
+  if (cmd === "/hidedon") {
+    const { list } = await donations(env, true);
+    const item = list[parseInt(arg, 10) - 1];
+    if (!item) return say("Такого номера нет. Список: /dons");
+    const hidden = await getJSON(env, "hidden_donations", []);
+    hidden.push(item.id);
+    await env.DB.put("hidden_donations", JSON.stringify(hidden));
+    feedCache = null;
+    return say(`Скрыт с сайта: ${item.name || "Аноним"} · ${item.amount} ${item.currency}`);
   }
 
   if (text.startsWith("/")) return say("Не знаю такую команду. Все команды: /help");

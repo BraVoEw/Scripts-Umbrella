@@ -16,7 +16,7 @@
       ver: "1.1.0", date: "2026-10-30T12:00:00Z", first: "2026-10-22T13:32:08Z",
       color: ["#3987e5", "#2a78d6"], tags: ["draft", "shop"], auto: true,
       video: "build-brain-1080.mp4", poster: "build-brain-poster-1080.webp",
-      preview: "build-brain-720.mp4", bg: "build-brain-bg.mp4", bgPoster: "build-brain-bg.webp",
+      preview: "build-brain-720.mp4",
       shots: ["bb-pick.webp", "bb-draft.webp", "bb-build.webp", "bb-shop.webp"],
       ru: {
         tagline: "Кого пикнуть и что собрать против этих врагов",
@@ -183,7 +183,7 @@
       ru: "https://www.donationalerts.com/r/brvezka",
       ua: "https://donatello.to/brvezka",
       usdt: "TNPQWb4zHXFqfn4XqkCmHDxJkqDfJK2ehs",
-      feed: ""
+      feed: "https://late-sound-19d9bravoew-feedback.bravoyt11.workers.dev/donations"
     },
     donations: [],
     thanks: []
