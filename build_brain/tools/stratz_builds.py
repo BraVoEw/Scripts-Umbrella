@@ -28,6 +28,10 @@ LANE_COST_MAX = 1500
 MAIN_PLAYERS = 25
 MAIN_PER = 15
 MAIN_MIN_GAMES = 15
+START_SLOTS = 6
+WARDS = {"item_ward_observer", "item_ward_sentry"}
+STACKS = {"item_tango", "item_clarity", "item_flask", "item_enchanted_mango", "item_ward_observer", "item_ward_sentry",
+          "item_blood_grenade", "item_dust"}
 VISION_ITEMS = ("item_dust", "item_ward_sentry", "item_ward_observer")
 VISION_Z = 3.0
 VISION_MIN = 15
@@ -415,14 +419,23 @@ def vision_lines(matches, items):
     return out
 
 
+def start_slots(st):
+    return sum(1 for i, n in enumerate(st) if n not in WARDS and (n not in STACKS or n not in st[:i]))
+
+
 def start_copies(main, agg, items):
     st = list(main)
     cost = {n: (items["by_name"].get(n) or {}).get("cost", 0) for n in set(st) | set(agg)}
     gold = sum(cost[n] for n in st)
     for name, k in collections.Counter(agg).items():
-        while name in st and st.count(name) < k and gold + cost[name] <= START_GOLD:
+        while name in st and st.count(name) < k and gold + cost[name] <= START_GOLD and start_slots(st + [name]) <= START_SLOTS:
             st.insert(st.index(name) + 1, name)
             gold += cost[name]
+    for name in list(agg) + ["item_tango"]:
+        price = cost.get(name, (items["by_name"].get(name) or {}).get("cost", 0))
+        if name not in st and gold + price <= START_GOLD and start_slots(st + [name]) <= START_SLOTS:
+            st.append(name)
+            gold += price
     return st
 
 
