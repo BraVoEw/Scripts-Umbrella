@@ -28,6 +28,11 @@ LANE_COST_MAX = 1500
 MAIN_PLAYERS = 25
 MAIN_PER = 15
 MAIN_MIN_GAMES = 15
+VISION_ITEMS = ("item_dust", "item_ward_sentry", "item_ward_observer")
+VISION_Z = 3.0
+VISION_MIN = 15
+VISION_LIFT = 1.3
+VISION_PRIOR = 10
 PATCH_GRACE = 2 * 86400
 FULL_CRON = "0 3 * * 1,4"
 SIT_MAX = 12
@@ -205,19 +210,23 @@ def median_level(dist):
     return 99
 
 
-def mainer_games(hero_id, version):
+def mainer_games(hero_id, version, matches=None):
     d = gql('{ leaderboard { a: hero(request: {heroIds: [%d], bracketIds: [IMMORTAL], take: %d}) { steamAccountId } } }' % (hero_id, MAIN_PLAYERS))
     ids = [p["steamAccountId"] for p in (d.get("leaderboard") or {}).get("a") or []]
     games = []
     for k in range(0, len(ids), 5):
         chunk = ids[k:k + 5]
-        parts = ['p%d: player(steamAccountId: %d) { matches(request: {heroIds: [%d], take: %d}) { gameVersionId players { steamAccountId heroId position isVictory stats { itemPurchases { time itemId } } } } }'
+        parts = ['p%d: player(steamAccountId: %d) { matches(request: {heroIds: [%d], take: %d}) { id gameVersionId players { steamAccountId heroId position isRadiant isVictory stats { itemPurchases { time itemId } } } } }'
                  % (i, sid, hero_id, MAIN_PER) for i, sid in enumerate(chunk)]
         data = gql("{ " + " ".join(parts) + " }")
         for i, sid in enumerate(chunk):
             for m in (data.get("p%d" % i) or {}).get("matches") or []:
                 if m.get("gameVersionId") != version:
                     continue
+                if matches is not None and m.get("id") and m["id"] not in matches:
+                    matches[m["id"]] = [[p["heroId"], p.get("position") or "", bool(p.get("isRadiant")),
+                                         sorted({e["itemId"] for e in ((p.get("stats") or {}).get("itemPurchases") or [])})]
+                                        for p in m.get("players") or []]
                 for p in m.get("players") or []:
                     if p["steamAccountId"] == sid and p["heroId"] == hero_id:
                         ev = (p.get("stats") or {}).get("itemPurchases") or []
@@ -353,6 +362,70 @@ def build_skills(hero, ab, mins, maxs, n, tiers):
     return seq
 
 
+def vision_lines(matches, items):
+    ids = {items["by_name"][n]["id"]: n for n in VISION_ITEMS if n in items["by_name"] and "id" in items["by_name"][n]}
+    rows = []
+    for players in matches.values():
+        if len(players) != 10:
+            continue
+        for hero, pos, radiant, bought in players:
+            if pos not in POSITIONS:
+                continue
+            group = 1 if POSITIONS.index(pos) < 3 else 2
+            have = {ids[i] for i in bought if i in ids}
+            foes = [h for h, _, r, _ in players if r != radiant]
+            rows.append((hero, pos, group, have, foes))
+    n_key, c_key = collections.Counter(), collections.Counter()
+    for hero, pos, group, have, foes in rows:
+        n_key[(hero, pos)] += 1
+        for it in have:
+            c_key[(hero, pos, it)] += 1
+    obs, exp, base_n, base_c = collections.Counter(), collections.Counter(), collections.Counter(), collections.Counter()
+    for hero, pos, group, have, foes in rows:
+        n = n_key[(hero, pos)]
+        base_n[group] += 1
+        for it in VISION_ITEMS:
+            got = it in have
+            if got:
+                base_c[(group, it)] += 1
+            if n < 2:
+                continue
+            pr = (c_key[(hero, pos, it)] - got) / (n - 1)
+            for o in foes:
+                exp[(it, group, o)] += pr
+                if got:
+                    obs[(it, group, o)] += 1
+    out = []
+    for it in VISION_ITEMS:
+        for group in (1, 2):
+            if not base_n[group]:
+                continue
+            good = []
+            for (i2, g2, o), e in exp.items():
+                if i2 != it or g2 != group:
+                    continue
+                ob = obs[(it, group, o)]
+                lift = (ob + VISION_PRIOR) / (e + VISION_PRIOR)
+                z = (ob - e) / (e + 1) ** 0.5
+                if z >= VISION_Z and ob >= VISION_MIN and lift >= VISION_LIFT:
+                    good.append((o, round(lift * 100)))
+            good.sort(key=lambda x: -x[1])
+            base = round(100 * base_c[(group, it)] / base_n[group])
+            out.append("E\t%s\t%d\t%d\t%s" % (it, group, base, ",".join("%d:%d" % g for g in good)))
+    return out
+
+
+def start_copies(main, agg, items):
+    st = list(main)
+    cost = {n: (items["by_name"].get(n) or {}).get("cost", 0) for n in set(st) | set(agg)}
+    gold = sum(cost[n] for n in st)
+    for name, k in collections.Counter(agg).items():
+        while name in st and st.count(name) < k and gold + cost[name] <= START_GOLD:
+            st.insert(st.index(name) + 1, name)
+            gold += cost[name]
+    return st
+
+
 def summarize(hero, data, weeks, items, ab, mainers=None):
     per = collections.defaultdict(lambda: {"full": collections.defaultdict(lambda: [0, 0]), "start": collections.Counter(),
                                            "boot": collections.defaultdict(lambda: [0, 0]), "tal": collections.Counter(),
@@ -447,7 +520,7 @@ def summarize(hero, data, weeks, items, ab, mainers=None):
         if not r:
             continue
         if m["start"]:
-            r["start"] = m["start"]
+            r["start"] = start_copies(m["start"], r["start"], items)
         if m["early"]:
             lane = {e[0] for e in m["early"]}
             r["early"] = m["early"]
@@ -501,7 +574,7 @@ def main():
     items = {"by_id": {}, "by_name": {}, "parts": item_parts()}
     for it in c["items"]:
         st = it.get("stat") or {}
-        e = {"name": "item_" + it["shortName"], "cost": st.get("cost") or 0, "recipe": bool(st.get("isRecipe"))}
+        e = {"name": "item_" + it["shortName"], "cost": st.get("cost") or 0, "recipe": bool(st.get("isRecipe")), "id": it["id"]}
         items["by_id"][it["id"]] = e
         items["by_name"][e["name"]] = e
     ab = {a["id"]: a for a in c["abilities"]}
@@ -510,6 +583,7 @@ def main():
         want = {int(x) for x in args.heroes.split(",")}
         heroes = [h for h in heroes if h["id"] in want]
     lines, vs_lines, wr_parts = [], [], []
+    vision = {}
     try:
         wins = pos_stats(week_ts)
     except Exception as e:
@@ -536,17 +610,22 @@ def main():
         if mfile and os.path.exists(mfile):
             with open(mfile, encoding="utf-8") as f:
                 cached = json.load(f)
-            if cached.get("version") == patch["id"] and now - cached.get("at", 0) < args.main_age:
+            if cached.get("version") == patch["id"] and now - cached.get("at", 0) < args.main_age and "matches" in cached:
                 games = cached["games"]
+                for k, v in cached["matches"].items():
+                    vision.setdefault(int(k), v)
         if games is None:
+            got = {}
             try:
-                games = mainer_games(h["id"], patch["id"])
+                games = mainer_games(h["id"], patch["id"], got)
             except Exception as e:
                 print("mainers failed", h["shortName"], e, flush=True)
                 games = []
+            for k, v in got.items():
+                vision.setdefault(k, v)
             if mfile:
                 with open(mfile, "w", encoding="utf-8") as f:
-                    json.dump({"version": patch["id"], "at": now, "games": games}, f)
+                    json.dump({"version": patch["id"], "at": now, "games": games, "matches": got}, f)
         roles = with_wins(summarize(h, data, week_ts, items, ab, mainer_builds(games, items)), h["id"], wins)
         if roles:
             lines.append("%d\t%s" % (h["id"], json.dumps(roles, ensure_ascii=False, separators=(",", ":"))))
@@ -562,9 +641,15 @@ def main():
         if vs:
             vs_lines.append("V\t%d\t%s" % (h["id"], vs))
         print("%3d/%d %s %s" % (i + 1, len(heroes), h["shortName"], " ".join("%s:%d/%d" % (k, v["n"], v.get("mg", 0)) for k, v in sorted(roles.items()))), flush=True)
+    try:
+        e_lines = vision_lines(vision, items)
+    except Exception as e:
+        print("vision failed", e, flush=True)
+        e_lines = []
+    print("vision", len(vision), "matches,", sum(1 for x in e_lines if x.split("\t")[4]), "lines with heroes", flush=True)
     head = "BB1\t%s\t%d\t%s" % (patch["name"], now, ",".join(str(w) for w in week_ts))
     with open(args.out, "w", encoding="utf-8", newline="\n") as f:
-        f.write(head + "\n" + "\n".join(lines + vs_lines + (["W\t" + ",".join(wr_parts)] if wr_parts else [])) + "\n")
+        f.write(head + "\n" + "\n".join(lines + vs_lines + (["W\t" + ",".join(wr_parts)] if wr_parts else []) + e_lines) + "\n")
     if args.version_file:
         with open(args.version_file, "w", encoding="utf-8", newline="\n") as f:
             f.write("%s\t%d\n" % (patch["name"], now))
