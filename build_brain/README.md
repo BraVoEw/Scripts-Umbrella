@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.1.0/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.0.0/build_brain.lua)**
 
 ## Что умеет
 
@@ -48,7 +48,7 @@
 
 ## Настройки
 
-В меню Umbrella: «Включить» и клавиша окна. Остальное в самом окне на вкладке «Настройки»: роль, ранг для статистики, режим игры, свои герои, тема оформления, панель на стадии пиков, панель в магазине и размер окна.
+В меню Umbrella: «Включить», клавиша окна и кнопка нашего Telegram канала. Остальное в самом окне на вкладке «Настройки»: роль, ранг для статистики, режим игры, свои герои, стиль окна, панель на стадии пиков, панель в магазине и размер окна.
 
 ## Обновления
 
@@ -65,7 +65,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v1.1.0/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.0.0/build_brain.lua)**
 
 ### Features
 
@@ -75,7 +75,8 @@ Umbrella script for Dota 2. Shows a build for your hero and role in the shop, ba
 - A window (on a key) with Draft, Build and Fight tabs: who to pick, who to watch out for, what kills you, enemy ult and BKB cooldowns and when you can fight.
 - Skip or replace any item of the build from its hover card, and remember the choice for the hero. Item minutes follow your real income, Turbo gets its own minutes.
 - Your own hero pool: mark the heroes you play and the draft suggests only them.
-- A short first-run setup (role, heroes, game mode) and themes: Classic, By hero, Radiant and Dire, By rank.
+- A short first-run setup (role, heroes, game mode) and window styles: Scoreboard, Mono, Gold, Ruby.
+- Live counters: when an enemy buys an item like Butterfly, the counter (for example MKB) moves into your build as the next item.
 - Builds come from Divine and Immortal matches on the current patch, matchups from Legend to Immortal pubs over two weeks (STRATZ data). A GitHub bot rebuilds them twice a week and after a new patch, the script downloads the file once a day, through the jsDelivr mirror when GitHub is not reachable.
 
 ### Install

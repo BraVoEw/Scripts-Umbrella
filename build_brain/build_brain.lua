@@ -633,11 +633,18 @@ local localization = qLocalization.new({
 		bb_mode_0 = "normal games",
 		bb_mode_1 = "Turbo",
 		bb_mode_2 = "both",
-		bb_set_theme = "Theme",
-		bb_theme_0 = "Classic",
-		bb_theme_1 = "By hero",
-		bb_theme_2 = "Radiant and Dire",
-		bb_theme_3 = "By rank",
+		bb_set_style = "Style",
+		bb_style_0 = "Scoreboard",
+		bb_style_1 = "Mono",
+		bb_style_2 = "Gold",
+		bb_style_3 = "Ruby",
+		bb_need = "%s gold to go",
+		bb_enough = "Enough gold",
+		bb_tl_hint = "items stand at the minute they are usually bought",
+		bb_tl_hint_turbo = "minute at your income",
+		bb_status_link = "Opening in your browser",
+		bb_vs_route = "vs %s on %s",
+		bb_menu_tg = "Telegram channel",
 		bb_onb_hello = "Let's set everything up for you",
 		bb_onb_start = "Start",
 		bb_onb_note = "Takes 20 seconds, you can change it any time",
@@ -1120,11 +1127,18 @@ local localization = qLocalization.new({
 		bb_mode_0 = "обычные игры",
 		bb_mode_1 = "Турбо",
 		bb_mode_2 = "оба режима",
-		bb_set_theme = "Тема",
-		bb_theme_0 = "Обычная",
-		bb_theme_1 = "Под героя",
-		bb_theme_2 = "Свет и Тьма",
-		bb_theme_3 = "По рангу",
+		bb_set_style = "Стиль",
+		bb_style_0 = "Табло",
+		bb_style_1 = "Тишина",
+		bb_style_2 = "Золото",
+		bb_style_3 = "Рубин",
+		bb_need = "не хватает %s",
+		bb_enough = "Хватает золота",
+		bb_tl_hint = "предмет стоит на минуте, когда его обычно покупают",
+		bb_tl_hint_turbo = "минута при твоём доходе",
+		bb_status_link = "Открываю в браузере",
+		bb_vs_route = "против %s у %s",
+		bb_menu_tg = "Telegram канал",
 		bb_onb_hello = "Давай настроим всё под тебя",
 		bb_onb_start = "Начать",
 		bb_onb_note = "Займёт 20 секунд, поменять можно в любой момент",
@@ -1337,6 +1351,8 @@ local JSON = require("assets.JSON")
 
 local ui = {}
 
+local LINK = {}
+
 do
 	local tab = UI.Create("Scripts", "Scripts", "Build Brain")
 	tab:Icon("\u{f5dc}")
@@ -1352,6 +1368,9 @@ do
 
 
 	ui.window_key:Properties(L("bb_bind_window"))
+
+	ui.tg = g_main:Button("bb_menu_tg", function() LINK.open("tg") end)
+	ui.tg:Icon("\u{f1d8}")
 end
 
 local function refresh_disabled()
@@ -1380,11 +1399,6 @@ local K = {
 	POS_BITS = { 1, 4, 2, 8, 16 },
 	WIN_W = 940,
 	WIN_H = 660,
-	RAIL_W = 56,
-	CX = 72,
-	COL_L = 410,
-	GAP = 14,
-	TOP = 66,
 	TAB_ICONS = { draft = "\u{f0c0}", build = "\u{f6e3}", fight = "\u{f05b}", settings = "\u{f013}" },
 	LOGO = "\u{f5dc}",
 	CLOSE = "\u{f00d}",
@@ -1439,16 +1453,6 @@ local K = {
 		{ "ALL", "bb_attr_all", Color(176, 128, 236) },
 	},
 	INCOME_BLEND = 180,
-	THEME_TEAM = { [2] = { 98, 196, 104 }, [3] = { 222, 92, 52 } },
-	THEME_GLYPH = { [2] = "\u{f185}", [3] = "\u{f186}" },
-	ATTR_ICONS = {
-		"panorama/images/primary_attribute_icons/primary_attribute_icon_strength_psd.vtex_c",
-		"panorama/images/primary_attribute_icons/primary_attribute_icon_agility_psd.vtex_c",
-		"panorama/images/primary_attribute_icons/primary_attribute_icon_intelligence_psd.vtex_c",
-		"panorama/images/primary_attribute_icons/primary_attribute_icon_all_psd.vtex_c",
-	},
-	THEME_RANK = { { 166, 130, 92 }, { 150, 170, 190 }, { 70, 186, 160 }, { 96, 158, 236 }, { 220, 180, 72 }, { 150, 112, 236 }, { 196, 214, 240 }, { 238, 120, 64 } },
-	THEME_FADE = 0.45,
 	ONB_ROLES = { 1, 2, 3, 4, 5, 0 },
 	ONB_MODE_ICONS = { "\u{f132}", "\u{f0e7}", "\u{f021}" },
 	ONB_CHECK = "\u{f00c}",
@@ -1461,14 +1465,16 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "1.1.0",
+	VERSION = "2.0.0",
+	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
+	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
+	TG_ICON = "\u{f1d8}",
 	BUY_MIN = 3,
 	GRID_OFF = { "Banned", "AlreadyPicked", "Unavailable" },
 	UPD_NAME = "build_brain.lua",
 	UPD_EVERY = 3600,
 	UPD_RETRY = 600,
 	UPD_MIN = 100000,
-	TABS = { "draft", "build", "fight", "settings" },
 	LANE_BITS = { [1] = 1, [2] = 3, [4] = 2, [8] = 4, [16] = 5 },
 	CROP_MIN = Vec2(0.21875, 0),
 	CROP_MAX = Vec2(0.78125, 1),
@@ -1544,6 +1550,8 @@ local K = {
 		{ tag = "phys", items = { "item_ghost", "item_heavens_halberd", "item_shivas_guard", "item_crimson_guard", "item_assault", "item_blade_mail", "item_butterfly", "item_solar_crest", "item_force_staff", "item_ethereal_blade" } },
 		{ tag = "tank", items = { "item_desolator", "item_assault", "item_spirit_vessel", "item_skadi" } },
 	},
+	PASS_COST = 1500,
+	PASS_LATE = 600,
 	ITEM_COUNTERS = {
 		item_abyssal_blade = { "item_sphere", "item_lotus_orb", "item_aeon_disk" },
 		item_aeon_disk = { "item_nullifier", "item_disperser" },
@@ -1670,7 +1678,7 @@ local K = {
 		{ key = "mode", title = "bb_set_mode", count = 3, default = 0, label = "bb_mode_" },
 		{ key = "auto", title = "bb_set_auto", count = 2, default = 1, flag = true },
 		{ key = "shop", title = "bb_set_shop", count = 2, default = 1, flag = true },
-		{ key = "theme", title = "bb_set_theme", count = 4, default = 0, label = "bb_theme_", right = true },
+		{ key = "style", title = "bb_set_style", count = 4, default = 0, label = "bb_style_", right = true },
 		{ key = "scale", title = "bb_set_scale", count = 5, default = 1, values = { 90, 100, 110, 120, 130 } },
 		{ key = "update", title = "bb_set_update", count = 2, default = 1, flag = true, own = true },
 	},
@@ -1678,31 +1686,12 @@ local K = {
 
 local C = {
 	WHITE = Color(255, 255, 255),
-	BG = Color(22, 22, 24),
 	BG_TOP = Color(255, 255, 255, 10),
 	BG_BOTTOM = Color(255, 255, 255, 0),
 	EDGE = Color(255, 255, 255, 20),
 	CARD = Color(29, 29, 32, 255),
-	CARD_EDGE = Color(44, 44, 48, 255),
-	RAIL = Color(17, 17, 19, 252),
-	SLOT = Color(36, 36, 40, 255),
 	ACCENT = Color(229, 72, 77),
-	ONB_LOGO = Color(42, 23, 25),
-	ONB_LOGO_EDGE = Color(92, 42, 45),
-	ONB_PICK = Color(42, 26, 28),
-	ONB_PIC = Color(23, 24, 27),
-	ONB_HL = Color(58, 33, 36),
-	ONB_OK_BG = Color(22, 48, 31),
-	ONB_OK_EDGE = Color(44, 107, 69),
-	ACCENT_HOT = Color(240, 98, 102),
 	BG_CLEAR = Color(22, 22, 24, 0),
-	THEME_GLOW = Color(229, 72, 77, 0),
-	THEME_CLEAR = Color(229, 72, 77, 0),
-	THEME_LINE = Color(229, 72, 77, 0),
-	THEME_CHIP = Color(229, 72, 77, 0),
-	TOGGLE_TRACK = Color(48, 48, 52),
-	TOGGLE_OFF = Color(130, 132, 138),
-	GO_EDGE = Color(52, 211, 153, 70),
 	SHOP_DONE = Color(255, 255, 255, 120),
 	DOT_DARK = Color(20, 22, 28),
 	ROLE_DIM = Color(150, 156, 166),
@@ -1711,14 +1700,6 @@ local C = {
 	LINE_FAINT = Color(255, 255, 255, 10),
 	DRAG_TINT = Color(255, 255, 255, 215),
 	SHADOW_SOFT = Color(0, 0, 0, 80),
-	TOP_EDGE = Color(255, 255, 255, 13),
-	SHINE_0 = Color(255, 255, 255, 0),
-	SHINE_1 = Color(255, 255, 255, 24),
-	GSHINE_0 = Color(255, 236, 190, 0),
-	GSHINE_1 = Color(255, 240, 200, 150),
-	MARK = Color(237, 237, 240, 150),
-	TOGGLE_ON_TRACK = Color(229, 72, 77, 60),
-	ROW = Color(255, 255, 255, 7),
 	HOVER = Color(232, 195, 122, 22),
 	TEXT = Color(237, 237, 240),
 	MUTED = Color(168, 168, 179),
@@ -1731,14 +1712,8 @@ local C = {
 	VS = Color(232, 140, 80),
 	GOLD_DEEP = Color(201, 154, 69),
 	TALENT_BG = Color(44, 37, 24),
-	DONE_TINT = Color(255, 255, 255, 110),
-	DEAD_TINT = Color(255, 255, 255, 90),
-	PILL_WIN = Color(52, 211, 153, 30),
-	PILL_LOSE = Color(251, 113, 133, 30),
-	GO_ROW = Color(52, 211, 153, 16),
 	GOLD_HI = Color(245, 216, 154),
 	GOLD_LO = Color(184, 137, 59),
-	GOLD_GLOW = Color(232, 195, 122, 40),
 	GOLD_CLEAR = Color(232, 195, 122, 0),
 	GOLD_TEXT = Color(42, 28, 5),
 	WIN = Color(52, 211, 153),
@@ -1746,13 +1721,11 @@ local C = {
 	MAGIC = Color(96, 165, 250),
 	PHYS = Color(251, 146, 60),
 	PURE = Color(245, 240, 230),
-	TRACK = Color(255, 255, 255, 18),
 	SEG = Color(255, 255, 255, 13),
 	SEG_ON = Color(255, 255, 255, 26),
 	BADGE = Color(0, 0, 0, 165),
 	EMPTY = Color(232, 195, 122, 16),
 	EMPTY_EDGE = Color(232, 195, 122, 150),
-	ROW_HOT = Color(255, 255, 255, 16),
 	SHADOW = Color(0, 0, 0, 130),
 	SHOP_BG = Color(13, 15, 19, 242),
 	SHOP_TOP = Color(255, 255, 255, 8),
@@ -1761,7 +1734,6 @@ local C = {
 	UNPICKED = Color(0, 0, 0, 110),
 	TIP = Color(32, 32, 36, 252),
 	TOGGLE_ON = Color(201, 154, 69),
-	CLOSE_HOT = Color(251, 113, 133, 60),
 }
 
 local fonts = {
@@ -1771,6 +1743,17 @@ local fonts = {
 	w800 = Render.LoadFont("Inter", Enum.FontCreate.FONTFLAG_ANTIALIAS, Enum.FontWeight.EXTRABOLD),
 	icon = Render.LoadFont("FontAwesomeEx", Enum.FontCreate.FONTFLAG_ANTIALIAS, 400),
 }
+
+do
+	local function bahn(weight, fallback)
+		local ok, f = pcall(Render.LoadFont, "Bahnschrift", Enum.FontCreate.FONTFLAG_ANTIALIAS, weight)
+		if ok and f and f ~= 0 then return f end
+		return fallback
+	end
+	fonts.d500 = bahn(Enum.FontWeight.MEDIUM, fonts.w500)
+	fonts.d600 = bahn(Enum.FontWeight.SEMIBOLD, fonts.w600)
+	fonts.d700 = bahn(Enum.FontWeight.BOLD, fonts.w700)
+end
 
 local state = {
 	images = {},
@@ -2907,13 +2890,13 @@ local function foe_counters(role, hero)
 		end
 		table.insert(e.why[unit], reason)
 	end
-	local function threat(units, text, reason, opts, rank, live)
+	local function threat(units, text, reason, opts, rank, live, foe_item)
 		local avail = {}
 		for _, name in ipairs(opts) do
 			if not is_owned(name, owned) then avail[#avail + 1] = name end
 		end
 		if #avail == 0 then return end
-		rows[#rows + 1] = { units = units, text = text, options = avail, how = how(avail[1]), rank = rank, live = live }
+		rows[#rows + 1] = { units = units, text = text, options = avail, how = how(avail[1]), rank = rank, live = live, foe_item = foe_item, foe_unit = foe_item and units[1] or nil }
 		for _, unit in ipairs(units) do
 			by_unit[unit] = by_unit[unit] or {}
 			local mine = by_unit[unit]
@@ -2955,7 +2938,7 @@ local function foe_counters(role, hero)
 			local counters = K.ITEM_COUNTERS[item]
 			if counters then
 				local reason = L("bb_it_" .. short_name(item))
-				threat({ unit }, hero_title(unit) .. ": " .. reason, reason, options(counters), 1)
+				threat({ unit }, hero_title(unit) .. ": " .. reason, reason, options(counters), 1, nil, item)
 			end
 		end
 	end
@@ -3125,6 +3108,49 @@ function EDIT.act(id, orig, name, kind, alt)
 	state.next_model = 0
 end
 
+local function route_adjust(route, owned, rows)
+	local out = {}
+	for i, step in ipairs(route) do
+		step.done = is_owned(step.name, owned)
+		step.cost = item_cost(step.name)
+		step.passed, step.counter, step.vs_reason = nil, nil, nil
+		out[i] = step
+	end
+	local t = math.max(0, GameRules.GetDOTATime() or 0)
+	local later = false
+	for i = #out, 1, -1 do
+		local step = out[i]
+		if not step.done and not step.skipped and step.cost <= K.PASS_COST and (later or (step.tm and step.tm > 0 and t > step.tm + K.PASS_LATE)) then step.passed = true end
+		if step.done then later = true end
+	end
+	for _, row in ipairs(rows or K.NONE) do
+		local name = row.foe_item and row.options[1]
+		if name and row.foe_unit and not is_owned(name, owned) then
+			local at, pos = nil, nil
+			for i, step in ipairs(out) do
+				if step.name == name then at = i end
+				if not pos and not step.done and not step.skipped and not step.passed then pos = i end
+			end
+			local why = string.format(L("bb_vs_route"), item_title(row.foe_item), hero_title(row.foe_unit))
+			local where = pos and pos + 1 or #out + 1
+			local step
+			if at and at <= where then
+				step = out[at]
+			else
+				if at then
+					step = table.remove(out, at)
+				else
+					step = { name = name, cost = item_cost(name), done = false, reason = why }
+				end
+				table.insert(out, math.min(where, #out + 1), step)
+			end
+			step.counter, step.vs_reason = true, why
+			break
+		end
+	end
+	return out
+end
+
 local function build_view(view)
 	local d = state.draft
 	local hero = Heroes.GetLocal()
@@ -3144,6 +3170,7 @@ local function build_view(view)
 		if step.early then extra = extra + 1 end
 	end
 	while #route > K.ROUTE_MAX + 2 + extra do table.remove(route) end
+	route = route_adjust(route, owned, rows)
 	local gpm = income()
 	local now_min = math.max(0, (GameRules.GetDOTATime() or 0) / 60)
 	local spent, next_step = 0, nil
@@ -3152,12 +3179,10 @@ local function build_view(view)
 	local player = Players.GetLocal()
 	if player then gold = Player.GetTotalGold(player) end
 	for _, step in ipairs(route) do
-		step.done = is_owned(step.name, owned)
-		step.cost = item_cost(step.name)
 		if step.done then
 			spent = spent + step.cost
 			step.minute = nil
-		elseif step.skipped then
+		elseif step.skipped or step.passed then
 			step.minute = nil
 		else
 			local left = step.cost
@@ -3873,7 +3898,38 @@ local function chevron(x, y, t, color)
 	Render.Line(mid, P(x + 5, y - dy), A(color), 1.6 * G.s)
 end
 
-local W = { dead = {}, seen = {}, seen_at = {}, todo_at = {}, todo_n = 0, foe_at = {}, item_at = {}, drop = {}, base_a = 1, base_y = 0, flat = false }
+local N = {
+	BG = Color(0, 0, 0, 255),
+	PANEL = Color(12, 12, 13, 255),
+	SLOT = Color(18, 18, 19, 255),
+	LINE = Color(32, 32, 34, 255),
+	HOT = Color(255, 255, 255, 12),
+	TEXT = Color(242, 242, 242),
+	MUTED = Color(142, 142, 146),
+	DIM = Color(88, 88, 92),
+	TRACK = Color(40, 40, 42),
+	WIN = Color(104, 214, 150),
+	LOSE = Color(240, 100, 110),
+	DONE = Color(255, 255, 255, 92),
+	SHADE = Color(0, 0, 0, 170),
+	ACCENT = Color(255, 90, 44),
+	ACCENT_HOT = Color(255, 122, 84),
+	ACCENT_SOFT = Color(255, 90, 44, 36),
+	INK = Color(0, 0, 0),
+	TG = Color(42, 171, 238),
+	TG_HOT = Color(74, 186, 244),
+	TEXT_ON = Color(255, 255, 255),
+	X = 28,
+	TOP = 80,
+	HEAD = 56,
+	R = 18,
+}
+
+local W = { dead = {}, seen = {}, seen_at = {}, todo_at = {}, todo_n = 0, foe_at = {}, item_at = {}, drop = {}, base_a = 1, base_y = 0, base_x = 0, dir = 0, flat = false, nums = {}, nums_n = 0 }
+
+W.TABS = { "draft", "build", "fight" }
+W.ORDER = { draft = 1, build = 2, fight = 3, settings = 4 }
+W.WHERE = { "shop", "auto" }
 
 function W.ease(t)
 	if t <= 0 then return 0 end
@@ -3891,62 +3947,64 @@ function W.block(i)
 	local e = W.since(state.win.open_at, i * 0.04, 0.24)
 	G.alpha = W.base_a * e
 	G.oy = W.base_y + (1 - e) * 8 * G.s
+	G.ox = W.base_x + (1 - e) * 16 * G.s * W.dir
 	return e
 end
 
 function W.unblock()
-	G.alpha, G.oy = W.base_a, W.base_y
+	G.alpha, G.oy, G.ox = W.base_a, W.base_y, W.base_x
 end
 
 function W.count(key, value)
 	return math.floor(tween(key, value, 7) + 0.5)
 end
 
-function W.soft(x, y, w, h, r, size)
-	Render.Shadow(P(x, y), P(x + w, y + h), A(C.SHADOW_SOFT), size * G.s, r * G.s)
+function W.num(n)
+	n = math.floor(n + 0.5)
+	local s = W.nums[n]
+	if s then return s end
+	s = tostring(math.abs(n)):reverse():gsub("(%d%d%d)", "%1 "):reverse():gsub("^ ", "")
+	if n < 0 then s = "-" .. s end
+	if W.nums_n > 4000 then W.nums, W.nums_n = {}, 0 end
+	W.nums[n] = s
+	W.nums_n = W.nums_n + 1
+	return s
 end
 
-function W.card(x, y, w, h, title, hint)
-	rect(x, y, w, h, C.CARD, 10)
-	rect(x + 10, y, w - 20, 1, C.TOP_EDGE)
-	frame_line(x, y, w, h, C.CARD_EDGE, 10)
-	if title then text(fonts.w600, 16, title, x + 16, y + 14, C.TEXT) end
-	if hint then text(fonts.w500, 13, hint, x + w - 16, y + 16, C.MUTED, "right") end
+function W.soft(x, y, w, h, r, size)
+	Render.Shadow(P(x, y), P(x + w, y + h), A(C.SHADOW_SOFT), size * G.s, r * G.s)
 end
 
 function W.dots(x, y)
 	for i = 0, 2 do
 		local a = 0.25 + 0.75 * (0.5 + 0.5 * math.sin(state.clock * 5 - i * 0.8))
-		dot(x + i * 11, y, 3, alpha(C.MUTED, a))
+		dot(x + i * 9, y, 2.5, alpha(N.MUTED, a))
 	end
 end
 
-function W.note(label, x, y, w)
-	W.dots(x + 20, y + 59)
-	for i, l in ipairs(wrap(fonts.w500, 14, label, w - 76, 2)) do text(fonts.w500, 14, l, x + 52, y + 50 + (i - 1) * 20, C.MUTED) end
+function W.empty(label, x, y, w)
+	W.dots(x + 3, y + 10)
+	for i, l in ipairs(wrap(fonts.w500, 14, label, w - 40, 2)) do text(fonts.w500, 14, l, x + 34, y + (i - 1) * 20, N.MUTED) end
 end
 
-function W.shine(x, y, w, h, t, c0, c1)
-	if t <= 0 or t >= 1 then return end
-	local bw = math.max(36, w * 0.3)
-	local bx = x - bw + (w + bw) * t
-	Render.PushClip(P(x, y), P(x + w, y + h), true)
-	grad(bx, y, bw / 2, h, c0, c1, c0, c1)
-	grad(bx + bw / 2, y, bw / 2, h, c1, c0, c1, c0)
-	Render.PopClip()
+function W.head(title, x, y, w, hint)
+	text(fonts.w500, 13, title, x, y, N.MUTED)
+	if hint then
+		local room = w - measure(fonts.w500, 13, title) - 24
+		if room > 40 then text(fonts.w500, 13, fit(fonts.w500, 13, hint, room), x + w, y, N.DIM, "right") end
+	end
 end
 
-function W.skeleton(x, y, w, h, i)
-	rect(x, y, w, h, C.SLOT, 8)
-	rect(x + 12, y + (h - 34) / 2, 60, 34, C.ROW_HOT, 6)
-	rect(x + 84, y + h / 2 - 9, w * 0.35, 8, C.ROW_HOT, 4)
-	rect(x + 84, y + h / 2 + 5, w * 0.22, 6, C.ROW, 3)
-	W.shine(x, y, w, h, ((state.clock * 0.7 + i * 0.15) % 1.6) / 1.6, C.SHINE_0, C.SHINE_1)
+function W.pic(handle, x, y, w, h, r, gray, crop, tint)
+	if not handle then
+		rect(x, y, w, h, N.SLOT, r)
+		return
+	end
+	picture(handle, x, y, w, h, r, gray, crop, tint)
 end
 
-function W.glow(x, y, w, h, r, a)
-	frame_line(x - 2, y - 2, w + 4, h + 4, alpha(C.GOLD, a or 1), r + 2, 2)
-	frame_line(x - 5, y - 5, w + 10, h + 10, alpha(C.GOLD_GLOW, a or 1), r + 5, 3)
+function W.ring(x, y, w, h, r, a)
+	frame_line(x - 3, y - 3, w + 6, h + 6, alpha(N.ACCENT, a or 1), (r or 0) + 3, 2)
 end
 
 function W.glyph(ch, size, x, y, color)
@@ -3969,9 +4027,9 @@ function W.icon(handle, x, y, w, h, r, key, gray, tint)
 	local hot = hover_t(key, x, y, w, h)
 	if hot > 0.01 then
 		local k = 0.08 * hot
-		picture(handle, x - w * k / 2, y - h * k / 2, w * (1 + k), h * (1 + k), r, gray, false, tint)
+		W.pic(handle, x - w * k / 2, y - h * k / 2, w * (1 + k), h * (1 + k), r, gray, false, tint)
 	else
-		picture(handle, x, y, w, h, r, gray, false, tint)
+		W.pic(handle, x, y, w, h, r, gray, false, tint)
 	end
 	return hot
 end
@@ -3990,211 +4048,131 @@ function W.first_seen(key, value)
 	return state.clock - W.seen_at[key]
 end
 
-W.th = { key = nil, from = nil, to = nil, at = -10, badge = nil, badge_at = -10, attr = nil, badges = {}, pals = {} }
-W.TH_FIELDS = { "ACCENT", "ACCENT_HOT", "TOGGLE_ON_TRACK", "ONB_LOGO", "ONB_LOGO_EDGE", "ONB_PICK", "ONB_HL", "THEME_GLOW", "THEME_CLEAR", "THEME_LINE", "THEME_CHIP" }
-do
-	local base = {}
-	for _, f in ipairs(W.TH_FIELDS) do base[f] = C[f] end
-	W.th.pals[0] = base
+function W.button_main(key, label, x, y, w, h, kind, value)
+	local bx, by, bw, bh, hot = W.btn(key, x, y, w, h)
+	rect(bx, by, bw, bh, mix(N.ACCENT, N.ACCENT_HOT, hot), 12)
+	local s = fit(fonts.w600, 14, label, w - 20)
+	local _, th = measure(fonts.w600, 14, s)
+	text(fonts.w600, 14, s, bx + bw / 2, by + (bh - th) / 2, N.INK, "center")
+	button(kind, x, y, w, h, value)
 end
 
-function W.palette(key, rgb)
-	local pal = W.th.pals[key]
+function W.button_ghost(key, label, x, y, w, h, kind, value, on)
+	local bx, by, bw, bh, hot = W.btn(key, x, y, w, h)
+	if hot > 0.01 then rect(bx, by, bw, bh, alpha(N.HOT, hot), 12) end
+	frame_line(bx, by, bw, bh, on and N.ACCENT or mix(N.LINE, N.DIM, hot), 12)
+	local s = fit(fonts.w600, 13, label, w - 16)
+	local _, th = measure(fonts.w600, 13, s)
+	text(fonts.w600, 13, s, bx + bw / 2, by + (bh - th) / 2, N.TEXT, "center")
+	button(kind, x, y, w, h, value)
+end
+
+function W.skeleton(x, y, w, h, i)
+	local a = 0.5 + 0.5 * math.sin(state.clock * 3 - i * 0.6)
+	rect(x, y, w, h, N.SLOT, 10)
+	rect(x + 12, y + (h - 30) / 2, 54, 30, alpha(N.LINE, 0.6 + 0.4 * a), 6)
+	rect(x + 78, y + h / 2 - 8, w * 0.35, 7, alpha(N.LINE, 0.6 + 0.4 * a), 3)
+	rect(x + 78, y + h / 2 + 5, w * 0.22, 5, alpha(N.LINE, 0.4 + 0.3 * a), 2)
+end
+
+W.st = { key = nil, from = nil, to = nil, at = -10, done = true, pals = {} }
+W.ST_FIELDS = { "ACCENT", "ACCENT_HOT", "ACCENT_SOFT", "INK" }
+
+function W.style_pal(i)
+	local pal = W.st.pals[i]
 	if pal then return pal end
-	local r, g, b = rgb[1], rgb[2], rgb[3]
-	local function over(k)
-		return Color(math.floor(22 + (r - 22) * k + 0.5), math.floor(22 + (g - 22) * k + 0.5), math.floor(24 + (b - 24) * k + 0.5))
-	end
+	local s = K.STYLES[i + 1] or K.STYLES[1]
+	local r, g, b = s[1], s[2], s[3]
 	pal = {
 		ACCENT = Color(r, g, b),
-		ACCENT_HOT = Color(math.floor(r + (255 - r) * 0.15 + 0.5), math.floor(g + (255 - g) * 0.15 + 0.5), math.floor(b + (255 - b) * 0.15 + 0.5)),
-		TOGGLE_ON_TRACK = Color(r, g, b, 60),
-		ONB_LOGO = over(0.1),
-		ONB_LOGO_EDGE = over(0.34),
-		ONB_PICK = over(0.1),
-		ONB_HL = over(0.17),
-		THEME_GLOW = Color(r, g, b, 58),
-		THEME_CLEAR = Color(r, g, b, 0),
-		THEME_LINE = Color(r, g, b, 170),
-		THEME_CHIP = Color(r, g, b, 34),
+		ACCENT_HOT = Color(math.floor(r + (255 - r) * 0.18 + 0.5), math.floor(g + (255 - g) * 0.18 + 0.5), math.floor(b + (255 - b) * 0.18 + 0.5)),
+		ACCENT_SOFT = Color(r, g, b, 36),
+		INK = s[4] == 1 and Color(255, 255, 255) or Color(0, 0, 0),
 	}
-	W.th.pals[key] = pal
+	W.st.pals[i] = pal
 	return pal
 end
 
-function W.theme_attr(unit)
-	local th = W.th
-	if not th.attr then
-		th.attr = {}
-		for i, grp in ipairs(HEROES.list()) do
-			for _, e in ipairs(grp.heroes) do th.attr[e.unit] = i end
-		end
-	end
-	return th.attr[unit]
-end
-
-function W.theme_target(mode)
-	local th = W.th
-	local hero = Heroes.GetLocal()
-	if mode == 1 then
-		local unit = hero and NPC.GetUnitName(hero)
-		if not unit then
-			local id = state.draft.my_hero or state.preview_hero
-			unit = id and hero_unit(id) or nil
-		end
-		local a = unit and W.theme_attr(unit)
-		if a then
-			local badge = th.badges[unit]
-			if not badge then
-				badge = { kind = "hero", icon = "panorama/images/heroes/icons/" .. unit .. "_png.vtex_c", attr = K.ATTR_ICONS[a] }
-				th.badges[unit] = badge
-			end
-			local c = K.ATTRS[a][3]
-			return 10 + a, { c.r, c.g, c.b }, badge
-		end
-	elseif mode == 2 then
-		local ok, team = false, nil
-		if hero then ok, team = pcall(Entity.GetTeamNum, hero) end
-		team = (ok and tonumber(team)) or state.draft.my_team
-		if K.THEME_TEAM[team] then
-			local key = 20 + team
-			th.badges[key] = th.badges[key] or { kind = "team", glyph = K.THEME_GLYPH[team] }
-			return key, K.THEME_TEAM[team], th.badges[key]
-		end
-	elseif mode == 3 then
-		local rank = setting("rank")
-		if K.THEME_RANK[rank] then
-			local key = 30 + rank
-			th.badges[key] = th.badges[key] or { kind = "rank", icon = "panorama/images/rank_tier_icons/rank" .. rank .. "_psd.vtex_c" }
-			return key, K.THEME_RANK[rank], th.badges[key]
-		end
-	end
-	return 0, nil, nil
-end
-
-function W.theme_tick()
-	local th = W.th
-	local key, rgb, badge = W.theme_target(setting("theme"))
-	if key ~= th.key then
-		local pal = key == 0 and th.pals[0] or W.palette(key, rgb)
+function W.style_tick()
+	local st = W.st
+	local key = setting("style")
+	if key ~= st.key then
 		local now = {}
-		for _, f in ipairs(W.TH_FIELDS) do now[f] = C[f] end
-		th.from, th.to = now, pal
-		th.at = th.key == nil and -10 or state.clock
-		th.key, th.done = key, false
+		for _, f in ipairs(W.ST_FIELDS) do now[f] = N[f] end
+		st.from, st.to = now, W.style_pal(key)
+		st.at = st.key == nil and -10 or state.clock
+		st.key, st.done = key, false
 	end
-	if badge ~= th.badge then
-		th.badge, th.badge_at = badge, state.clock
-	end
-	if th.done or not th.to then return end
-	local k = math.min(1, (state.clock - th.at) / K.THEME_FADE)
+	if st.done then return end
+	local k = math.min(1, (state.clock - st.at) / 0.35)
 	if k >= 1 then
-		for _, f in ipairs(W.TH_FIELDS) do C[f] = th.to[f] end
-		th.done = true
+		for _, f in ipairs(W.ST_FIELDS) do N[f] = st.to[f] end
+		st.done = true
 	else
 		local e = W.ease(k)
-		for _, f in ipairs(W.TH_FIELDS) do C[f] = mix(th.from[f], th.to[f], e) end
+		for _, f in ipairs(W.ST_FIELDS) do N[f] = mix(st.from[f], st.to[f], e) end
 	end
-end
-
-function W.theme_art(w)
-	local th = W.th
-	if not th.key or th.key == 0 then return end
-	grad(K.RAIL_W, 0, w - K.RAIL_W, 190, C.THEME_CLEAR, C.THEME_GLOW, C.THEME_CLEAR, C.THEME_CLEAR, 12)
-	grad(w * 0.3, 0, w * 0.7 - 12, 1, C.THEME_CLEAR, C.THEME_LINE, C.THEME_CLEAR, C.THEME_LINE)
-end
-
-function W.theme_badge(xr, cy)
-	local b = W.th.badge
-	if not b or not W.th.key or W.th.key == 0 then return end
-	local t = state.clock - W.th.badge_at
-	local sc = W.pop(t)
-	local ba = G.alpha
-	G.alpha = ba * math.min(1, t / 0.2)
-	if b.kind == "hero" then
-		local cw, ch = 54 * sc, 28 * sc
-		local x = xr - 54 + (54 - cw) / 2
-		rect(x, cy - ch / 2, cw, ch, C.THEME_CHIP, ch / 2)
-		local attr, icon = load_image(b.attr), load_image(b.icon)
-		if attr then picture(attr, x + 6 * sc, cy - 9 * sc, 18 * sc, 18 * sc) end
-		if icon then picture(icon, x + 28 * sc, cy - 10 * sc, 20 * sc, 20 * sc, 5) end
-	elseif b.kind == "team" then
-		local r = 15 * sc
-		rect(xr - 15 - r, cy - r, r * 2, r * 2, C.THEME_CHIP, r)
-		W.glyph(b.glyph, 14 * sc, xr - 15, cy, C.ACCENT)
-	elseif b.kind == "rank" then
-		local m = load_image(b.icon)
-		local s = 38 * sc
-		if m then picture(m, xr - 19 - s / 2, cy - s / 2, s, s) end
-	end
-	G.alpha = ba
 end
 
 function W.shell(w, h)
-	rect(0, 0, w, h, C.BG, 12)
-	W.theme_art(w)
-	rect(0, 0, K.RAIL_W, h, C.RAIL, 12)
-	rect(K.RAIL_W - 12, 0, 12, h, C.RAIL)
-	rect(12, 0, w - 24, 1, C.TOP_EDGE)
-	frame_line(0, 0, w, h, C.EDGE, 12)
-end
-
-function W.rail_y(tab, h)
-	if tab == "settings" then return h - 60 end
-	local y = 70
-	for _, t in ipairs(K.TABS) do
-		if t == tab then return y end
-		if t ~= "settings" then y = y + 50 end
-	end
-	return y
-end
-
-function W.rail_item(tab, y)
-	local on = state.win.tab == tab
-	local hot = hover_t("rail_" .. tab, 0, y, K.RAIL_W, 46)
-	local lit = math.max(tween("rail_on_" .. tab, on and 1 or 0, 14), hot * 0.6)
-	if hot > 0.01 and not on then rect(7, y + 2 - hot, K.RAIL_W - 14, 42, alpha(C.ROW_HOT, hot), 8) end
-	W.glyph(K.TAB_ICONS[tab], 18, K.RAIL_W / 2, y + 23 - hot, mix(mix(C.DIM, C.TEXT, lit), C.ACCENT, tween("rail_red_" .. tab, on and 1 or 0, 14)))
-	if tab == "settings" and (UPD.st == "available" or UPD.st == "done") then dot(K.RAIL_W / 2 + 11, y + 12 - hot, 4, C.ACCENT) end
-	button("tab", 0, y, K.RAIL_W, 46, tab)
-end
-
-function W.rail(h)
-	W.glyph(K.LOGO, 21, K.RAIL_W / 2, 31, C.ACCENT)
-	local iy = tween("rail_ind", W.rail_y(state.win.tab, h), 16)
-	rect(0, iy + 11, 3, 24, C.ACCENT, 2)
-	for _, tab in ipairs(K.TABS) do W.rail_item(tab, W.rail_y(tab, h)) end
+	shadow(0, 0, w, h, N.R, 28)
+	rect(0, 0, w, h, N.BG, N.R)
+	frame_line(0, 0, w, h, N.LINE, N.R)
 end
 
 function W.header(w)
 	local win = state.win
 	local view = state.view
-	button("header", K.RAIL_W, 0, w - K.RAIL_W - 56, 56)
-	local x = K.RAIL_W + 20
-	text(fonts.w500, 16, L("bb_title"), x, 19, C.MUTED)
-	x = x + measure(fonts.w500, 16, L("bb_title"))
-	text(fonts.w500, 16, " / ", x, 19, C.DIM)
-	x = x + measure(fonts.w500, 16, " / ")
-	text(fonts.w600, 16, L("bb_tab_" .. win.tab), x, 19, C.ACCENT)
+	button("header", 0, 0, w, N.HEAD)
+	rect(0, N.HEAD - 1, w, 1, N.LINE)
+	local title = L("bb_title")
+	text(fonts.d600, 17, title, N.X, 17, N.TEXT)
+	local x = N.X + measure(fonts.d600, 17, title) + 40
+	local cur_x, cur_w = nil, nil
+	for _, t in ipairs(W.TABS) do
+		local label = L("bb_tab_" .. t)
+		local tw = measure(fonts.d500, 16, label)
+		local on = win.tab == t
+		local hot = hover_t("tab_" .. t, x - 10, 0, tw + 20, N.HEAD)
+		local lit = math.max(tween("tab_on_" .. t, on and 1 or 0, 14), hot * 0.7)
+		text(fonts.d500, 16, label, x, 18, mix(N.MUTED, N.TEXT, lit))
+		button("tab", x - 10, 0, tw + 20, N.HEAD, t)
+		if on then cur_x, cur_w = x, tw end
+		x = x + tw + 28
+	end
+	local ia = tween("tab_ia", cur_x and 1 or 0, 14)
+	if cur_x then W.ind_x, W.ind_w = tween("tab_ix", cur_x, 16), tween("tab_iw", cur_w, 16) end
+	if ia > 0.01 and W.ind_x then rect(W.ind_x, N.HEAD - 2, W.ind_w, 2, alpha(N.ACCENT, ia), 1) end
 	local cx = w - 46
-	local bx, by, bw, bh, hot = W.btn("close", cx, 14, 30, 30)
-	if hot > 0.01 then rect(bx, by, bw, bh, alpha(C.CLOSE_HOT, hot), 8) end
-	W.glyph(K.CLOSE, 15, bx + bw / 2, by + bh / 2, mix(C.DIM, C.TEXT, hot))
-	button("close", cx, 14, 30, 30)
-	local right = cx - 16
+	local bx, by, bw, bh, hot = W.btn("close", cx, 13, 30, 30)
+	if hot > 0.01 then rect(bx, by, bw, bh, alpha(N.HOT, hot), 10) end
+	W.glyph(K.CLOSE, 14, bx + bw / 2, by + bh / 2, mix(N.MUTED, N.TEXT, hot))
+	button("close", cx, 13, 30, 30)
+	local gx = cx - 38
+	local gon = win.tab == "settings"
+	local qx, qy, qw, qh, gh = W.btn("gear", gx, 13, 30, 30)
+	if gh > 0.01 then rect(qx, qy, qw, qh, alpha(N.HOT, gh), 10) end
+	W.glyph(K.TAB_ICONS.settings, 15, qx + qw / 2, qy + qh / 2, gon and N.ACCENT or mix(N.MUTED, N.TEXT, gh))
+	if UPD.st == "available" or UPD.st == "done" then dot(qx + qw - 6, qy + 6, 3.5, N.ACCENT) end
+	button("tab", gx, 13, 30, 30, "settings")
+	local tgx = gx - 38
+	local ux, uy, uw, uh, th = W.btn("tg", tgx, 13, 30, 30)
+	local tr = 13 + th
+	dot(ux + uw / 2, uy + uh / 2, tr, mix(N.TG, N.TG_HOT, th))
+	W.glyph(K.TG_ICON, 12, ux + uw / 2 - 1, uy + uh / 2 + 1, N.TEXT_ON)
+	button("link", tgx, 13, 30, 30, "tg")
+	if th > 0.5 then W.tip = { text = L("bb_menu_tg"), x = tgx + 15, y = N.HEAD + 6 } end
+	local right = tgx - 16
+	local room = right - x - 4
+	if room < 60 then return end
 	local busy = (state.net.busy and L("bb_status_loading")) or (state.net.offline and L("bb_status_offline"))
-	if win.status or (busy and win.tab ~= "build") then
-		local s = fit(fonts.w500, 14, win.status or busy, 320)
-		text(fonts.w500, 14, s, right, 20, C.MUTED, "right")
-		W.theme_badge(right - measure(fonts.w500, 14, s) - 12, 28)
+	local info
+	if win.status then
+		info = win.status
+	elseif busy and win.tab ~= "build" then
+		info = busy
 	elseif win.tab == "build" and view and view.gold then
-		local gpm = W.count("hdr_gpm", math.floor(view.gpm or 0))
-		local label = "GPM " .. gpm
-		text(fonts.w500, 14, label, right, 20, C.MUTED, "right")
-		right = right - measure(fonts.w500, 14, label) - 16
-		local gold = tostring(W.count("hdr_gold", view.gold))
-		text(fonts.w700, 15, gold, right, 19, C.GOLD, "right")
-		W.theme_badge(right - measure(fonts.w700, 15, gold) - 12, 28)
+		info = "GPM " .. W.count("hdr_gpm", math.floor(view.gpm or 0))
 	else
 		local rank, pos = setting("rank"), my_position()
 		local key = rank * 10 + (tonumber(pos) or 0)
@@ -4202,76 +4180,78 @@ function W.header(w)
 			win.info_key = key
 			win.info = L("bb_rank_" .. rank) .. " · " .. L("bb_role") .. " " .. L("bb_role_" .. pos)
 		end
-		text(fonts.w500, 14, win.info, right, 20, C.MUTED, "right")
-		W.theme_badge(right - measure(fonts.w500, 14, win.info) - 12, 28)
+		info = win.info
 	end
+	text(fonts.w500, 13, fit(fonts.w500, 13, info, room), right, 21, N.MUTED, "right")
 end
 
-function W.slots(x, y, w, list, label, color, key)
-	dot(x + 5, y + 9, 4, color)
-	text(fonts.w500, 14, label, x + 17, y, C.MUTED)
-	local bw = (w - 4 * 8) / 5
+function W.team(x, y, w, list, label, color, key)
+	text(fonts.w500, 13, label, x, y, N.MUTED)
+	local gap = 6
+	local bw = (w - 4 * gap) / 5
 	local bh = math.floor(bw * 0.5625 + 0.5)
-	y = y + 24
+	y = y + 22
 	local pulse = 0.5 + 0.5 * math.sin(state.clock * 3)
 	for i = 1, 5 do
 		local e = list[i]
-		local px = x + (i - 1) * (bw + 8)
+		local px = x + (i - 1) * (bw + gap)
 		local unit = e and e.id and hero_unit(e.id)
-		rect(px, y, bw, bh + 5, C.SLOT, 8)
 		if unit then
 			local t = W.first_seen(key .. i, e.id)
 			local sc = W.pop(t)
 			local cw, ch = bw * sc, bh * sc
-			picture(hero_image(unit), px + (bw - cw) / 2, y + (bh - ch) / 2, cw, ch, 8, 0, false)
+			W.pic(hero_image(unit), px + (bw - cw) / 2, y + (bh - ch) / 2, cw, ch, 8)
 			local flash = 1 - math.min(1, t / 0.45)
-			if flash > 0 then rect(px, y, bw, bh, alpha(color, 0.5 * flash), 8) end
-			if e.me then W.glow(px, y, bw, bh, 8) end
+			if flash > 0 then rect(px, y, bw, bh, alpha(N.TEXT, 0.22 * flash), 8) end
+			if e.me then W.ring(px, y, bw, bh, 8) end
 		else
 			W.seen[key .. i] = nil
-			frame_line(px, y, bw, bh + 5, alpha((e and e.me) and C.GOLD or C.MUTED, 0.2 + 0.35 * pulse), 8, 1.5)
+			rect(px, y, bw, bh, N.SLOT, 8)
+			if e and e.me then frame_line(px, y, bw, bh, alpha(N.ACCENT, 0.3 + 0.5 * pulse), 8, 1.5) end
 		end
-		rect(px + 8, y + bh + 1, bw - 16, 3, color, 2)
+		rect(px + 6, y + bh + 4, bw - 12, 2, color, 1)
 		if e and e.pos then
-			rect(px + 4, y + 4, 18, 17, C.BADGE, 5)
-			text(fonts.w600, 12, tostring(e.pos), px + 13, y + 5, C.TEXT, "center")
+			rect(px + 4, y + 4, 18, 17, N.SHADE, 5)
+			text(fonts.d600, 12, tostring(e.pos), px + 13, y + 5, N.TEXT, "center")
 		end
 	end
-	return y + bh + 5
+	return y + bh + 6
 end
 
-function W.chance(x, y, w, h)
+function W.chance(x, y, w)
 	local d = state.draft
 	local view = state.view
 	local light = d.my_team ~= 3
 	local chance = view and view.chance
-	W.card(x, y, w, h, L("bb_chance_title"))
-	local bx, bw, by = x + 16, w - 32, y + 52
+	W.head(L("bb_chance_title"), x, y, w)
+	local ny = y + 22
+	local by = ny + 60
 	if chance then
 		if state.anim.chance == nil then state.anim.chance = 50 end
 		local shown = tween("chance", chance, 5)
+		local str = math.floor(shown + 0.5) .. "%"
+		text(fonts.d600, 46, str, x, ny - 4, N.TEXT)
+		local nw = measure(fonts.d600, 46, str)
 		local rad = light and shown or (100 - shown)
-		text(fonts.w700, 22, math.floor(shown + 0.5) .. "%", x + w - 16, y + 10, light and C.WIN or C.LOSE, "right")
-		local split = bw * rad / 100
-		rect(bx, by, split, 8, C.WIN, 4)
-		rect(bx + split, by, bw - split, 8, C.LOSE, 4)
-		rect(bx + bw / 2, by - 4, 1, 16, C.MARK)
 		local r = math.floor(rad + 0.5)
-		text(fonts.w600, 13, L("bb_light") .. " " .. r, bx, by + 16, C.WIN)
-		text(fonts.w600, 13, (100 - r) .. " " .. L("bb_dark"), bx + bw, by + 16, C.LOSE, "right")
+		text(fonts.w500, 13, L("bb_light") .. " " .. r .. "   " .. (100 - r) .. " " .. L("bb_dark"), x + nw + 16, ny + 26, N.MUTED)
+		local split = w * rad / 100
+		rect(x, by, split, 4, N.WIN, 2)
+		rect(x + split, by, w - split, 4, N.LOSE, 2)
+		rect(x + w / 2, by - 4, 1, 12, N.MUTED)
 	else
-		rect(bx, by, bw, 8, C.TRACK, 4)
-		W.shine(bx, by, bw, 8, ((state.clock * 0.6) % 1.4) / 1.4, C.SHINE_0, C.SHINE_1)
-		text(fonts.w500, 13, L("bb_chance_sub"), bx, by + 16, C.MUTED)
+		text(fonts.w500, 14, L("bb_chance_sub"), x, ny + 18, N.MUTED)
+		rect(x, by, w, 4, N.TRACK, 2)
+		local p = (state.clock * 0.5) % 1
+		rect(x + (w - 70) * p, by, 70, 4, N.DIM, 2)
 	end
-	local ty = W.slots(bx, by + 44, bw, d.ours, light and L("bb_light") or L("bb_dark"), light and C.WIN or C.LOSE, "so")
-	W.slots(bx, ty + 14, bw, d.theirs, light and L("bb_dark") or L("bb_light"), light and C.LOSE or C.WIN, "st")
+	return by + 16
 end
 
 function W.heat(x, y, w, h)
 	local view = state.view
-	W.card(x, y, w, h, L("bb_heat"), L("bb_heat_hint"))
-	if not view or #view.ours == 0 or #view.theirs == 0 then return W.note(L("bb_heat_empty"), x, y, w) end
+	W.head(L("bb_heat"), x, y, w, L("bb_heat_hint"))
+	if not view or #view.ours == 0 or #view.theirs == 0 then return W.empty(L("bb_heat_empty"), x, y + 32, w) end
 	local order = view.heat_order
 	if not order then
 		order = {}
@@ -4279,68 +4259,38 @@ function W.heat(x, y, w, h)
 		table.sort(order, function(p, q) return (view.totals[p] or 0) > (view.totals[q] or 0) end)
 		view.heat_order = order
 	end
-	local lx = x + 16
-	local tw = 58
-	local gx = lx + 40
-	local col = (w - 32 - 40 - tw - 6) / 5
+	local tw = 54
+	local gx = x + 40
+	local col = (w - 40 - tw - 8) / 5
 	for j, b in ipairs(view.theirs) do
 		local unit = hero_unit(b)
-		if unit then picture(hero_image(unit), gx + (j - 1) * col + (col - 28) / 2, y + 46, 28, 28, 6, 0, true) end
+		if unit then W.pic(hero_image(unit), gx + (j - 1) * col + (col - 26) / 2, y + 26, 26, 26, 13, 0, true) end
 	end
-	local ry0 = y + 84
-	local row_h = math.min(36, (y + h - ry0 - 10) / math.max(1, #order))
+	local ry0 = y + 62
+	local row_h = math.min(36, (y + h - ry0) / math.max(1, #order))
 	local me = state.draft.my_hero
 	local ba = G.alpha
 	for idx, a in ipairs(order) do
 		local ry = ry0 + tween("hr" .. a, (idx - 1) * row_h, 10)
 		local e = W.since(state.win.open_at, 0.1 + idx * 0.04, 0.24)
 		G.alpha = ba * e
+		if idx > 1 then rect(x, ry, w, 1, N.LINE) end
 		local unit = hero_unit(a)
 		if unit then
-			picture(hero_image(unit), lx, ry + (row_h - 28) / 2, 28, 28, 6, 0, true)
-			if a == me then frame_line(lx, ry + (row_h - 28) / 2, 28, 28, C.GOLD, 6, 2) end
+			local py = ry + (row_h - 26) / 2
+			W.pic(hero_image(unit), x, py, 26, 26, 13, 0, true)
+			if a == me then frame_line(x - 2, py - 2, 30, 30, N.ACCENT, 15, 1.5) end
 		end
 		for j, b in ipairs(view.theirs) do
 			local v = view.cells[a] and view.cells[a][b] or 0
-			local cx = gx + (j - 1) * col
-			local mid = cx + col / 2
-			rect(cx + 2, ry + 2, col - 4, row_h - 4, C.ROW, 6)
-			local len = math.min(1, math.abs(v) / 4) * (col / 2 - 6) * e
-			if v >= 0 then rect(mid, ry + row_h - 8, len, 3, C.WIN, 1) else rect(mid - len, ry + row_h - 8, len, 3, C.LOSE, 1) end
-			text(fonts.w600, 13, string.format("%+.1f", v), mid, ry + row_h / 2 - 11, C.TEXT, "center")
+			local mid = gx + (j - 1) * col + col / 2
+			local c = v > 0.05 and N.WIN or (v < -0.05 and N.LOSE or N.MUTED)
+			text(fonts.d500, 14, string.format("%+.1f", v), mid, ry + row_h / 2 - 9, c, "center")
 		end
 		local total = view.totals[a] or 0
-		local tx = x + w - 16 - tw
-		local tmid = tx + tw / 2
-		local tlen = math.min(1, math.abs(total) / 8) * (tw / 2 - 2) * e
-		if total >= 0 then rect(tmid, ry + row_h - 8, tlen, 3, C.WIN, 1) else rect(tmid - tlen, ry + row_h - 8, tlen, 3, C.LOSE, 1) end
-		text(fonts.w700, 14, string.format("%+.1f", total), tmid, ry + row_h / 2 - 12, total >= 0 and C.WIN or C.LOSE, "center")
+		text(fonts.d600, 15, string.format("%+.1f", total), x + w - tw / 2, ry + row_h / 2 - 10, total >= 0 and N.WIN or N.LOSE, "center")
 	end
 	G.alpha = ba
-end
-
-function W.chips(b, x, y, room)
-	if not b.chips then
-		local list = {}
-		local first = true
-		for k = 1, 2 do
-			local sid = k == 1 and b.strong or b.strong2
-			local su = sid and hero_unit(sid)
-			if su then
-				list[#list + 1] = first and string.format(L("bb_pick_vs"), hero_title(su)) or hero_title(su)
-				first = false
-			end
-		end
-		b.chips = list
-	end
-	local cx = x
-	for _, label in ipairs(b.chips) do
-		local cw = measure(fonts.w500, 13, label) + 16
-		if cx + cw > x + room then break end
-		rect(cx, y, cw, 22, C.SEG, 6)
-		text(fonts.w500, 13, label, cx + 8, y + 4, C.MUTED)
-		cx = cx + cw + 6
-	end
 end
 
 function W.stages(x, y, w)
@@ -4353,91 +4303,97 @@ function W.stages(x, y, w)
 		{ theirs and "bb_ld_picks" or "bb_ld_wait", theirs and "busy" or "wait" },
 	}
 	for i, r in ipairs(rows) do
-		local ry = y + (i - 1) * 34
-		local cx, cy = x + 11, ry + 11
+		local ry = y + (i - 1) * 36
+		local cx, cy = x + 10, ry + 10
 		if r[2] == "done" then
-			rect(x, ry, 22, 22, C.PILL_WIN, 11)
-			text(fonts.w800, 12, "✓", cx, ry + 3, C.WIN, "center")
+			W.glyph(K.ONB_CHECK, 12, cx, cy, N.TEXT)
 		elseif r[2] == "busy" then
-			Render.Circle(P(cx, cy), 8 * G.s, A(C.TRACK), 2 * G.s, 0, 1, false, 24)
-			Render.Circle(P(cx, cy), 8 * G.s, A(C.ACCENT), 2 * G.s, (state.clock * 360) % 360, 0.25, true, 24)
+			Render.Circle(P(cx, cy), 8 * G.s, A(N.TRACK), 2 * G.s, 0, 1, false, 24)
+			Render.Circle(P(cx, cy), 8 * G.s, A(N.ACCENT), 2 * G.s, (state.clock * 360) % 360, 0.25, true, 24)
 		else
-			Render.Circle(P(cx, cy), 9 * G.s, A(C.TRACK), 2 * G.s, 0, 1, false, 24)
+			Render.Circle(P(cx, cy), 8 * G.s, A(N.TRACK), 2 * G.s, 0, 1, false, 24)
 		end
-		text(r[2] == "busy" and fonts.w600 or fonts.w500, 14, L(r[1]), x + 34, ry + 3, r[2] == "wait" and C.MUTED or C.TEXT)
+		text(fonts.w500, 14, L(r[1]), x + 30, ry + 2, r[2] == "wait" and N.MUTED or N.TEXT)
 	end
-	local ny = y + #rows * 34 + 6
+	local ny = y + #rows * 36 + 8
 	if state.sync.failed and state.sz_date then
 		for i, l in ipairs(wrap(fonts.w500, 13, string.format(L("bb_ld_offline"), os.date("%d.%m", state.sz_date)), w, 2)) do
-			text(fonts.w500, 13, l, x, ny + (i - 1) * 18, C.GOLD)
+			text(fonts.w500, 13, l, x, ny + (i - 1) * 18, N.ACCENT)
 		end
 	end
 end
 
 function W.picks(x, y, w, h)
 	local view = state.view
-	W.card(x, y, w, h, string.format(L("bb_pick_title"), L("bb_role_" .. (view and view.pick_role or my_position()))))
-	if not view or #view.best == 0 then return W.stages(x + 16, y + 54, w - 32) end
-	local top = math.max(0.1, view.best[1].gain)
+	W.head(string.format(L("bb_pick_title"), L("bb_role_" .. (view and view.pick_role or my_position()))), x, y, w)
+	if not view or #view.best == 0 then return W.stages(x, y + 34, w) end
 	local ba = G.alpha
-	local ry = y + 50
+	local ry = y + 24
 	for i, b in ipairs(view.best) do
 		local first = i == 1
-		local chh = first and 82 or 70
-		if ry + chh > y + h - 10 then break end
+		local rh = 78
+		if ry + rh > y + h then break end
 		local unit = hero_unit(b.id)
 		if unit then
 			local e = W.since(state.win.open_at, 0.12 + i * 0.05, 0.24)
 			G.alpha = ba * e
-			local cx, cy, cw, ch, hot = W.btn("best" .. i, x + 14, ry, w - 28, chh - 10)
-			rect(cx, cy, cw, ch, first and C.ROW_HOT or mix(C.ROW, C.ROW_HOT, hot), 8)
-			if first then W.glow(cx, cy, cw, ch, 8, 0.75 + 0.25 * math.sin(state.clock * 2.4)) end
-			picture(hero_image(unit), cx + 10, cy + (ch - 42) / 2, 74, 42, 6)
-			local rx, rcy = cx + cw - 32, cy + ch / 2
-			local share = math.max(0.06, math.min(1, b.gain / top)) * e
-			Render.Circle(P(rx, rcy), 20 * G.s, A(C.TRACK), 4 * G.s, 0, 1, false, 48)
-			Render.Circle(P(rx, rcy), 20 * G.s, A(b.gain >= 0 and C.WIN or C.LOSE), 4 * G.s, -90, share, false, 48)
-			text(fonts.w700, 12, string.format("%+.1f", b.gain), rx, rcy - 8, C.TEXT, "center")
-			local room = w - 178
-			text(fonts.w600, first and 16 or 15, fit(fonts.w600, first and 16 or 15, hero_title(unit), room), cx + 96, cy + (first and 12 or 9), C.TEXT)
-			W.chips(b, cx + 96, cy + ch - 32, room)
-			button("hero", cx, cy, cw, ch, b.id)
+			local hot = hover_t("best" .. i, x, ry, w, rh)
+			if hot > 0.01 then rect(x - 10, ry + 4, w + 20, rh - 8, alpha(N.HOT, hot), 12) end
+			if i > 1 then rect(x, ry, w, 1, N.LINE) end
+			local py = ry + (rh - 44) / 2
+			W.pic(hero_image(unit), x, py, 78, 44, 8)
+			if first then W.ring(x, py, 78, 44, 8, 0.7 + 0.3 * math.sin(state.clock * 2.4)) end
+			text(fonts.d600, 22, string.format("%+.1f", b.gain), x + w, ry + 16, b.gain >= 0 and N.WIN or N.LOSE, "right")
+			text(fonts.w500, 12, L("bb_best_hint"), x + w, ry + 46, N.DIM, "right")
+			local tx = x + 96
+			local room = w - 96 - 92
+			local name = hero_title(unit)
+			if first then
+				local tag = L("bb_top")
+				local tw = measure(fonts.w700, 11, tag) + 12
+				rect(tx, ry + 19, tw, 18, N.ACCENT, 6)
+				text(fonts.w700, 11, tag, tx + tw / 2, ry + 21, N.INK, "center")
+				text(fonts.w600, 16, fit(fonts.w600, 16, name, room - tw - 8), tx + tw + 8, ry + 18, N.TEXT)
+			else
+				text(fonts.w600, 16, fit(fonts.w600, 16, name, room), tx, ry + 18, N.TEXT)
+			end
+			if b.why then text(fonts.w500, 13, fit(fonts.w500, 13, b.why, room), tx, ry + 43, N.MUTED) end
+			button("hero", x, ry, w, rh, b.id)
 		end
-		ry = ry + chh
+		ry = ry + rh
 	end
 	G.alpha = ba
 end
 
 function W.foes(x, y, w, h)
 	local view = state.view
-	W.card(x, y, w, h, L("bb_foe_title"))
+	W.head(L("bb_foe_title"), x, y, w)
 	local list = view and view.foes or K.NONE
 	if #list == 0 then
-		for i = 0, 3 do W.skeleton(x + 14, y + 50 + i * 72, w - 28, 62, i) end
+		for i = 0, 3 do W.skeleton(x, y + 30 + i * 70, w, 60, i) end
 		return
 	end
 	local ba = G.alpha
-	local ry = y + 50
+	local ry = y + 24
 	for i, f in ipairs(list) do
 		local n = math.min(#f.items, 3)
-		local room = w - 128 - n * 44
+		local room = w - 96 - n * 44 - 8
 		local lines = wrap(fonts.w500, 13, f.line, room, 2)
-		local ch = math.max(62, 34 + #lines * 18)
-		if ry + ch > y + h - 10 then break end
+		local rh = math.max(66, 34 + #lines * 18 + 12)
+		if ry + rh > y + h then break end
 		G.alpha = ba * W.since(state.win.open_at, 0.12 + i * 0.05, 0.24)
-		rect(x + 14, ry, w - 28, ch, C.ROW, 8)
-		picture(hero_image(f.unit), x + 24, ry + (ch - 42) / 2, 74, 42, 6)
-		text(fonts.w600, 15, fit(fonts.w600, 15, hero_title(f.unit), room), x + 110, ry + 8, C.TEXT)
-		for k, l in ipairs(lines) do text(fonts.w500, 13, l, x + 110, ry + 30 + (k - 1) * 18, C.MUTED) end
-		local px = x + w - 24
+		if i > 1 then rect(x, ry, w, 1, N.LINE) end
+		W.pic(hero_image(f.unit), x, ry + (rh - 44) / 2, 78, 44, 8)
+		text(fonts.w600, 15, fit(fonts.w600, 15, hero_title(f.unit), room), x + 94, ry + 11, N.TEXT)
+		for k, l in ipairs(lines) do text(fonts.w500, 13, l, x + 94, ry + 33 + (k - 1) * 18, N.MUTED) end
+		local px = x + w
 		for k = n, 1, -1 do
 			px = px - 40
-			W.icon(item_image(f.items[k]), px, ry + (ch - 29) / 2, 40, 29, 5, "fi" .. i .. k)
-			frame_line(px, ry + (ch - 29) / 2, 40, 29, C.VS, 5)
-			button("item", px, ry + (ch - 29) / 2, 40, 29, f.items[k])
+			W.icon(item_image(f.items[k]), px, ry + (rh - 29) / 2, 40, 29, 5, "fi" .. i .. k)
+			button("item", px, ry + (rh - 29) / 2, 40, 29, f.items[k])
 			px = px - 4
 		end
-		ry = ry + ch + 8
+		ry = ry + rh
 	end
 	G.alpha = ba
 end
@@ -4445,180 +4401,111 @@ end
 function W.draft(w, h)
 	local d = state.draft
 	local view = state.view
-	local lx, lw, rx, rw = K.CX, K.COL_L, K.CX + K.COL_L + K.GAP, w - K.CX - K.COL_L - K.GAP - 16
-	local top, bottom = K.TOP, h - 16
+	local lx, lw = N.X, 404
+	local rx = lx + lw + 44
+	local rw = w - N.X - rx
+	local top, bottom = N.TOP, h - 24
+	local light = d.my_team ~= 3
 	W.block(0)
-	W.chance(lx, top, lw, 254)
+	local y = W.chance(lx, top, lw)
+	y = W.team(lx, y + 4, lw, d.ours, light and L("bb_light") or L("bb_dark"), light and N.WIN or N.LOSE, "so")
+	y = W.team(lx, y + 12, lw, d.theirs, light and L("bb_dark") or L("bb_light"), light and N.LOSE or N.WIN, "st")
 	W.block(1)
-	W.heat(lx, top + 254 + K.GAP, lw, bottom - top - 254 - K.GAP)
+	rect(lx, y + 16, lw, 1, N.LINE)
+	W.heat(lx, y + 34, lw, bottom - y - 34)
 	W.block(2)
+	rect(rx - 22, top, 1, bottom - top, N.LINE)
 	if d.my_hero and view then W.foes(rx, top, rw, bottom - top) else W.picks(rx, top, rw, bottom - top) end
 	W.unblock()
 end
 
-function W.next_strip(x, y, w, h)
-	local view = state.view
-	local win = state.win
-	W.card(x, y, w, h)
-	local step = view and view.next
-	if not step then return W.note(L("bb_route_empty"), x, y - 10, w) end
-	local can = view.gold >= step.cost
-	if can and win.afford_name ~= step.name then win.afford_name, win.afford_at = step.name, state.clock end
-	if not can then win.afford_name = nil end
-	local pulse = 0.5 + 0.5 * math.sin(state.clock * 3)
-	local ix, iy = x + 16, y + (h - 58) / 2
-	W.icon(item_image(step.name), ix, iy, 80, 58, 8, "next_icon")
-	W.glow(ix, iy, 80, 58, 8, can and (0.6 + 0.4 * pulse) or 1)
-	button("item", ix, iy, 80, 58, step.name)
-	local bw0 = 190
-	local rx = x + w - 16 - bw0
-	local tx = ix + 96
-	local tw = rx - 18 - tx
-	local name = fit(fonts.w600, 17, item_title(step.name), tw)
-	local nw = measure(fonts.w600, 17, name)
-	text(fonts.w600, 17, name, tx, y + 14, C.TEXT)
+function W.why(step)
+	if step.vs_reason then return step.vs_reason end
+	if step.why_text then return step.why_text end
 	local why = step.reason or L("bb_why_popular")
 	if state.turbo and step.share then
 		why = string.format(L("bb_next_share"), math.floor(step.share * 100 + 0.5))
 	elseif step.tm and step.tm > 0 and step.share then
 		why = string.format(L("bb_next_usual"), math.floor(step.tm / 60 + 0.5), math.floor(step.share * 100 + 0.5))
 	end
-	if tw - nw - 12 > 60 then text(fonts.w500, 13, fit(fonts.w500, 13, why, tw - nw - 12), tx + nw + 12, y + 18, C.MUTED) end
-	local by = y + 44
-	local share = tween("gold_bar", step.cost > 0 and math.min(1, view.gold / step.cost) or 0, 6)
-	rect(tx, by, tw, 8, C.TRACK, 4)
-	if share > 0.005 then grad(tx, by, tw * share, 8, C.GOLD_LO, C.GOLD_HI, C.GOLD_LO, C.GOLD_HI, 4) end
-	if can then W.shine(tx, by, tw, 8, (state.clock - (win.afford_at or 0)) / 0.8, C.GSHINE_0, C.GSHINE_1) end
-	local gold = string.format(L("bb_gold_of"), W.count("next_gold", math.min(view.gold, step.cost)), step.cost)
-	if step.minute then gold = gold .. " · " .. string.format(L("bb_eta"), step.minute) end
-	local gy = y + 62
-	text(fonts.w500, 13, gold, tx, gy + 7, C.MUTED)
+	step.why_text = why
+	return why
+end
+
+function W.next_block(x, y, w)
+	local view = state.view
+	local win = state.win
+	local step = view and view.next
+	W.head(L("bb_next"), x, y, w)
+	if not step then
+		W.empty(L("bb_route_empty"), x, y + 34, w)
+		return y + 110
+	end
+	local gold = view.gold or 0
+	local can = gold >= step.cost
+	if can and win.afford_name ~= step.name then win.afford_name, win.afford_at = step.name, state.clock end
+	if not can then win.afford_name = nil end
+	local iy = y + 26
+	local iw, ih = 112, 82
+	W.icon(item_image(step.name), x, iy, iw, ih, 12, "next_icon")
+	W.ring(x, iy, iw, ih, 12, can and (0.55 + 0.45 * (0.5 + 0.5 * math.sin(state.clock * 3))) or 1)
+	button("item", x, iy, iw, ih, step.name)
+	local rw0 = 270
+	local rx = x + w - rw0
+	local tx = x + iw + 28
+	local tw = rx - 36 - tx
+	local big = W.num(W.count("next_gold", math.min(gold, step.cost)))
+	text(fonts.d600, 46, big, tx, iy - 9, N.TEXT)
+	local bw = measure(fonts.d600, 46, big)
+	text(fonts.d500, 22, "/ " .. W.num(step.cost), tx + bw + 10, iy + 12, N.MUTED)
+	local name = fit(fonts.w600, 17, item_title(step.name), tw)
+	local nw = measure(fonts.w600, 17, name)
+	text(fonts.w600, 17, name, tx, iy + 46, N.TEXT)
+	if tw - nw - 14 > 60 then text(fonts.w500, 13, fit(fonts.w500, 13, W.why(step), tw - nw - 14), tx + nw + 14, iy + 50, N.MUTED) end
+	local by = iy + 76
+	local share = tween("gold_bar", step.cost > 0 and math.min(1, gold / step.cost) or 0, 6)
+	rect(tx, by, tw, 2, N.TRACK, 1)
+	if share > 0.005 then rect(tx, by, tw * share, 2, N.ACCENT, 1) end
+	local line
+	if can then
+		line = L("bb_enough")
+	else
+		line = string.format(L("bb_need"), W.num(step.cost - gold))
+		if step.minute then line = line .. "  ·  " .. string.format(L("bb_eta"), step.minute) end
+	end
+	text(fonts.w500, 13, line, tx, by + 10, can and N.ACCENT or N.MUTED)
 	local parts = step.parts or K.NONE
-	local px = tx + measure(fonts.w500, 13, gold) + 14
+	local py = y + 22
+	local shown = math.min(#parts, 4)
 	for i, part in ipairs(parts) do
-		local label = part.have and "✓" or tostring(part.cost)
-		local lw = measure(fonts.w600, 13, label) + 48
-		if px + lw > tx + tw then break end
-		local okp = not part.have and part.cost <= view.gold
-		local bx, bby, bw, bh, hot = W.btn("part" .. i, px, gy, lw, 30)
-		rect(bx, bby, bw, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
-		frame_line(bx, bby, bw, bh, okp and C.WIN or C.CARD_EDGE, 8)
-		picture(item_image(part.name), bx + 4, bby + 4, 30, 22, 4, part.have and 1 or 0)
-		text(fonts.w600, 13, label, bx + 40, bby + 7, okp and C.WIN or C.MUTED)
-		button("item", px, gy, lw, 30, part.name)
-		px = px + lw + 6
+		if i > shown then break end
+		local okp = not part.have and part.cost <= gold
+		local hh = hover_t("part" .. i, rx - 8, py, rw0 + 16, 26)
+		if hh > 0.01 then rect(rx - 8, py, rw0 + 16, 26, alpha(N.HOT, hh), 8) end
+		W.pic(item_image(part.name), rx, py + 3, 28, 20, 4, part.have and 1 or 0, false, (part.have or not okp) and N.DONE or nil)
+		text(fonts.w500, 13, fit(fonts.w500, 13, item_title(part.name), rw0 - 130), rx + 38, py + 5, (okp or part.have) and N.TEXT or N.MUTED)
+		local price = part.have and "✓" or W.num(part.cost)
+		text(part.have and fonts.w600 or fonts.d500, 14, price, rx + rw0, py + 4, part.have and N.MUTED or (okp and N.TEXT or N.DIM), "right")
+		if okp then text(fonts.w600, 12, L("bb_vs_now"), rx + rw0 - measure(fonts.d500, 14, price) - 10, py + 6, N.ACCENT, "right") end
+		button("item", rx - 8, py, rw0 + 16, 26, part.name)
+		py = py + 26
 	end
 	local main_label = L("bb_buy_all")
-	if not can then
-		for _, part in ipairs(parts) do
-			if not part.have and part.cost <= view.gold then
-				main_label = fit(fonts.w600, 14, string.format(L("bb_buy_part"), item_title(part.name)), bw0 - 18)
+	if can then
+		main_label = string.format(L("bb_buy_part"), item_title(step.name))
+	else
+		for i, part in ipairs(parts) do
+			if i > shown then break end
+			if not part.have and part.cost <= gold then
+				main_label = string.format(L("bb_buy_part"), item_title(part.name))
 				break
 			end
 		end
 	end
-	local b1y = y + (h - 84) / 2
-	local bx, bby, bw, bh, hb = W.btn("buy", rx, b1y, bw0, 38)
-	if can then frame_line(bx - 3, bby - 3, bw + 6, bh + 6, alpha(C.ACCENT, 0.25 + 0.35 * pulse), 10, 2) end
-	rect(bx, bby, bw, bh, mix(C.ACCENT, C.ACCENT_HOT, hb), 8)
-	text(fonts.w600, 14, main_label, bx + bw / 2, bby + 10, C.WHITE, "center")
-	button("buy", rx, b1y, bw0, 38, step.name)
-	local qx, qy, qw, qh, hq = W.btn("quick", rx, b1y + 46, bw0, 38)
-	rect(qx, qy, qw, qh, mix(C.ROW, C.ROW_HOT, hq), 8)
-	frame_line(qx, qy, qw, qh, C.CARD_EDGE, 8)
-	text(fonts.w600, 14, fit(fonts.w600, 14, L("bb_quick"), bw0 - 14), qx + qw / 2, qy + 10, C.TEXT, "center")
-	button("quick", rx, b1y + 46, bw0, 38, step.name)
-end
-
-function W.vs(x, y, w, h)
-	local view = state.view
-	W.card(x, y, w, h, L("bb_vs_title"))
-	local list = view and view.vs_rows or K.NONE
-	if #list == 0 then return W.note(L("bb_vs_empty"), x, y, w) end
-	local ba = G.alpha
-	local ry = y + 48
-	for i, t in ipairs(list) do
-		local first = t.options[1]
-		local px = x + 26
-		local np = math.min(3, #t.units)
-		local tx = px + (np > 0 and np * 25 + 4 or 0)
-		local cost, gold = item_cost(first), view.gold or 0
-		local now = cost <= gold
-		local label = now and L("bb_vs_now") or string.format(L("bb_vs_eta"), math.max(1, math.floor((cost - gold) / math.max(100, view.gpm or 400) + 0.5)))
-		local pw = measure(fonts.w600, 13, label) + 18
-		local title = wrap(fonts.w600, 14, t.text, x + w - 34 - pw - tx, 2)
-		if t.how ~= "" and not t.how_line then t.how_line = item_title(first) .. ": " .. t.how end
-		local how = t.how_line and wrap(fonts.w500, 13, t.how_line, w - 52, 2) or K.NONE
-		local th = #title * 19
-		local ch = 12 + th + 8 + 30 + (#how > 0 and (8 + #how * 18) or 0) + 12
-		if ry + ch > y + h - 8 then break end
-		G.alpha = ba * W.since(state.win.open_at, 0.12 + i * 0.05, 0.24)
-		rect(x + 14, ry, w - 28, ch, C.ROW, 8)
-		for k, unit in ipairs(t.units) do
-			if k > 3 then break end
-			picture(hero_image(unit), px + (k - 1) * 25, ry + 12, 22, 22, 6, 0, true)
-		end
-		for k, l in ipairs(title) do text(fonts.w600, 14, l, tx, ry + 12 + (k - 1) * 19, t.live and C.GOLD or C.TEXT) end
-		local sc = now and W.pop(W.first_seen("can" .. t.key, true)) or 1
-		if not now then W.seen["can" .. t.key] = nil end
-		local pcx = x + w - 24 - pw / 2
-		rect(pcx - pw * sc / 2, ry + 11 + 11 * (1 - sc), pw * sc, 22 * sc, now and C.PILL_WIN or C.SEG, 6)
-		if sc > 0.85 then text(fonts.w600, 13, label, pcx, ry + 15, now and C.WIN or C.MUTED, "center") end
-		local iy = ry + 12 + th + 8
-		local ix = x + 26
-		for k, name in ipairs(t.options) do
-			if k > 7 or ix + 42 > x + w - 26 then break end
-			W.icon(item_image(name), ix, iy, 42, 30, 6, t.key .. k)
-			frame_line(ix, iy, 42, 30, k == 1 and C.VS or C.EDGE, 6, k == 1 and 1.3 or 1)
-			button("item", ix, iy, 42, 30, name)
-			ix = ix + 48
-		end
-		for k, l in ipairs(how) do text(fonts.w500, 13, l, x + 26, iy + 38 + (k - 1) * 18, C.MUTED) end
-		ry = ry + ch + 8
-	end
-	G.alpha = ba
-end
-
-function W.shelf(label, list, x, y, w, key, row0, line)
-	local view = state.view
-	local ba = G.alpha
-	local top = label and 24 or 0
-	if label then text(fonts.w500, 14, label, x, y, C.MUTED) end
-	if line then
-		rect(x, y + top, w, 3, line, 1)
-		top = top + 12
-	end
-	local iw, ih, gap = 46, 34, 6
-	local per = math.max(1, math.floor((w + gap) / (iw + gap)))
-	local pulse = 0.5 + 0.5 * math.sin(state.clock * 3)
-	for i, step in ipairs(list) do
-		local col, row = (i - 1) % per, math.floor((i - 1) / per)
-		local sx, sy = x + col * (iw + gap), y + top + row * (ih + 24)
-		local e = W.since(state.win.open_at, 0.12 + (row0 + row) * 0.05 + col * 0.02, 0.22)
-		G.alpha = ba * e
-		local now = view and view.next == step
-		local dim = step.done or step.skipped
-		local hot = W.icon(item_image(step.name), sx, sy + (1 - e) * 6, iw, ih, 6, key .. i, dim and 1 or 0, dim and C.DONE_TINT or nil)
-		if hot > 0.5 and (key == "sh_e" or key == "sh_c") then W.hov_cand = { name = step.name, orig = step.from or step.name, x = sx, y = sy, w = iw, h = ih } end
-		if now then
-			W.glow(sx, sy, iw, ih, 6, 0.6 + 0.4 * pulse)
-		else
-			frame_line(sx, sy, iw, ih, hot > 0.01 and alpha(C.WHITE, 0.15 + hot * 0.3) or C.EDGE, 6)
-		end
-		if step.count and step.count > 1 then text(fonts.w700, 13, tostring(step.count), sx + iw - 4, sy + ih - 17, C.WHITE, "right") end
-		if step.done then
-			text(fonts.w700, 13, "✓", sx + iw / 2, sy + ih + 4, C.WIN, "center")
-		elseif step.skipped then
-			text(fonts.w600, 12, L("bb_card_skipped"), sx + iw / 2, sy + ih + 4, C.DIM, "center")
-		else
-			local mm = state.turbo and step.minute or (step.tm and step.tm > 0 and math.floor(step.tm / 60 + 0.5))
-			if mm then text(fonts.w600, 13, mm .. "'", sx + iw / 2, sy + ih + 4, now and C.GOLD or C.MUTED, "center") end
-		end
-		button("item", sx, sy, iw, ih, step.name)
-	end
-	G.alpha = ba
-	local rows = math.max(1, math.ceil(#list / per))
-	return y + top + rows * (ih + 24) + 8, row0 + rows
+	local b1y = y + 22 + math.max(3, shown) * 26 + 10
+	W.button_main("buy", main_label, rx, b1y, rw0 - 106, 38, "buy", step.name)
+	W.button_ghost("quick", L("bb_quick"), rx + rw0 - 98, b1y, 98, 38, "quick", step.name)
+	return b1y + 38
 end
 
 function W.shelf_data(view)
@@ -4651,86 +4538,195 @@ function W.shelf_data(view)
 	return sh
 end
 
-function W.stage_line(s, view)
-	local all, now = #s.list > 0, false
-	for _, st in ipairs(s.list) do
-		if not st.done and not st.skipped then all = false end
-		if view.next == st then now = true end
-	end
-	if all then return C.WIN end
-	if now then return C.GOLD end
-	return C.TRACK
-end
-
-function W.route_plan(view, cw)
-	local plan = { h = 148 }
-	if not view or not view.route then return plan end
-	local sh = W.shelf_data(view)
-	local stages = {}
-	if #sh.start > 0 then stages[#stages + 1] = { label = L("bb_shelf_start"), list = sh.start, key = "sh_s" } end
-	if #sh.early > 0 then stages[#stages + 1] = { label = L("bb_shelf_lane"), list = sh.early, key = "sh_e" } end
-	stages[#stages + 1] = { label = L("bb_shelf_core"), list = sh.core, key = "sh_c" }
-	local avail = cw - 32 - (#stages - 1) * 16
-	local need = 0
-	for _, s in ipairs(stages) do
-		s.need = math.max(measure(fonts.w500, 14, s.label) + 10, math.max(1, #s.list) * 52 - 6)
-		need = need + s.need
-	end
-	local rows = 1
-	for i, s in ipairs(stages) do
-		if need <= avail then
-			s.w = s.need + (i == #stages and avail - need or 0)
-		else
-			s.w = math.floor(avail * s.need / need)
+function W.tl_layout(view, aw)
+	if view.tl and view.tl_w == aw then return view.tl end
+	local items = {}
+	local last = 0
+	for i, step in ipairs(view.route) do
+		if not step.sit then
+			local m = state.turbo and step.minute or ((step.tm and step.tm > 0) and step.tm / 60 or step.minute)
+			if m then last = m else m = last end
+			items[#items + 1] = { step = step, m = m, i = i }
 		end
-		local per = math.max(1, math.floor((s.w + 6) / 52))
-		rows = math.max(rows, math.ceil(math.max(1, #s.list) / per))
 	end
-	plan.stages = stages
-	plan.h = 50 + 36 + rows * 58 + 4
-	return plan
+	table.sort(items, function(a, b)
+		if a.m ~= b.m then return a.m < b.m end
+		return a.i < b.i
+	end)
+	local maxm = 30
+	for _, it in ipairs(items) do maxm = math.max(maxm, it.m + 4) end
+	maxm = math.min(90, math.ceil(maxm / 5) * 5)
+	local iw, gap = 44, 6
+	local free = { -1000, -1000 }
+	for _, it in ipairs(items) do
+		local cx = it.m / maxm * aw
+		local p1 = math.max(cx, free[1] + gap + iw / 2)
+		local p2 = math.max(cx, free[2] + gap + iw / 2)
+		local lane = p2 < p1 and 2 or 1
+		cx = lane == 1 and p1 or p2
+		free[lane] = cx + iw / 2
+		it.cx, it.lane = cx, lane
+	end
+	for l = 1, 2 do
+		local limit = aw - iw / 2
+		for k = #items, 1, -1 do
+			local it = items[k]
+			if it.lane == l then
+				it.cx = math.max(iw / 2, math.min(it.cx, limit))
+				limit = it.cx - iw - gap
+			end
+		end
+	end
+	local tl = { items = items, max = maxm }
+	view.tl, view.tl_w = tl, aw
+	return tl
 end
 
-function W.route(x, y, w, plan)
-	W.card(x, y, w, plan.h, L("bb_route_title"))
-	if not plan.stages then return W.note(L("bb_route_empty"), x, y, w) end
+function W.timeline(x, y, w)
 	local view = state.view
-	local sx = x + 16
-	for _, s in ipairs(plan.stages) do
-		W.shelf(s.label, s.list, sx, y + 50, s.w, s.key, 0, W.stage_line(s, view))
-		sx = sx + s.w + 16
+	W.head(L("bb_route_title"), x, y, w, state.turbo and L("bb_tl_hint_turbo") or L("bb_tl_hint"))
+	if not view or not view.route then
+		W.empty(L("bb_route_empty"), x, y + 34, w)
+		return y + 164
 	end
+	local sh = W.shelf_data(view)
+	local top = y + 30
+	text(fonts.w500, 12, L("bb_shelf_start"), x, top, N.DIM)
+	for i, e in ipairs(sh.start) do
+		if i > 8 then break end
+		local col, row = (i - 1) % 2, math.floor((i - 1) / 2)
+		local px, py = x + col * 36, top + 20 + row * 28
+		W.pic(item_image(e.name), px, py, 32, 23, 5, e.done and 1 or 0, false, e.done and N.DONE or nil)
+		if e.count and e.count > 1 then
+			rect(px + 18, py + 11, 14, 12, N.SHADE, 3)
+			text(fonts.d600, 11, tostring(e.count), px + 25, py + 11, N.TEXT, "center")
+		end
+		button("item", px, py, 32, 23, e.name)
+	end
+	local ax0 = x + 100
+	local aw = w - 100
+	local tl = W.tl_layout(view, aw)
+	local lane_y = { top + 18, top + 64 }
+	local axis_y = top + 110
+	rect(ax0, axis_y, aw, 1, N.DIM)
+	local step_m = tl.max > 50 and 10 or 5
+	for m = 0, tl.max, step_m do
+		local tx = ax0 + m / tl.max * aw
+		rect(tx, axis_y - 3, 1, 4, N.DIM)
+		text(fonts.d500, 12, tostring(m), tx, axis_y + 6, N.DIM, "center")
+	end
+	local now_m = Engine.IsInGame() and math.max(0, (GameRules.GetDOTATime() or 0) / 60) or 0
+	if now_m > 0 then
+		local nx = ax0 + math.min(1, now_m / tl.max) * aw
+		rect(nx - 1, top - 2, 2, axis_y - top + 6, N.ACCENT)
+		text(fonts.d600, 12, string.format("%d:%02d", math.floor(now_m), math.floor((now_m % 1) * 60)), nx - 7, top - 2, N.ACCENT, "right")
+	end
+	local ba = G.alpha
+	local pulse = 0.5 + 0.5 * math.sin(state.clock * 3)
+	for i, it in ipairs(tl.items) do
+		local iy = lane_y[it.lane]
+		G.alpha = ba * W.since(state.win.open_at, 0.12 + i * 0.03, 0.22)
+		rect(ax0 + it.cx, iy + 32, 1, axis_y - iy - 32, (it.step.done or it.step.skipped or it.step.passed) and N.LINE or N.DIM)
+	end
+	local card_hit = W.card_hit()
+	for i, it in ipairs(tl.items) do
+		local step = it.step
+		local ix = ax0 + it.cx - 22
+		local iy = lane_y[it.lane]
+		local e = W.since(state.win.open_at, 0.12 + i * 0.03, 0.22)
+		G.alpha = ba * e
+		local dim = step.done or step.skipped or step.passed
+		local hot = W.icon(item_image(step.name), ix, iy + (1 - e) * 6, 44, 32, 6, "tl" .. i, dim and 1 or 0, dim and N.DONE or nil)
+		if hot > 0.5 and not card_hit then W.hov_cand = { name = step.name, orig = step.from or step.name, x = ix, y = iy, w = 44, h = 32 } end
+		if view.next == step then W.ring(ix, iy, 44, 32, 6, 0.6 + 0.4 * pulse) end
+		if step.skipped then rect(ix + 6, iy + 15, 32, 2, N.MUTED, 1) end
+		if step.counter and not dim then
+			dot(ix + 42, iy + 2, 5, N.BG)
+			dot(ix + 42, iy + 2, 3.5, N.ACCENT)
+		end
+		button("item", ix, iy, 44, 32, step.name)
+	end
+	G.alpha = ba
+	return axis_y + 24
+end
+
+function W.vs(x, y, w, h)
+	local view = state.view
+	W.head(L("bb_vs_title"), x, y, w)
+	local list = view and view.vs_rows or K.NONE
+	if #list == 0 then return W.empty(L("bb_vs_empty"), x, y + 32, w) end
+	local ba = G.alpha
+	local ry = y + 22
+	local gold = view.gold or 0
+	for i, t in ipairs(list) do
+		local rh = 46
+		if ry + rh > y + h then break end
+		G.alpha = ba * W.since(state.win.open_at, 0.12 + i * 0.05, 0.24)
+		if i > 1 then rect(x, ry, w, 1, N.LINE) end
+		local first = t.options[1]
+		local np = math.min(3, #t.units)
+		for k = np, 1, -1 do W.pic(hero_image(t.units[k]), x + (k - 1) * 16, ry + 11, 24, 24, 12, 0, true) end
+		local tx = x + (np > 0 and (np - 1) * 16 + 36 or 0)
+		local cost = item_cost(first)
+		local now = cost <= gold
+		local label = now and L("bb_vs_now") or string.format(L("bb_vs_eta"), math.max(1, math.floor((cost - gold) / math.max(100, view.gpm or 400) + 0.5)))
+		local lw = measure(fonts.w600, 12, label)
+		text(fonts.w600, 12, label, x + w, ry + 16, now and N.ACCENT or N.MUTED, "right")
+		local ix = x + w - lw - 12
+		local room0 = ix - tx - 160
+		for k = math.max(1, math.min(4, #t.options, math.floor((room0 + 4) / 44))), 1, -1 do
+			ix = ix - 40
+			W.icon(item_image(t.options[k]), ix, ry + 9, 38, 28, 5, t.key .. k)
+			button("item", ix, ry + 9, 38, 28, t.options[k])
+			ix = ix - 4
+		end
+		local room = ix - 12 - tx
+		if not t.sub then t.sub = (t.how and t.how ~= "") and (item_title(first) .. ": " .. t.how) or item_title(first) end
+		text(fonts.w500, 14, fit(fonts.w500, 14, t.text, room), tx, ry + 6, t.live and N.ACCENT or N.TEXT)
+		text(fonts.w500, 12, fit(fonts.w500, 12, t.sub, room), tx, ry + 26, N.MUTED)
+		ry = ry + rh
+	end
+	G.alpha = ba
 end
 
 function W.more(x, y, w, h)
 	local view = state.view
-	W.card(x, y, w, h, L("bb_shelf_more"))
+	W.head(L("bb_shelf_more"), x, y, w)
 	if not view or not view.route then return end
 	local sh = W.shelf_data(view)
-	if #sh.more > 0 then W.shelf(nil, sh.more, x + 16, y + 50, w - 32, "sh_m", 1) end
+	local iw, ih, gap = 44, 32, 8
+	local per = math.max(1, math.floor((w + gap) / (iw + gap)))
+	local ba = G.alpha
+	for i, e in ipairs(sh.more) do
+		local col, row = (i - 1) % per, math.floor((i - 1) / per)
+		local sx, sy = x + col * (iw + gap), y + 26 + row * (ih + gap)
+		if sy + ih > y + h then break end
+		G.alpha = ba * W.since(state.win.open_at, 0.15 + i * 0.02, 0.22)
+		W.icon(item_image(e.name), sx, sy, iw, ih, 6, "sh_m" .. i)
+		button("item", sx, sy, iw, ih, e.name)
+	end
+	G.alpha = ba
 end
 
 function W.build(w, h)
-	local view = state.view
-	local x, cw = K.CX, w - K.CX - 16
-	local top, bottom = K.TOP, h - 16
-	local nh = 106
+	local x, cw = N.X, w - 2 * N.X
+	local top, bottom = N.TOP, h - 24
 	W.block(0)
-	W.next_strip(x, top, cw, nh)
-	local plan = W.route_plan(view, cw)
-	local ry = top + nh + K.GAP
+	local y = W.next_block(x, top, cw)
 	W.block(1)
-	W.route(x, ry, cw, plan)
-	local by = ry + plan.h + K.GAP
-	local half = (cw - K.GAP) / 2
+	rect(x, y + 16, cw, 1, N.LINE)
+	y = W.timeline(x, y + 32, cw)
 	W.block(2)
-	W.vs(x, by, half, bottom - by)
+	rect(x, y + 12, cw, 1, N.LINE)
+	local cy = y + 28
+	local lw = math.floor(cw * 0.58)
+	W.vs(x, cy, lw, bottom - cy)
 	W.block(3)
-	W.more(x + half + K.GAP, by, half, bottom - by)
+	W.more(x + lw + 40, cy, cw - lw - 40, bottom - cy)
 	W.unblock()
 end
 
-function W.ring(cx, cy, r, th, mag, phys, grow)
+function W.donut(cx, cy, r, th, mag, phys, grow)
 	local start = -90
 	if mag > 0.001 then Render.Circle(P(cx, cy), r * G.s, A(C.MAGIC), th * G.s, start, mag * grow, false, 64) end
 	start = start + mag * 360 * grow
@@ -4744,58 +4740,61 @@ function W.fight(w, h)
 	local view = state.view
 	local dmg = state.dmg
 	local total = dmg.phys + dmg.mag + dmg.pure
-	local lx, lw, rx, rw = K.CX, K.COL_L, K.CX + K.COL_L + K.GAP, w - K.CX - K.COL_L - K.GAP - 16
-	local top, bottom = K.TOP, h - 16
-	local kh = 350
+	local lx, lw = N.X, 404
+	local rx = lx + lw + 44
+	local rw = w - N.X - rx
+	local top, bottom = N.TOP, h - 24
 	W.block(0)
-	W.card(lx, top, lw, kh, L("bb_fight_title"), dmg.deaths > 0 and string.format(L("bb_kill_deaths"), dmg.deaths) or nil)
+	W.head(L("bb_fight_title"), lx, top, lw, dmg.deaths > 0 and string.format(L("bb_kill_deaths"), dmg.deaths) or nil)
+	local ky = top + 30
 	if total <= 0 then
-		W.note(L("bb_fight_empty"), lx, top, lw)
+		W.empty(L("bb_fight_empty"), lx, ky + 4, lw)
 	else
-		local cx, cy = lx + 86, top + 122
+		local cx, cy = lx + 66, ky + 70
 		local grow = tween("fight_ring", 1, 3.6)
 		local mag = tween("f_mag", dmg.mag / total, 6)
 		local phys = tween("f_phys", dmg.phys / total, 6)
-		Render.Circle(P(cx, cy), 54 * G.s, A(C.TRACK), 12 * G.s, 0, 1, false, 64)
-		W.ring(cx, cy, 54, 12, mag, phys, grow)
-		text(fonts.w700, 18, tostring(W.count("f_total", math.floor(total * grow))), cx, cy - 16, C.TEXT, "center")
-		text(fonts.w500, 13, L("bb_fight_hint"), cx, cy + 6, C.MUTED, "center")
-		local gx, gr = lx + 172, lx + lw - 16
+		Render.Circle(P(cx, cy), 60 * G.s, A(N.TRACK), 8 * G.s, 0, 1, false, 64)
+		W.donut(cx, cy, 60, 8, mag, phys, grow)
+		text(fonts.d600, 24, W.num(W.count("f_total", math.floor(total * grow))), cx, cy - 18, N.TEXT, "center")
+		text(fonts.w500, 12, L("bb_fight_hint"), cx, cy + 10, N.MUTED, "center")
+		local gx, gr = lx + 162, lx + lw
 		for i, r in ipairs(K.DMG_ROWS) do
-			local ly = top + 74 + (i - 1) * 30
+			local ly = ky + 28 + (i - 1) * 30
 			local part = i == 1 and mag or (i == 2 and phys or math.max(0, 1 - mag - phys))
-			rect(gx, ly + 4, 10, 10, C[r[1]], 3)
-			text(fonts.w500, 15, L(r[2]), gx + 18, ly, C.TEXT)
-			text(fonts.w600, 15, math.floor(part * 100 + 0.5) .. "%", gr, ly, C.TEXT, "right")
+			rect(gx, ly + 5, 8, 8, C[r[1]], 2)
+			text(fonts.w500, 14, L(r[2]), gx + 18, ly, N.TEXT)
+			text(fonts.d600, 15, math.floor(part * 100 + 0.5) .. "%", gr, ly, N.TEXT, "right")
 		end
-		local ry = top + 194
+		local ry = ky + 154
 		if dmg.deaths > 0 then
-			text(fonts.w500, 14, fit(fonts.w500, 14, string.format(L("bb_kill_ctrl"), dmg.ctrl / dmg.deaths), lw - 32), lx + 16, ry, C.MUTED)
-			ry = ry + 30
+			text(fonts.w500, 13, fit(fonts.w500, 13, string.format(L("bb_kill_ctrl"), dmg.ctrl / dmg.deaths), lw), lx, ry, N.MUTED)
+			ry = ry + 28
 		end
 		for i, s in ipairs(view and view.killers or K.NONE) do
-			if ry + 34 > top + kh - 10 then break end
-			if s.unit:match("^npc_dota_hero_") then picture(hero_image(s.unit), lx + 16, ry, 28, 28, 6, 0, true) end
-			text(fonts.w500, 15, fit(fonts.w500, 15, hero_title(s.unit), lw - 170), lx + 54, ry, C.TEXT)
+			if ry + 34 > top + 300 then break end
+			if s.unit:match("^npc_dota_hero_") then W.pic(hero_image(s.unit), lx, ry, 26, 26, 13, 0, true) end
+			text(fonts.w500, 14, fit(fonts.w500, 14, hero_title(s.unit), lw - 150), lx + 38, ry, N.TEXT)
 			local share = tween("src_" .. s.unit, s.share, 6) * W.since(state.win.open_at, 0.15 + i * 0.06, 0.45)
-			rect(lx + 54, ry + 23, lw - 130, 5, C.TRACK, 2)
-			rect(lx + 54, ry + 23, (lw - 130) * share, 5, C.GOLD, 2)
-			text(fonts.w600, 15, math.floor(s.share * 100 + 0.5) .. "%", lx + lw - 16, ry + 6, C.TEXT, "right")
-			ry = ry + 40
+			rect(lx + 38, ry + 22, lw - 100, 2, N.TRACK, 1)
+			rect(lx + 38, ry + 22, (lw - 100) * share, 2, N.ACCENT, 1)
+			text(fonts.d600, 15, math.floor(s.share * 100 + 0.5) .. "%", lx + lw, ry + 5, N.TEXT, "right")
+			ry = ry + 38
 		end
 	end
-	local ty = top + kh + K.GAP
+	local ty = top + 330
 	W.block(1)
-	W.card(lx, ty, lw, bottom - ty, L("bb_todo_title"))
+	rect(lx, ty - 18, lw, 1, N.LINE)
+	W.head(L("bb_todo_title"), lx, ty, lw)
 	local todo = view and view.todo or K.NONE
 	if #todo == 0 then
-		W.note(L("bb_todo_empty"), lx, ty, lw)
+		W.empty(L("bb_todo_empty"), lx, ty + 30, lw)
 	else
 		local ba = G.alpha
-		local ly = ty + 50
+		local ly = ty + 28
 		for i, line in ipairs(todo) do
-			local lines = wrap(fonts.w500, 15, line, lw - 52, 2)
-			if ly + #lines * 21 > bottom - 10 then break end
+			local lines = wrap(fonts.w500, 15, line, lw - 22, 2)
+			if ly + #lines * 21 > bottom then break end
 			local tkey = line:match("^[^:]*")
 			if not W.todo_at[tkey] then
 				W.todo_n = W.todo_n + 1
@@ -4804,10 +4803,10 @@ function W.fight(w, h)
 			end
 			local flash = 1 - math.min(1, (state.clock - W.todo_at[tkey]) / 0.7)
 			G.alpha = ba * W.since(state.win.open_at, 0.1 + i * 0.05, 0.24)
-			if flash > 0 then dot(lx + 21, ly + 10, 3 + 5 * flash, alpha(C.ACCENT, 0.35 * flash)) end
-			dot(lx + 21, ly + 10, 3, C.ACCENT)
+			if flash > 0 then dot(lx + 4, ly + 10, 3 + 5 * flash, alpha(N.ACCENT, 0.35 * flash)) end
+			dot(lx + 4, ly + 10, 3, N.ACCENT)
 			for _, l in ipairs(lines) do
-				text(fonts.w500, 15, l, lx + 34, ly, C.TEXT)
+				text(fonts.w500, 15, l, lx + 20, ly, N.TEXT)
 				ly = ly + 21
 			end
 			ly = ly + 8
@@ -4815,52 +4814,51 @@ function W.fight(w, h)
 		G.alpha = ba
 	end
 	W.block(2)
-	W.card(rx, top, rw, bottom - top, L("bb_fight_foes"))
+	rect(rx - 22, top, 1, bottom - top, N.LINE)
+	W.head(L("bb_fight_foes"), rx, top, rw)
 	local live = view and view.live or K.NONE
 	if #live == 0 then
-		W.note(L("bb_enemies_empty"), rx, top, rw)
+		W.empty(L("bb_enemies_empty"), rx, top + 32, rw)
 		return W.unblock()
 	end
 	local ba = G.alpha
-	local ready = L("bb_foe_ult_ready")
 	local pulse = 0.5 + 0.5 * math.sin(state.clock * 4)
-	local ey = top + 50
-	for _, f in ipairs(live) do
-		if ey + 84 > bottom - 8 then break end
+	local ey = top + 26
+	for i, f in ipairs(live) do
+		if ey + 82 > bottom then break end
 		local fresh = not W.foe_at[f.unit]
 		if fresh then W.foe_at[f.unit] = state.clock end
 		G.alpha = ba * W.since(W.foe_at[f.unit], 0, 0.3)
-		rect(rx + 12, ey - 6, rw - 24, 84, f.go and C.GO_ROW or C.ROW, 8)
-		if f.go then frame_line(rx + 12, ey - 6, rw - 24, 84, C.GO_EDGE, 8) end
-		picture(hero_image(f.unit), rx + 22, ey + 2, 44, 44, 6, 0, true, f.alive and nil or C.DEAD_TINT)
+		if i > 1 then rect(rx, ey, rw, 1, N.LINE) end
+		W.pic(hero_image(f.unit), rx, ey + 12, 44, 44, 10, f.alive and 0 or 1, true, (not f.alive) and N.DONE or nil)
 		local name = hero_title(f.unit)
 		if f.fog then name = name .. " · " .. string.format(L("bb_foe_fog"), f.fog) end
 		local pw = 0
 		if f.go then
-			pw = measure(fonts.w600, 13, L("bb_foe_go")) + 18
-			rect(rx + rw - 22 - pw, ey, pw, 22, C.PILL_WIN, 6)
-			text(fonts.w600, 13, L("bb_foe_go"), rx + rw - 22 - pw / 2, ey + 4, C.WIN, "center")
+			pw = measure(fonts.w600, 12, L("bb_foe_go")) + 14
+			dot(rx + rw - pw + 3, ey + 21, 3, N.WIN)
+			text(fonts.w600, 12, L("bb_foe_go"), rx + rw, ey + 14, N.WIN, "right")
 		end
-		text(fonts.w600, 15, fit(fonts.w600, 15, name, rw - 112 - pw), rx + 78, ey + 1, f.fog and C.MUTED or C.TEXT)
-		local cx = rx + 78
+		text(fonts.w600, 15, fit(fonts.w600, 15, name, rw - 72 - pw), rx + 58, ey + 11, f.fog and N.MUTED or N.TEXT)
+		local cx = rx + 58
 		if f.hp then
 			local hp = tween("hp_" .. f.unit, f.hp, 8)
-			rect(cx, ey + 31, 58, 6, C.TRACK, 3)
-			rect(cx, ey + 31, 58 * hp, 6, hp < 0.35 and C.WIN or C.LOSE, 3)
-			cx = cx + 66
+			rect(cx, ey + 39, 56, 3, N.TRACK, 1)
+			rect(cx, ey + 39, 56 * hp, 3, hp < 0.35 and N.WIN or N.LOSE, 1)
+			cx = cx + 68
 		end
-		if f.ult then
-			local lw2 = measure(fonts.w600, 13, f.ult) + 16
-			local warn = f.ult == ready
-			rect(cx, ey + 24, lw2, 22, f.ult_ok and C.PILL_WIN or (warn and alpha(C.LOSE, 0.12 + 0.18 * pulse) or C.PILL_LOSE), 6)
-			text(fonts.w600, 13, f.ult, cx + lw2 / 2, ey + 28, f.ult_ok and C.WIN or C.LOSE, "center")
-			cx = cx + lw2 + 6
-		end
-		if f.bkb then
-			local lw2 = measure(fonts.w600, 13, f.bkb) + 16
-			if cx + lw2 <= rx + rw - 22 then
-				rect(cx, ey + 24, lw2, 22, f.bkb_ok and C.PILL_WIN or C.PILL_LOSE, 6)
-				text(fonts.w600, 13, f.bkb, cx + lw2 / 2, ey + 28, f.bkb_ok and C.WIN or C.LOSE, "center")
+		for k = 1, 2 do
+			local label, ok = f.ult, f.ult_ok
+			if k == 2 then label, ok = f.bkb, f.bkb_ok end
+			if label then
+				local lw2 = measure(fonts.w500, 12, label) + 14
+				if cx + lw2 <= rx + rw then
+					local warn = k == 1 and label == L("bb_foe_ult_ready")
+					local c = ok and N.WIN or (warn and alpha(N.LOSE, 0.55 + 0.45 * pulse) or N.LOSE)
+					dot(cx + 3, ey + 40, 3, c)
+					text(fonts.w500, 12, label, cx + 11, ey + 33, ok and N.MUTED or N.TEXT)
+					cx = cx + lw2 + 10
+				end
 			end
 		end
 		local seen = W.item_at[f.unit]
@@ -4868,16 +4866,16 @@ function W.fight(w, h)
 			seen = {}
 			W.item_at[f.unit] = seen
 		end
-		local ix = rx + 78
+		local ix = rx + 58
 		for _, item in ipairs(f.items or K.NONE) do
-			if ix + 30 > rx + rw - 22 then break end
+			if ix + 30 > rx + rw then break end
 			if not seen[item] then seen[item] = fresh and -10 or state.clock end
-			picture(item_image(item), ix, ey + 54, 30, 22, 4)
+			W.pic(item_image(item), ix, ey + 52, 30, 22, 4)
 			local glow = 1 - math.min(1, (state.clock - seen[item]) / 2)
-			if glow > 0 then frame_line(ix - 1, ey + 53, 32, 24, alpha(C.GOLD, glow), 5, 1.5) end
+			if glow > 0 then frame_line(ix - 2, ey + 50, 34, 26, alpha(N.ACCENT, glow), 6, 1.5) end
 			ix = ix + 34
 		end
-		ey = ey + 92
+		ey = ey + 84
 	end
 	G.alpha = ba
 	W.unblock()
@@ -4891,21 +4889,19 @@ end
 
 function W.toggle(key, x, y, on)
 	local t = tween("toggle_" .. key, on and 1 or 0, 20)
-	rect(x, y, 40, 22, mix(C.TOGGLE_TRACK, C.TOGGLE_ON_TRACK, t), 11)
-	dot(x + 11 + 18 * t, y + 11, 8, mix(C.TOGGLE_OFF, C.ACCENT, t))
+	rect(x, y, 40, 22, mix(N.TRACK, N.ACCENT, t), 11)
+	dot(x + 11 + 18 * t, y + 11, 8, mix(N.MUTED, N.INK, t))
 end
 
 function W.steps(s, x, y, value)
 	local cw = 48
-	rect(x, y, cw * s.count, 32, C.ROW, 8)
-	frame_line(x, y, cw * s.count, 32, C.CARD_EDGE, 8)
+	frame_line(x, y, cw * s.count, 32, N.LINE, 10)
 	local sx = tween("steps_x_" .. s.key, x + value * cw, 18)
-	rect(sx + 2, y + 2, cw - 4, 28, C.ACCENT, 6)
+	rect(sx + 3, y + 3, cw - 6, 26, N.ACCENT, 8)
 	for v = 0, s.count - 1 do
 		local bx = x + v * cw
 		local hot = hover_t("step_" .. s.key .. v, bx, y, cw, 32)
-		if hot > 0.01 and v ~= value then rect(bx + 2, y + 2, cw - 4, 28, alpha(C.ROW_HOT, hot), 6) end
-		text(fonts.w600, 14, tostring(s.values[v + 1]), bx + cw / 2, y + 7, v == value and C.WHITE or mix(C.MUTED, C.TEXT, hot), "center")
+		text(fonts.d500, 14, tostring(s.values[v + 1]), bx + cw / 2, y + 7, v == value and N.INK or mix(N.MUTED, N.TEXT, hot), "center")
 		button("step", bx, y, cw, 32, v)
 	end
 end
@@ -4913,79 +4909,93 @@ end
 function W.dropdown(drop, h)
 	local s = drop.def
 	local t = tween("dropdown", 1, 16)
-	local row = 32
+	local row = 34
 	local full = s.count * row + 8
 	local y = drop.y
-	local up = y + full > h - 16
-	if up then y = drop.y - 46 - full end
-	local k = 0.02 * (1 - t)
+	if y + full > h - 16 then y = drop.y - 41 - full end
+	local k = 0.03 * (1 - t)
 	local dx, dy, dw, dh = drop.x + drop.w * k / 2, y + full * k / 2, drop.w * (1 - k), full * (1 - k)
 	local ba = G.alpha
 	G.alpha = ba * t
-	W.soft(dx, dy, dw, dh, 10, 20)
-	rect(dx, dy, dw, dh, C.TIP, 10)
-	rect(dx + 10, dy, dw - 20, 1, C.TOP_EDGE)
-	frame_line(dx, dy, dw, dh, C.CARD_EDGE, 10)
+	W.soft(dx, dy, dw, dh, 12, 22)
+	rect(dx, dy, dw, dh, N.PANEL, 12)
+	frame_line(dx, dy, dw, dh, N.LINE, 12)
 	local current = setting(s.key)
 	for v = 0, s.count - 1 do
 		local oy = y + 4 + v * row
 		local hot = hover_t("option" .. v, drop.x + 4, oy, drop.w - 8, row - 2)
-		if hot > 0 then rect(drop.x + 4, oy, drop.w - 8, row - 2, alpha(C.ROW_HOT, hot), 6) end
-		text(fonts.w500, 14, fit(fonts.w500, 14, W.label(s, v), drop.w - 44), drop.x + 14, oy + 7, v == current and C.ACCENT or C.TEXT)
-		if v == current then text(fonts.w700, 14, "✓", drop.x + drop.w - 14, oy + 7, C.ACCENT, "right") end
+		if hot > 0.01 then rect(drop.x + 4, oy, drop.w - 8, row - 2, alpha(N.HOT, hot), 8) end
+		text(fonts.w500, 14, fit(fonts.w500, 14, W.label(s, v), drop.w - 44), drop.x + 14, oy + 8, v == current and N.ACCENT or N.TEXT)
+		if v == current then W.glyph(K.ONB_CHECK, 11, drop.x + drop.w - 20, oy + row / 2 - 1, N.ACCENT) end
 		if t > 0.6 then button("option", drop.x + 4, oy, drop.w - 8, row - 2, v) end
 	end
 	G.alpha = ba
 end
 
+function W.set_row(key, x, y, w, h)
+	local hot = hover_t(key, x - 10, y, w + 20, h)
+	if hot > 0.01 then rect(x - 10, y + 2, w + 20, h - 4, alpha(N.HOT, hot), 10) end
+	rect(x, y + h - 1, w, 1, N.LINE)
+	return hot
+end
+
 function W.updates(x, y, cw, half, x1, x2)
-	W.card(x, y, cw, 52 + 54 + 6, L("bb_upd_title"))
-	local ry = y + 52
-	text(fonts.w600, 15, UPD.title, x1, ry + 4, C.TEXT)
+	W.head(L("bb_upd_title"), x, y, cw)
+	local ry = y + 26
+	local rh = 56
+	rect(x1, ry + rh - 1, half, 1, N.LINE)
+	text(fonts.w600, 15, UPD.title, x1, ry + 8, N.TEXT)
 	local line, tone = UPD.line()
+	local col = (tone == C.LOSE and N.LOSE) or (tone == C.WIN and N.WIN) or (tone == C.ACCENT and N.ACCENT) or N.MUTED
 	local act = UPD.action()
 	local bw = 150
-	text(fonts.w500, 13, fit(fonts.w500, 13, line, act and half - bw - 12 or half), x1, ry + 26, tone)
+	text(fonts.w500, 13, fit(fonts.w500, 13, line, act and half - bw - 12 or half), x1, ry + 30, col)
 	if act then
-		local bx, by, bww, bh, hot = W.btn("upd_" .. act, x1 + half - bw, ry + 7, bw, 34)
-		local main = act ~= "check"
-		rect(bx, by, bww, bh, main and mix(C.ACCENT, C.ACCENT_HOT, hot) or mix(C.ROW, C.ROW_HOT, hot), 8)
-		if not main then frame_line(bx, by, bww, bh, C.CARD_EDGE, 8) end
-		text(fonts.w600, 14, L("bb_upd_" .. act), bx + bww / 2, by + 8, main and C.WHITE or C.TEXT, "center")
-		button("upd", x1 + half - bw, ry + 7, bw, 34, act)
+		if act == "check" then
+			W.button_ghost("upd_" .. act, L("bb_upd_" .. act), x1 + half - bw, ry + 9, bw, 36, "upd", act)
+		else
+			W.button_main("upd_" .. act, L("bb_upd_" .. act), x1 + half - bw, ry + 9, bw, 36, "upd", act)
+		end
 	end
-	local hot = hover_t("set_update", x2 - 8, ry, half + 16, 48)
-	if hot > 0.01 then rect(x2 - 8, ry, half + 16, 48, alpha(C.ROW_HOT, hot), 8) end
-	text(fonts.w500, 15, fit(fonts.w500, 15, L("bb_set_update"), half - 60), x2, ry + 14, C.TEXT)
-	W.toggle("update", x2 + half - 40, ry + 13, setting("update") == 1)
-	button("toggle", x2 - 8, ry, half + 16, 48, "update")
+	W.set_row("set_update", x2, ry, half, rh)
+	text(fonts.w500, 15, fit(fonts.w500, 15, L("bb_set_update"), half - 60), x2, ry + 18, N.TEXT)
+	W.toggle("update", x2 + half - 40, ry + 17, setting("update") == 1)
+	button("toggle", x2 - 10, ry, half + 20, rh, "update")
+	return ry + rh
+end
+
+function W.draw_tip()
+	local t = W.tip
+	if not t then return end
+	W.tip = nil
+	local tw = measure(fonts.w500, 13, t.text) + 20
+	local tx = math.max(6, math.min(K.WIN_W - 6 - tw, t.x - tw / 2))
+	rect(tx, t.y, tw, 28, N.PANEL, 8)
+	frame_line(tx, t.y, tw, 28, N.LINE, 8)
+	text(fonts.w500, 13, t.text, tx + tw / 2, t.y + 6, N.TEXT, "center")
 end
 
 function W.hero_grid(x, y, w, cell, kind)
 	local sel = POOL.get()
 	local any = POOL.n > 0
-	local gap = 4
+	local gap = 5
 	local per = math.max(1, math.floor((w + gap) / (cell + gap)))
 	W.grid_tip = nil
 	for _, g in ipairs(HEROES.list()) do
-		dot(x + 4, y + 8, 4, g.color)
-		text(fonts.w600, 13, L(g.key), x + 14, y, C.MUTED)
+		dot(x + 3, y + 8, 3, g.color)
+		text(fonts.w500, 13, L(g.key), x + 12, y, N.MUTED)
 		y = y + 20
 		for i, hro in ipairs(g.heroes) do
 			local col, row = (i - 1) % per, math.floor((i - 1) / per)
 			local hx, hy = x + col * (cell + gap), y + row * (cell + gap)
 			local on = sel[hro.id]
+			local off = any and not on
 			local hot = hover_t(kind .. hro.id, hx, hy, cell, cell)
-			local img = hero_image(hro.unit)
-			if img then
-				picture(img, hx, hy, cell, cell, 6, (any and not on) and 1 or 0, true)
-			else
-				rect(hx, hy, cell, cell, C.SLOT, 6)
-			end
+			W.pic(hero_image(hro.unit), hx, hy, cell, cell, 8, off and 1 or 0, true, off and N.DONE or nil)
 			if on then
-				frame_line(hx - 1, hy - 1, cell + 2, cell + 2, C.ACCENT, 7, 2)
+				frame_line(hx - 2, hy - 2, cell + 4, cell + 4, N.ACCENT, 10, 2)
 			elseif hot > 0.01 then
-				frame_line(hx, hy, cell, cell, alpha(C.WHITE, 0.4 * hot), 6)
+				frame_line(hx, hy, cell, cell, alpha(N.TEXT, 0.4 * hot), 8)
 			end
 			button(kind, hx, hy, cell, cell, hro.id)
 			if hot > 0.5 then W.grid_tip = { name = hro.title, x = hx + cell / 2, y = hy } end
@@ -4994,102 +5004,88 @@ function W.hero_grid(x, y, w, cell, kind)
 	end
 	local t = W.grid_tip
 	if t then
-		local tw = measure(fonts.w600, 13, t.name) + 16
-		rect(t.x - tw / 2, t.y - 28, tw, 24, C.TIP, 6)
-		frame_line(t.x - tw / 2, t.y - 28, tw, 24, C.CARD_EDGE, 6)
-		text(fonts.w600, 13, t.name, t.x, t.y - 24, C.TEXT, "center")
+		local tw = measure(fonts.w600, 13, t.name) + 18
+		local tx = math.max(6, math.min(K.WIN_W - 6 - tw, t.x - tw / 2))
+		rect(tx, t.y - 30, tw, 26, N.PANEL, 8)
+		frame_line(tx, t.y - 30, tw, 26, N.LINE, 8)
+		text(fonts.w600, 13, t.name, tx + tw / 2, t.y - 25, N.TEXT, "center")
 	end
 	return y
 end
 
 function W.pool_page(w, h)
-	local x, cw = K.CX, w - K.CX - 16
-	local top = K.TOP
+	local x, cw = N.X, w - 2 * N.X
+	local top = N.TOP
 	W.block(0)
-	W.card(x, top, cw, h - top - 16, L("bb_pool_title"))
-	local tx = x + 16 + measure(fonts.w600, 16, L("bb_pool_title")) + 12
-	text(fonts.w500, 13, POOL.label(), tx, top + 17, C.MUTED)
-	local bx = x + cw - 16 - 120
-	local dx, dy, dw, dh, hd = W.btn("pool_done", bx, top + 9, 120, 34)
-	rect(dx, dy, dw, dh, mix(C.ACCENT, C.ACCENT_HOT, hd), 8)
-	text(fonts.w600, 14, L("bb_pool_done"), dx + dw / 2, dy + 8, C.WHITE, "center")
-	button("pool_done", bx, top + 9, 120, 34)
-	if POOL.n > 0 then
-		local cx = bx - 8 - 120
-		local qx, qy, qw, qh, hq = W.btn("pool_clear", cx, top + 9, 120, 34)
-		rect(qx, qy, qw, qh, mix(C.ROW, C.ROW_HOT, hq), 8)
-		frame_line(qx, qy, qw, qh, C.CARD_EDGE, 8)
-		text(fonts.w600, 14, L("bb_pool_clear"), qx + qw / 2, qy + 8, C.TEXT, "center")
-		button("pool_clear", cx, top + 9, 120, 34)
-	end
-	text(fonts.w500, 13, L("bb_pool_hint"), x + 16, top + 50, C.MUTED)
-	W.hero_grid(x + 16, top + 80, cw - 32, 40, "pool")
+	local title = L("bb_pool_title")
+	text(fonts.d600, 20, title, x, top - 4, N.TEXT)
+	text(fonts.w500, 13, POOL.label(), x + measure(fonts.d600, 20, title) + 14, top + 2, N.MUTED)
+	local bx = x + cw - 120
+	W.button_main("pool_done", L("bb_pool_done"), bx, top - 8, 120, 36, "pool_done")
+	if POOL.n > 0 then W.button_ghost("pool_clear", L("bb_pool_clear"), bx - 128, top - 8, 120, 36, "pool_clear") end
+	text(fonts.w500, 13, L("bb_pool_hint"), x, top + 38, N.MUTED)
+	W.hero_grid(x, top + 66, cw, 40, "pool")
 	W.unblock()
 end
 
 function W.onb_heroes(w)
 	W.onb_title(L("bb_onb_heroes_q"), L("bb_onb_heroes_s"))
-	W.hero_grid(56, 160, w - 112, 34, "pool")
+	W.hero_grid(56, 166, w - 112, 34, "pool")
 end
 
 function W.settings(w, h)
 	if state.win.pool_page then return W.pool_page(w, h) end
 	local win = state.win
-	local x, cw = K.CX, w - K.CX - 16
-	local top = K.TOP
-	local half = (cw - 48) / 2
-	local x1, x2, y1, y2 = x + 16, x + 32 + half, top + 52, top + 52
+	local x, cw = N.X, w - 2 * N.X
+	local top = N.TOP
+	local half = (cw - 56) / 2
+	local x1, x2 = x, x + half + 56
+	local y1, y2 = top + 24, top + 24
+	local rh = 52
 	W.block(0)
-	W.card(x, top, cw, 52 + 5 * 54 + 10, L("bb_tab_settings"))
+	W.head(L("bb_tab_settings"), x, top, cw)
 	local drop
 	for _, s in ipairs(K.SETTINGS) do
 		if not s.own then
 			local rx, ry = x1, y1
 			if s.flag or s.right then rx, ry = x2, y2 end
-			local hot = hover_t("set_" .. s.key, rx - 8, ry, half + 16, 48)
-			if hot > 0.01 and not s.values then rect(rx - 8, ry, half + 16, 48, alpha(C.ROW_HOT, hot), 8) end
+			local hot = s.values and 0 or W.set_row("set_" .. s.key, rx, ry, half, rh)
+			if s.values then rect(rx, ry + rh - 1, half, 1, N.LINE) end
 			local value = setting(s.key)
 			if s.flag then
-				text(fonts.w500, 15, fit(fonts.w500, 15, L(s.title), half - 60), rx, ry + 14, C.TEXT)
-				W.toggle(s.key, rx + half - 40, ry + 13, value == 1)
-				button("toggle", rx - 8, ry, half + 16, 48, s.key)
+				text(fonts.w500, 15, fit(fonts.w500, 15, L(s.title), half - 60), rx, ry + 16, N.TEXT)
+				W.toggle(s.key, rx + half - 40, ry + 15, value == 1)
+				button("toggle", rx - 10, ry, half + 20, rh, s.key)
 			elseif s.values then
 				local sx = rx + half - 48 * s.count
-				text(fonts.w500, 15, fit(fonts.w500, 15, L(s.title), sx - rx - 12), rx, ry + 14, C.TEXT)
-				W.steps(s, sx, ry + 8, value)
+				text(fonts.w500, 15, fit(fonts.w500, 15, L(s.title), sx - rx - 12), rx, ry + 16, N.TEXT)
+				W.steps(s, sx, ry + 10, value)
 			else
 				local open = win.dropdown == s.key
 				local bw = 190
 				local bx = rx + half - bw
-				text(fonts.w500, 15, fit(fonts.w500, 15, L(s.title), bx - rx - 12), rx, ry + 14, C.TEXT)
+				text(fonts.w500, 15, fit(fonts.w500, 15, L(s.title), bx - rx - 12), rx, ry + 16, N.TEXT)
 				local ot = tween("open_" .. s.key, open and 1 or 0, 18)
-				rect(bx, ry + 7, bw, 34, mix(C.ROW, C.ROW_HOT, math.max(ot, hot * 0.5)), 8)
-				frame_line(bx, ry + 7, bw, 34, mix(C.CARD_EDGE, C.ACCENT, ot), 8)
-				text(fonts.w500, 14, fit(fonts.w500, 14, W.label(s, value), bw - 40), bx + 12, ry + 15, C.TEXT)
-				chevron(bx + bw - 16, ry + 24, ot, mix(C.MUTED, C.ACCENT, ot))
-				button("dropdown", rx - 8, ry, half + 16, 48, s.key)
+				frame_line(bx, ry + 9, bw, 34, mix(mix(N.LINE, N.DIM, hot), N.ACCENT, ot), 10)
+				text(fonts.w500, 14, fit(fonts.w500, 14, W.label(s, value), bw - 40), bx + 12, ry + 17, N.TEXT)
+				chevron(bx + bw - 16, ry + 26, ot, mix(N.MUTED, N.ACCENT, ot))
+				button("dropdown", rx - 10, ry, half + 20, rh, s.key)
 				if open then
 					drop = W.drop
-					drop.def, drop.x, drop.y, drop.w = s, bx, ry + 44, bw
+					drop.def, drop.x, drop.y, drop.w = s, bx, ry + 46, bw
 				end
 			end
-			if s.flag or s.right then y2 = ry + 54 else y1 = ry + 54 end
+			if s.flag or s.right then y2 = ry + rh else y1 = ry + rh end
 		end
 	end
-	local ph = hover_t("set_pool", x1 - 8, y1, half + 16, 48)
-	if ph > 0.01 then rect(x1 - 8, y1, half + 16, 48, alpha(C.ROW_HOT, ph), 8) end
-	local pbw = 150
-	text(fonts.w500, 15, L("bb_pool_title"), x1, y1 + 4, C.TEXT)
-	text(fonts.w500, 13, POOL.label(), x1, y1 + 25, C.MUTED)
-	local pbx, pby, pbww, pbh, phot = W.btn("pool_open", x1 + half - pbw, y1 + 7, pbw, 34)
-	rect(pbx, pby, pbww, pbh, mix(C.ROW, C.ROW_HOT, phot), 8)
-	frame_line(pbx, pby, pbww, pbh, C.CARD_EDGE, 8)
-	text(fonts.w600, 14, L("bb_pool_pick"), pbx + pbww / 2, pby + 8, C.TEXT, "center")
-	button("pool_open", x1 + half - pbw, y1 + 7, pbw, 34)
-	y1 = y1 + 54
-	text(fonts.w500, 13, L("bb_set_key_hint"), x2, y2 + 10, C.MUTED)
+	W.set_row("set_pool", x1, y1, half, rh)
+	text(fonts.w500, 15, L("bb_pool_title"), x1, y1 + 7, N.TEXT)
+	text(fonts.w500, 13, POOL.label(), x1, y1 + 28, N.MUTED)
+	W.button_ghost("pool_open", L("bb_pool_pick"), x1 + half - 150, y1 + 9, 150, 34, "pool_open")
+	y1 = y1 + rh
+	text(fonts.w500, 13, L("bb_set_key_hint"), x2, y2 + 16, N.MUTED)
 	W.block(1)
-	W.updates(x, top + 52 + 5 * 54 + 10 + K.GAP, cw, half, x1, x2)
+	W.updates(x, math.max(y1, y2) + 24, cw, half, x1, x2)
 	W.block(0)
 	if drop then W.dropdown(drop, h) end
 	W.unblock()
@@ -5110,7 +5106,7 @@ function W.onb_finish()
 	set_setting("mode", o.mode)
 	set_setting("shop", o.shop)
 	set_setting("auto", o.auto)
-	Config.WriteInt(K.CONFIG, "onboard", 1)
+	Config.WriteInt(K.CONFIG, "onboard2", 1)
 	o.active = false
 	local win = state.win
 	win.tab = Heroes.GetLocal() and "build" or "draft"
@@ -5155,71 +5151,66 @@ function W.onb_rise(t, delay, ba, by0)
 end
 
 function W.onb_main_btn(key, label, x, y, w, h, value)
-	local bx, by, bw, bh, hot = W.btn(key, x, y, w, h)
-	rect(bx, by, bw, bh, mix(C.ACCENT, C.ACCENT_HOT, hot), 8)
-	text(fonts.w700, 15, label, bx + bw / 2, by + (bh - 18) / 2, C.WHITE, "center")
-	button("onb", x, y, w, h, value)
+	W.button_main(key, label, x, y, w, h, "onb", value)
 end
 
 function W.onb_card(key, x, y, cw, ch, on, value)
 	local hot = hover_t(key, x, y, cw, ch)
 	local t = tween(key .. "_on", on and 1 or 0, 16)
-	rect(x, y, cw, ch, mix(C.CARD, C.ONB_PICK, t), 10)
-	if hot > 0.01 then rect(x, y, cw, ch, alpha(C.ROW_HOT, hot), 10) end
-	frame_line(x, y, cw, ch, mix(C.CARD_EDGE, C.ACCENT, t), 10, 1 + t * 0.5)
+	rect(x, y, cw, ch, mix(N.PANEL, N.SLOT, hot), 16)
+	frame_line(x, y, cw, ch, mix(mix(N.LINE, N.DIM, hot), N.ACCENT, t), 16, 1 + t * 0.6)
 	button("onb", x, y, cw, ch, value)
 	return t
 end
 
+function W.onb_check(x, y, t)
+	if t > 0.01 then W.glyph(K.ONB_CHECK, 12, x, y, alpha(N.ACCENT, t)) end
+end
+
 function W.onb_title(q, s)
-	text(fonts.w700, 26, q, 56, 92, C.TEXT)
-	text(fonts.w500, 15, s, 56, 130, C.MUTED)
+	text(fonts.d600, 30, q, 56, 86, N.TEXT)
+	text(fonts.w500, 15, s, 56, 130, N.MUTED)
 end
 
 function W.onb_intro(w)
 	local o = W.onb
 	local ba, by0 = G.alpha, G.oy
-	local cx, cy = w / 2, 230
+	local cx, cy = w / 2, 214
 	local t = state.clock - o.at
-	if t > 0.5 then
-		local p = ((t - 0.5) % 1.6) / 1.6
-		local r = 60 * (0.8 + 1.1 * p)
-		frame_line(cx - r, cy - r, r * 2, r * 2, alpha(C.ACCENT, 0.55 * (1 - p)), r, 2)
-	end
-	local e = math.min(1, t / 0.7)
-	local sc = e < 0.6 and 0.55 + 0.51 * W.ease(e / 0.6) or 1.06 - 0.06 * W.ease((e - 0.6) / 0.4)
-	G.alpha = ba * math.min(1, e * 2)
-	local r = 52 * sc
-	rect(cx - r, cy - r, r * 2, r * 2, C.ONB_LOGO, r)
-	frame_line(cx - r, cy - r, r * 2, r * 2, C.ONB_LOGO_EDGE, r)
-	W.glyph(K.LOGO, math.floor(52 * sc + 0.5), cx, cy, C.ACCENT)
-	W.onb_rise(t, 0.35, ba, by0)
-	text(fonts.w800, 40, L("bb_title"), cx, cy + 86, C.TEXT, "center")
+	local e = W.ease(t / 0.6)
+	G.alpha = ba * e
+	W.glyph(K.LOGO, 40, cx, cy + (1 - e) * 10, N.ACCENT)
+	W.onb_rise(t, 0.25, ba, by0)
+	local title = L("bb_title")
+	text(fonts.d700, 54, title, cx, cy + 40, N.TEXT, "center")
+	local lw = measure(fonts.d700, 54, title) * W.ease((t - 0.5) / 0.6)
+	if lw > 1 then rect(cx - lw / 2, cy + 112, lw, 2, N.ACCENT, 1) end
 	W.onb_rise(t, 0.55, ba, by0)
-	text(fonts.w500, 18, L("bb_onb_hello"), cx, cy + 140, C.MUTED, "center")
+	text(fonts.w500, 18, L("bb_onb_hello"), cx, cy + 134, N.MUTED, "center")
 	W.onb_rise(t, 0.75, ba, by0)
-	W.onb_main_btn("onb_start", L("bb_onb_start"), cx - 100, cy + 188, 200, 46, "next")
-	text(fonts.w500, 13, L("bb_onb_note"), cx, cy + 250, C.DIM, "center")
+	W.onb_main_btn("onb_start", L("bb_onb_start"), cx - 100, cy + 186, 200, 46, "next")
+	text(fonts.w500, 13, L("bb_onb_note"), cx, cy + 250, N.DIM, "center")
 	G.alpha, G.oy = ba, by0
 end
 
 function W.onb_roles(w)
 	local o = W.onb
 	W.onb_title(L("bb_onb_role_q"), L("bb_onb_role_s"))
-	local cw, ch = (w - 112 - 24) / 3, 108
+	local cw, ch = (w - 112 - 24) / 3, 112
 	for i, id in ipairs(K.ONB_ROLES) do
 		local col, row = (i - 1) % 3, math.floor((i - 1) / 3)
-		local x, y = 56 + col * (cw + 12), 168 + row * (ch + 12)
+		local x, y = 56 + col * (cw + 12), 172 + row * (ch + 12)
 		local t = W.onb_card("onb_r" .. id, x, y, cw, ch, o.role == id, "role:" .. id)
-		rect(x + 18, y + 16, 36, 36, mix(C.SEG, C.ACCENT, t), 8)
 		local icon = id > 0 and W.role_icon(id)
+		local tint = mix(N.MUTED, N.ACCENT, t)
 		if icon then
-			picture(icon, x + 25, y + 23, 22, 22, nil, 0, false, mix(C.ROLE_DIM, C.WHITE, t))
+			picture(icon, x + 20, y + 20, 26, 26, nil, 0, false, tint)
 		else
-			text(fonts.w800, 16, id > 0 and tostring(id) or "A", x + 36, y + 24, mix(C.MUTED, C.WHITE, t), "center")
+			text(fonts.d700, 20, "A", x + 33, y + 21, tint, "center")
 		end
-		text(fonts.w700, 16, L("bb_onb_r" .. id), x + 18, y + 62, C.TEXT)
-		text(fonts.w500, 13, fit(fonts.w500, 13, L("bb_onb_rs" .. id), cw - 36), x + 18, y + 84, C.MUTED)
+		W.onb_check(x + cw - 24, y + 33, t)
+		text(fonts.w600, 16, L("bb_onb_r" .. id), x + 20, y + 62, N.TEXT)
+		text(fonts.w500, 13, fit(fonts.w500, 13, L("bb_onb_rs" .. id), cw - 40), x + 20, y + 84, N.MUTED)
 	end
 end
 
@@ -5228,46 +5219,42 @@ function W.onb_modes(w)
 	W.onb_title(L("bb_onb_mode_q"), L("bb_onb_mode_s"))
 	local cw, ch = (w - 112 - 24) / 3, 210
 	for m = 0, 2 do
-		local x, y = 56 + m * (cw + 12), 168
+		local x, y = 56 + m * (cw + 12), 172
 		local t = W.onb_card("onb_m" .. m, x, y, cw, ch, o.mode == m, "mode:" .. m)
-		rect(x + 20, y + 22, 52, 52, mix(C.SEG, C.ACCENT, t), 12)
-		W.glyph(K.ONB_MODE_ICONS[m + 1], 22, x + 46, y + 48, mix(C.MUTED, C.WHITE, t))
-		text(fonts.w700, 18, L("bb_onb_m" .. m), x + 20, y + 140, C.TEXT)
-		for k, l in ipairs(wrap(fonts.w500, 13, L("bb_onb_ms" .. m), cw - 40, 2)) do text(fonts.w500, 13, l, x + 20, y + 166 + (k - 1) * 19, C.MUTED) end
+		W.glyph(K.ONB_MODE_ICONS[m + 1], 24, x + 38, y + 42, mix(N.MUTED, N.ACCENT, t))
+		W.onb_check(x + cw - 26, y + 36, t)
+		text(fonts.d600, 20, L("bb_onb_m" .. m), x + 22, y + 132, N.TEXT)
+		for k, l in ipairs(wrap(fonts.w500, 13, L("bb_onb_ms" .. m), cw - 44, 2)) do text(fonts.w500, 13, l, x + 22, y + 162 + (k - 1) * 19, N.MUTED) end
 	end
 end
 
 function W.onb_where(w)
 	local o = W.onb
 	W.onb_title(L("bb_onb_where_q"), L("bb_onb_where_s"))
-	local cw, ch = (w - 112 - 16) / 2, 260
-	for i, key in ipairs({ "shop", "auto" }) do
-		local x, y = 56 + (i - 1) * (cw + 16), 168
+	local cw, ch = (w - 112 - 16) / 2, 262
+	for i, key in ipairs(W.WHERE) do
+		local x, y = 56 + (i - 1) * (cw + 16), 172
 		local on = o[key] == 1
 		local t = W.onb_card("onb_w" .. key, x, y, cw, ch, on, "flip:" .. key)
-		rect(x + 1, y + 1, cw - 2, 150, C.ONB_PIC, 10)
 		local a, b = i == 1 and 96 or 150, i == 1 and 150 or 96
 		local ix = x + (cw - a - b - 8) / 2
-		rect(ix, y + 20, a, 110, mix(C.SEG, C.ONB_HL, t), 6)
-		rect(ix + a + 8, y + 20, b, 110, C.SEG, 6)
-		text(fonts.w700, 16, L("bb_onb_" .. key), x + 20, y + 170, C.TEXT)
-		for k, l in ipairs(wrap(fonts.w500, 13, L("bb_onb_" .. key .. "_s"), cw - 100, 2)) do text(fonts.w500, 13, l, x + 20, y + 196 + (k - 1) * 19, C.MUTED) end
-		W.toggle("onb_" .. key, x + cw - 60, y + 184, on)
+		if t > 0.01 then rect(ix, y + 22, a, 110, alpha(N.ACCENT_SOFT, t), 10) end
+		frame_line(ix, y + 22, a, 110, mix(N.LINE, N.ACCENT, t), 10, 1.5)
+		frame_line(ix + a + 8, y + 22, b, 110, N.LINE, 10)
+		text(fonts.w600, 16, L("bb_onb_" .. key), x + 22, y + 164, N.TEXT)
+		for k, l in ipairs(wrap(fonts.w500, 13, L("bb_onb_" .. key .. "_s"), cw - 110, 2)) do text(fonts.w500, 13, l, x + 22, y + 190 + (k - 1) * 19, N.MUTED) end
+		W.toggle("onb_" .. key, x + cw - 62, y + 166, on)
 	end
 end
 
 function W.onb_nav(w, h)
 	local o = W.onb
-	local y = h - 62
-	local bx, by, bw, bh, hot = W.btn("onb_back", 56, y, 110, 42)
-	rect(bx, by, bw, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
-	frame_line(bx, by, bw, bh, C.CARD_EDGE, 8)
-	text(fonts.w600, 14, L("bb_onb_back"), bx + bw / 2, by + 12, C.TEXT, "center")
-	button("onb", 56, y, 110, 42, "back")
+	local y = h - 66
+	W.button_ghost("onb_back", L("bb_onb_back"), 56, y, 110, 42, "onb", "back")
 	local dx = w / 2 - 46
 	for i = 1, 5 do
 		local dw = tween("onb_dot" .. i, i == o.step and 28 or 8, 14)
-		rect(dx, y + 17, dw, 8, i <= o.step and C.ACCENT or C.SEG, 4)
+		rect(dx, y + 18, dw, 6, i <= o.step and N.ACCENT or N.TRACK, 3)
 		dx = dx + dw + 8
 	end
 	W.onb_main_btn("onb_next", L(o.step == 4 and "bb_onb_finish" or "bb_onb_next"), w - 56 - 140, y, 140, 42, "next")
@@ -5277,15 +5264,14 @@ function W.onb_done(w)
 	local o = W.onb
 	local ba, by0 = G.alpha, G.oy
 	local t = state.clock - o.step_at
-	local cx, cy = w / 2, 240
+	local cx, cy = w / 2, 226
 	local sc = W.pop(t)
 	G.alpha = ba * math.min(1, t / 0.2)
-	local r = 42 * sc
-	rect(cx - r, cy - r, r * 2, r * 2, C.ONB_OK_BG, r)
-	frame_line(cx - r, cy - r, r * 2, r * 2, C.ONB_OK_EDGE, r)
-	W.glyph(K.ONB_CHECK, math.floor(30 * sc + 0.5), cx, cy, C.WIN)
+	local r = 40 * sc
+	frame_line(cx - r, cy - r, r * 2, r * 2, N.ACCENT, r, 2)
+	W.glyph(K.ONB_CHECK, math.floor(28 * sc + 0.5), cx, cy, N.ACCENT)
 	W.onb_rise(t, 0.2, ba, by0)
-	text(fonts.w800, 30, L("bb_onb_done"), cx, cy + 62, C.TEXT, "center")
+	text(fonts.d600, 34, L("bb_onb_done"), cx, cy + 62, N.TEXT, "center")
 	W.onb_rise(t, 0.35, ba, by0)
 	local pills = { o.role > 0 and L("bb_onb_r" .. o.role) or L("bb_onb_lobby"), L("bb_onb_m" .. o.mode), L(o.shop == 1 and "bb_onb_shop_on" or "bb_onb_shop_off"), POOL.label() }
 	local ws, total = {}, -8
@@ -5295,34 +5281,30 @@ function W.onb_done(w)
 	end
 	local px = cx - total / 2
 	for i, p in ipairs(pills) do
-		rect(px, cy + 110, ws[i], 34, C.CARD, 17)
-		frame_line(px, cy + 110, ws[i], 34, C.CARD_EDGE, 17)
-		text(fonts.w600, 14, p, px + ws[i] / 2, cy + 118, C.TEXT, "center")
+		frame_line(px, cy + 116, ws[i], 34, N.LINE, 17)
+		text(fonts.w600, 14, p, px + ws[i] / 2, cy + 124, N.TEXT, "center")
 		px = px + ws[i] + 8
 	end
-	text(fonts.w500, 14, L("bb_onb_change"), cx, cy + 160, C.MUTED, "center")
+	text(fonts.w500, 14, L("bb_onb_change"), cx, cy + 166, N.MUTED, "center")
 	W.onb_rise(t, 0.5, ba, by0)
-	W.onb_main_btn("onb_go", L("bb_onb_go"), cx - 100, cy + 200, 200, 46, "go")
+	W.onb_main_btn("onb_go", L("bb_onb_go"), cx - 100, cy + 206, 200, 46, "go")
 	G.alpha, G.oy = ba, by0
 end
 
 function W.onboard(w, h)
 	local o = W.onb
 	local ba, bx0 = G.alpha, G.ox
-	rect(0, 0, w, h, C.BG, 12)
-	rect(12, 0, w - 24, 1, C.TOP_EDGE)
-	frame_line(0, 0, w, h, C.EDGE, 12)
-	rect(0, 56, w, 1, C.LINE_FAINT)
-	button("header", 0, 0, w - 160, 56)
-	W.glyph(K.LOGO, 18, 34, 28, C.ACCENT)
-	text(fonts.w600, 15, L("bb_title"), 52, 19, C.MUTED)
-	if o.step >= 1 and o.step <= 4 then text(fonts.w500, 13, string.format(L("bb_onb_step"), o.step), w / 2, 21, C.MUTED, "center") end
+	W.shell(w, h)
+	rect(0, N.HEAD - 1, w, 1, N.LINE)
+	button("header", 0, 0, w - 160, N.HEAD)
+	text(fonts.d600, 17, L("bb_title"), N.X, 17, N.TEXT)
+	if o.step >= 1 and o.step <= 4 then text(fonts.w500, 13, string.format(L("bb_onb_step"), o.step), w / 2, 21, N.MUTED, "center") end
 	if o.step < 5 then
 		local label = L("bb_onb_skip")
 		local lw = measure(fonts.w600, 13, label)
-		local hot = hover_t("onb_skip", w - 32 - lw, 12, lw + 16, 32)
-		text(fonts.w600, 13, label, w - 24, 21, mix(C.MUTED, C.TEXT, hot), "right")
-		button("onb", w - 32 - lw, 12, lw + 16, 32, "skip")
+		local hot = hover_t("onb_skip", w - 36 - lw, 12, lw + 16, 32)
+		text(fonts.w600, 13, label, w - N.X, 21, mix(N.MUTED, N.TEXT, hot), "right")
+		button("onb", w - 36 - lw, 12, lw + 16, 32, "skip")
 	end
 	if o.step == 0 then
 		W.onb_intro(w)
@@ -5344,6 +5326,11 @@ function W.onboard(w, h)
 		W.onb_nav(w, h)
 	end
 	G.alpha, G.ox = ba, bx0
+end
+
+function W.card_hit()
+	local r = W.cardst and W.cardst.rect
+	return r ~= nil and cursor_in(r.x1, r.y1, r.x2, r.y2)
 end
 
 function W.item_vs(view, name)
@@ -5388,14 +5375,14 @@ function W.item_card(w, h)
 	local ed = EDIT.get(view.edit_id)
 	local cw = 300
 	local lines = {}
-	if step.from then lines[#lines + 1] = { string.format(L("bb_card_from"), item_title(step.from)), C.MUTED } end
+	if step.from then lines[#lines + 1] = { string.format(L("bb_card_from"), item_title(step.from)), N.MUTED } end
 	if step.share and state.turbo then
-		lines[#lines + 1] = { string.format(L("bb_next_share"), math.floor(step.share * 100 + 0.5)), C.MUTED }
+		lines[#lines + 1] = { string.format(L("bb_next_share"), math.floor(step.share * 100 + 0.5)), N.MUTED }
 	elseif step.share and step.tm and step.tm > 0 then
-		lines[#lines + 1] = { string.format(L("bb_card_usual"), math.floor(step.share * 100 + 0.5), math.floor(step.tm / 60 + 0.5)), C.MUTED }
+		lines[#lines + 1] = { string.format(L("bb_card_usual"), math.floor(step.share * 100 + 0.5), math.floor(step.tm / 60 + 0.5)), N.MUTED }
 	end
 	local vs = W.item_vs(view, step.name)
-	if vs then lines[#lines + 1] = { vs, C.TEXT } end
+	if vs then lines[#lines + 1] = { vs, N.TEXT } end
 	local wrapped = {}
 	for _, l in ipairs(lines) do
 		for _, part in ipairs(wrap(fonts.w500, 13, l[1], cw - 28, 2)) do wrapped[#wrapped + 1] = { part, l[2] } end
@@ -5403,7 +5390,7 @@ function W.item_card(w, h)
 	local alts = c.alts or K.NONE
 	local menu = c.menu and #alts > 0
 	local ch = 14 + 42 + 12 + #wrapped * 19 + 10 + 34 + (menu and (12 + 18 + #alts * 42) or 0) + 12 + 20 + 14
-	local x = math.max(K.CX, math.min(w - 16 - cw, c.x - 20))
+	local x = math.max(N.X, math.min(w - 16 - cw, c.x - 20))
 	local y = c.y + c.ih + 24
 	if y + ch > h - 8 then
 		y = c.y - ch - 8
@@ -5415,11 +5402,13 @@ function W.item_card(w, h)
 	end
 	local ba = G.alpha
 	G.alpha = ba * W.ease((now - c.at - 0.25) / 0.15)
-	rect(x, y, cw, ch, C.TIP, 10)
-	frame_line(x, y, cw, ch, C.CARD_EDGE, 10)
-	picture(item_image(step.name), x + 14, y + 14, 56, 41, 6)
-	text(fonts.w700, 15, fit(fonts.w700, 15, item_title(step.name), cw - 96), x + 82, y + 16, C.TEXT)
-	text(fonts.w600, 13, string.format(L("bb_card_cost"), step.cost or item_cost(step.name)), x + 82, y + 38, C.GOLD)
+	W.soft(x, y, cw, ch, 14, 22)
+	rect(x, y, cw, ch, N.PANEL, 14)
+	frame_line(x, y, cw, ch, N.LINE, 14)
+	button("card_bg", x, y, cw, ch)
+	W.pic(item_image(step.name), x + 14, y + 14, 56, 41, 6)
+	text(fonts.w600, 15, fit(fonts.w600, 15, item_title(step.name), cw - 96), x + 82, y + 16, N.TEXT)
+	text(fonts.d500, 14, string.format(L("bb_card_cost"), step.cost or item_cost(step.name)), x + 82, y + 38, N.MUTED)
 	local ly = y + 68
 	for _, l in ipairs(wrapped) do
 		text(fonts.w500, 13, l[1], x + 14, ly, l[2])
@@ -5428,33 +5417,25 @@ function W.item_card(w, h)
 	ly = ly + 10
 	local bw = (cw - 36) / 2
 	local back = step.skipped or step.from
-	local bx, by, bww, bh, hot = W.btn("card_a", x + 14, ly, bw, 34)
-	rect(bx, by, bww, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
-	frame_line(bx, by, bww, bh, C.CARD_EDGE, 8)
-	text(fonts.w600, 13, L(back and "bb_card_back" or "bb_card_skip"), bx + bww / 2, by + 9, C.TEXT, "center")
-	button("card", x + 14, ly, bw, 34, back and "back" or "skip")
+	W.button_ghost("card_a", L(back and "bb_card_back" or "bb_card_skip"), x + 14, ly, bw, 34, "card", back and "back" or "skip")
 	local rx = x + 22 + bw
 	if #alts > 0 then
-		local qx, qy, qw, qh, hq = W.btn("card_b", rx, ly, bw, 34)
-		rect(qx, qy, qw, qh, mix(C.ROW, C.ROW_HOT, hq), 8)
-		frame_line(qx, qy, qw, qh, menu and C.ACCENT or C.CARD_EDGE, 8)
-		text(fonts.w600, 13, L("bb_card_replace"), qx + qw / 2, qy + 9, C.TEXT, "center")
-		button("card", rx, ly, bw, 34, "menu")
+		W.button_ghost("card_b", L("bb_card_replace"), rx, ly, bw, 34, "card", "menu", menu)
 	else
-		text(fonts.w500, 13, L("bb_card_none"), rx + bw / 2, ly + 9, C.DIM, "center")
+		text(fonts.w500, 13, L("bb_card_none"), rx + bw / 2, ly + 9, N.DIM, "center")
 	end
 	ly = ly + 34
 	if menu then
 		ly = ly + 12
-		rect(x + 14, ly - 6, cw - 28, 1, C.LINE_FAINT)
-		text(fonts.w600, 12, L("bb_card_alts"), x + 14, ly, C.MUTED)
+		rect(x + 14, ly - 6, cw - 28, 1, N.LINE)
+		text(fonts.w500, 12, L("bb_card_alts"), x + 14, ly, N.MUTED)
 		ly = ly + 18
 		for i, a in ipairs(alts) do
 			local ah = hover_t("card_alt" .. i, x + 8, ly, cw - 16, 40)
-			if ah > 0.01 then rect(x + 8, ly, cw - 16, 40, alpha(C.ROW_HOT, ah), 8) end
-			picture(item_image(a.name), x + 14, ly + 5, 40, 29, 4)
-			text(fonts.w600, 13, fit(fonts.w600, 13, item_title(a.name), cw - 150), x + 64, ly + 11, C.TEXT)
-			text(fonts.w500, 12, string.format(L("bb_card_share"), math.floor(a.share * 100 + 0.5)), x + cw - 16, ly + 12, C.MUTED, "right")
+			if ah > 0.01 then rect(x + 8, ly, cw - 16, 40, alpha(N.HOT, ah), 8) end
+			W.pic(item_image(a.name), x + 14, ly + 5, 40, 29, 4)
+			text(fonts.w600, 13, fit(fonts.w600, 13, item_title(a.name), cw - 150), x + 64, ly + 11, N.TEXT)
+			text(fonts.d500, 13, string.format(L("bb_card_share"), math.floor(a.share * 100 + 0.5)), x + cw - 16, ly + 12, N.MUTED, "right")
 			button("card", x + 8, ly, cw - 16, 40, "alt:" .. i)
 			ly = ly + 42
 		end
@@ -5462,10 +5443,13 @@ function W.item_card(w, h)
 	ly = ly + 12
 	local on = ed and ed.always
 	local kh = hover_t("card_keep", x + 10, ly - 2, cw - 20, 24)
-	rect(x + 14, ly + 2, 16, 16, on and C.ACCENT or C.ROW, 4)
-	frame_line(x + 14, ly + 2, 16, 16, on and C.ACCENT or mix(C.CARD_EDGE, C.MUTED, kh), 4)
-	if on then text(fonts.w800, 11, "✓", x + 22, ly + 3, C.WHITE, "center") end
-	text(fonts.w500, 13, L("bb_card_always"), x + 40, ly + 2, mix(C.MUTED, C.TEXT, kh))
+	if on then
+		rect(x + 14, ly + 2, 16, 16, N.ACCENT, 5)
+		W.glyph(K.ONB_CHECK, 9, x + 22, ly + 10, N.INK)
+	else
+		frame_line(x + 14, ly + 2, 16, 16, mix(N.LINE, N.MUTED, kh), 5)
+	end
+	text(fonts.w500, 13, L("bb_card_always"), x + 40, ly + 2, mix(N.MUTED, N.TEXT, kh))
 	button("card", x + 10, ly - 2, cw - 20, 24, "always")
 	local a, b = P(x, y), P(x + cw, y + ch)
 	c.rect = { x1 = a.x, y1 = a.y, x2 = b.x, y2 = b.y }
@@ -5514,10 +5498,10 @@ local function draw_window()
 	for i = #list, 1, -1 do list[i] = nil end
 	if W.onb.active == nil then
 		W.onb.active = false
-		if not Config.mem and Config.ReadInt(K.CONFIG, "onboard", 0) == 0 then W.onb_start() end
+		if not Config.mem and Config.ReadInt(K.CONFIG, "onboard2", 0) == 0 then W.onb_start() end
 	elseif W.onb.active and not win.visible then
 		W.onb.active = false
-		Config.WriteInt(K.CONFIG, "onboard", 1)
+		Config.WriteInt(K.CONFIG, "onboard2", 1)
 	end
 	local open = tween("win", win.visible and 1 or 0, 14)
 	if open < 0.01 then
@@ -5528,9 +5512,11 @@ local function draw_window()
 		win.was_open = true
 		win.open_at = state.clock
 		win.drawn_tab, win.prev_tab = win.tab, nil
+		win.dir = 0
 		state.anim.fight_ring = 0
 	end
 	if win.drawn_tab ~= win.tab then
+		win.dir = (W.ORDER[win.tab] or 0) > (W.ORDER[win.drawn_tab] or 0) and 1 or -1
 		win.prev_tab, win.drawn_tab = win.drawn_tab, win.tab
 		win.tab_at, win.open_at = state.clock, state.clock + 0.06
 		if win.tab == "fight" then state.anim.fight_ring = 0 end
@@ -5551,35 +5537,37 @@ local function draw_window()
 	end
 	win.x = math.max(0, math.min(screen.x - w * s, win.x))
 	win.y = math.max(0, math.min(screen.y - h * s, win.y))
-	local base_y = win.y + (1 - open) * 8 * s
+	local base_y = win.y + (1 - open) * 10 * s
 	G.ox, G.oy, G.s, G.alpha = win.x, base_y, s, open
 	G.buttons = list
+	W.base_x, W.base_y, W.base_a, W.dir = win.x, base_y, open, 0
 	if W.onb.active then
-		W.base_a, W.base_y = open, base_y
 		W.onboard(w, h)
-		G.alpha, G.oy = 1, base_y
+		G.alpha, G.oy, G.ox = 1, base_y, win.x
 		return
 	end
 	W.shell(w, h)
-	W.rail(h)
 	W.header(w)
 	local out = win.prev_tab and (state.clock - win.tab_at) / 0.14 or 1
 	if out < 1 then
 		local dead = W.dead
 		for i = #dead, 1, -1 do dead[i] = nil end
 		G.buttons = dead
-		W.base_a, W.base_y, W.flat = open * (1 - W.ease(out)), base_y, true
+		W.base_a, W.flat = open * (1 - W.ease(out)), true
 		W.tab(win.prev_tab, w, h)
 		W.flat = false
 		G.buttons = list
 	else
 		win.prev_tab = nil
 	end
-	W.base_a, W.base_y = open, base_y
+	W.base_a = open
+	W.dir = (win.tab_at and state.clock - win.tab_at < 0.6) and (win.dir or 0) or 0
 	W.hov_cand = nil
 	W.tab(win.tab, w, h)
 	if win.tab == "build" then W.item_card(w, h) else W.cardst = nil end
-	G.alpha, G.oy = 1, base_y
+	G.alpha, G.oy, G.ox = open, base_y, win.x
+	W.draw_tip()
+	G.alpha = 1
 end
 
 local PK = { cards = {}, buttons = {}, stack = {}, map = nil, fresh = nil, next_scan = 0, next_pos = 0, hl = { {}, {}, {} }, leader = nil, flash_at = -10, h = 300, x = nil, y = nil, drag = nil }
@@ -5660,7 +5648,7 @@ function PK.grid(view)
 				local okp, pos = pcall(card.GetPositionWithinWindow, card)
 				local okw, cw = pcall(card.GetLayoutWidth, card)
 				local okh, ch = pcall(card.GetLayoutHeight, card)
-				if okv and vis and okp and pos and okw and okh and cw > 4 and ch > 4 then
+				if okv and vis and okp and pos and okw and okh and (tonumber(cw) or 0) > 4 and (tonumber(ch) or 0) > 4 then
 					slot.on, slot.x, slot.y, slot.w, slot.h, slot.gain = true, pos.x, pos.y, cw, ch, b.gain
 				end
 			end
@@ -5671,12 +5659,12 @@ function PK.grid(view)
 	for i = 1, 3 do
 		local slot = PK.hl[i]
 		if slot.on then
-			local c = i == 1 and C.GOLD or C.WHITE
-			frame_line(slot.x - 2, slot.y - 2, slot.w + 4, slot.h + 4, alpha(c, 0.55 + 0.45 * pulse), 6, i == 1 and 2.5 or 1.5)
+			local lead = i == 1
+			frame_line(slot.x - 2, slot.y - 2, slot.w + 4, slot.h + 4, alpha(lead and N.ACCENT or N.TEXT, (lead and 0.6 or 0.3) + 0.4 * pulse), 6, lead and 2.5 or 1.5)
 			local label = string.format("%+.1f%%", slot.gain)
-			local lw = measure(fonts.w700, 13, label) + 12
-			rect(slot.x + slot.w / 2 - lw / 2, slot.y + slot.h - 10, lw, 20, C.BADGE, 6)
-			text(fonts.w700, 13, label, slot.x + slot.w / 2, slot.y + slot.h - 8, slot.gain >= 0 and C.WIN or C.LOSE, "center")
+			local lw = measure(fonts.d600, 13, label) + 12
+			rect(slot.x + slot.w / 2 - lw / 2, slot.y + slot.h - 10, lw, 20, N.SHADE, 6)
+			text(fonts.d600, 13, label, slot.x + slot.w / 2, slot.y + slot.h - 8, slot.gain >= 0 and N.WIN or N.LOSE, "center")
 		end
 	end
 end
@@ -5690,34 +5678,34 @@ function PK.card(c, b, x, y, w, leader)
 	local cx, cy = x + (w - cw2) / 2, y + (ch - ch2) / 2
 	local hot = hover_t("pkc" .. b.id, cx, cy, cw2, ch2)
 	cy = cy - hot * 1.5
-	rect(cx, cy, cw2, ch2, leader and C.ROW_HOT or mix(C.ROW, C.ROW_HOT, hot), 8)
+	if hot > 0.01 then rect(cx, cy, cw2, ch2, alpha(N.HOT, hot), 10) end
 	if leader then
 		local flash = 1 - math.min(1, (state.clock - PK.flash_at) / 0.5)
-		W.glow(cx, cy, cw2, ch2, 8, 0.75 + 0.25 * math.sin(state.clock * 2.4))
-		if flash > 0 then rect(cx, cy, cw2, ch2, alpha(C.GOLD, 0.3 * flash), 8) end
+		if flash > 0 then rect(cx, cy, cw2, ch2, alpha(N.ACCENT_SOFT, flash), 10) end
 	end
 	if sc < 0.9 then return end
 	local ph = leader and 40 or 32
-	picture(hero_image(unit), cx + 8, cy + (ch2 - ph) / 2, ph * 1.78, ph, 6)
-	local tx = cx + 16 + ph * 1.78
-	local left = w - 28 - ph * 1.78
+	local pw = ph * 1.78
+	local py = cy + (ch2 - ph) / 2
+	W.pic(hero_image(unit), cx + 8, py, pw, ph, 6)
+	if leader then W.ring(cx + 8, py, pw, ph, 6, 0.7 + 0.3 * math.sin(state.clock * 2.4)) end
+	local tx = cx + 18 + pw
+	local left = w - 30 - pw
 	c.g = c.g + (b.gain - c.g) * (1 - math.exp(-8 * state.dt))
 	if math.abs(b.gain - c.g) < 0.01 then c.g = b.gain end
 	local gain = string.format("%+.1f%%", c.g)
-	local gsize = leader and 16 or 14
-	text(fonts.w700, gsize, gain, cx + cw2 - 12, cy + (leader and 10 or 8), b.gain >= 0 and C.WIN or C.LOSE, "right")
-	local room = left - measure(fonts.w700, gsize, "+00.0%") - 8
+	local gsize = leader and 18 or 15
+	text(fonts.d600, gsize, gain, cx + cw2 - 10, cy + (leader and 9 or 7), b.gain >= 0 and N.WIN or N.LOSE, "right")
+	local room = left - measure(fonts.d600, gsize, "+00.0%") - 8
 	if leader then
 		local tw = measure(fonts.w700, 11, L("bb_top")) + 12
-		rect(tx, cy + 8, tw, 17, C.GOLD, 5)
-		text(fonts.w700, 11, L("bb_top"), tx + tw / 2, cy + 10, C.GOLD_TEXT, "center")
-		text(fonts.w600, 15, fit(fonts.w600, 15, hero_title(unit), room - tw - 6), tx + tw + 6, cy + 8, C.TEXT)
+		rect(tx, cy + 10, tw, 17, N.ACCENT, 5)
+		text(fonts.w700, 11, L("bb_top"), tx + tw / 2, cy + 12, N.INK, "center")
+		text(fonts.w600, 15, fit(fonts.w600, 15, hero_title(unit), room - tw - 6), tx + tw + 6, cy + 9, N.TEXT)
 	else
-		text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(unit), room), tx, cy + 7, C.TEXT)
+		text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(unit), room), tx, cy + 8, N.TEXT)
 	end
-	if b.chips == nil then W.chips(b, -10000, -10000, 0) end
-	local reason = b.chips[1]
-	if reason then text(fonts.w500, 13, fit(fonts.w500, 13, reason, left), tx, cy + ch2 - 22, C.MUTED) end
+	if b.why then text(fonts.w500, 13, fit(fonts.w500, 13, b.why, left), tx, cy + ch2 - 22, N.MUTED) end
 	button("hero", cx, cy, cw2, ch2, b.id)
 end
 
@@ -5753,75 +5741,76 @@ function PK.draw()
 	G.ox, G.oy, G.s, G.alpha = ox, oy, s, vis
 	G.buttons = list
 	PK.x1, PK.y1, PK.x2, PK.y2 = ox, oy, ox + w * s, oy + h * s
-	rect(0, 0, w, h, C.BG, 12)
-	rect(12, 0, w - 24, 1, C.TOP_EDGE)
-	frame_line(0, 0, w, h, C.EDGE, 12)
-	W.glyph(K.LOGO, 17, 22, 24, C.ACCENT)
-	text(fonts.w600, 16, L("bb_tab_draft"), 40, 14, C.TEXT)
+	shadow(0, 0, w, h, 16, 22)
+	rect(0, 0, w, h, N.BG, 16)
+	frame_line(0, 0, w, h, N.LINE, 16)
+	W.glyph(K.LOGO, 16, 22, 23, N.ACCENT)
+	text(fonts.d600, 16, L("bb_tab_draft"), 40, 13, N.TEXT)
 	button("drag", 0, 0, w - 50, 46)
-	local bx, by, bw, bh, hot = W.btn("pk_open", w - 44, 9, 30, 30)
-	rect(bx, by, bw, bh, mix(C.ROW, C.ROW_HOT, hot), 8)
-	W.glyph(K.ICON_OPEN, 14, bx + bw / 2, by + bh / 2, mix(C.MUTED, C.TEXT, hot))
-	button("open", w - 44, 9, 30, 30)
+	local bx, by, bw, bh, hot = W.btn("pk_open", w - 44, 8, 30, 30)
+	if hot > 0.01 then rect(bx, by, bw, bh, alpha(N.HOT, hot), 10) end
+	W.glyph(K.ICON_OPEN, 14, bx + bw / 2, by + bh / 2, mix(N.MUTED, N.TEXT, hot))
+	button("open", w - 44, 8, 30, 30)
+	rect(0, 45, w, 1, N.LINE)
 	local light = d.my_team ~= 3
 	local chance = view and view.chance
-	local y = 52
-	text(fonts.w500, 13, L("bb_chance_title"), 16, y, C.MUTED)
+	local y = 58
+	text(fonts.w500, 13, L("bb_chance_title"), 16, y, N.MUTED)
 	if chance then
 		if state.anim.pk_chance == nil then state.anim.pk_chance = 50 end
 		local shown = tween("pk_chance", chance, 5)
 		local rad = light and shown or (100 - shown)
-		text(fonts.w700, 18, math.floor(shown + 0.5) .. "%", w - 16, y - 3, light and C.WIN or C.LOSE, "right")
+		text(fonts.d600, 20, math.floor(shown + 0.5) .. "%", w - 16, y - 4, N.TEXT, "right")
 		local split = (w - 32) * rad / 100
-		rect(16, y + 24, split, 6, C.WIN, 3)
-		rect(16 + split, y + 24, w - 32 - split, 6, C.LOSE, 3)
-		rect(16 + (w - 32) / 2, y + 21, 1, 12, C.MARK)
+		rect(16, y + 26, split, 4, N.WIN, 2)
+		rect(16 + split, y + 26, w - 32 - split, 4, N.LOSE, 2)
+		rect(16 + (w - 32) / 2, y + 22, 1, 12, N.MUTED)
 	else
-		rect(16, y + 24, w - 32, 6, C.TRACK, 3)
-		W.shine(16, y + 24, w - 32, 6, ((state.clock * 0.6) % 1.4) / 1.4, C.SHINE_0, C.SHINE_1)
+		rect(16, y + 26, w - 32, 4, N.TRACK, 2)
+		local p = (state.clock * 0.5) % 1
+		rect(16 + (w - 32 - 50) * p, y + 26, 50, 4, N.DIM, 2)
 	end
 	y = y + 42
 	local sw = (w - 32 - 4 * 5) / 5
 	local sh = math.floor(sw * 0.5625 + 0.5)
 	for row = 1, 2 do
 		local team = row == 1 and d.ours or d.theirs
-		local color = (row == 1) == light and C.WIN or C.LOSE
+		local color = (row == 1) == light and N.WIN or N.LOSE
 		for i = 1, 5 do
 			local e = team[i]
 			local px = 16 + (i - 1) * (sw + 5)
 			local unit = e and e.id and hero_unit(e.id)
-			rect(px, y, sw, sh, C.SLOT, 5)
+			rect(px, y, sw, sh, N.SLOT, 6)
 			if unit then
 				local t = W.first_seen((row == 1 and "pko" or "pkt") .. i, e.id)
 				local sc = W.pop(t)
-				picture(hero_image(unit), px + sw * (1 - sc) / 2, y + sh * (1 - sc) / 2, sw * sc, sh * sc, 5, 0, false)
+				W.pic(hero_image(unit), px + sw * (1 - sc) / 2, y + sh * (1 - sc) / 2, sw * sc, sh * sc, 6)
 				local flash = 1 - math.min(1, t / 0.45)
-				if flash > 0 then rect(px, y, sw, sh, alpha(color, 0.5 * flash), 5) end
+				if flash > 0 then rect(px, y, sw, sh, alpha(N.TEXT, 0.22 * flash), 6) end
 			else
 				W.seen[(row == 1 and "pko" or "pkt") .. i] = nil
 			end
-			rect(px + 4, y + sh - 2, sw - 8, 2, color, 1)
+			rect(px + 5, y + sh - 2, sw - 10, 2, color, 1)
 		end
 		y = y + sh + 5
 	end
-	y = y + 10
+	y = y + 12
 	local mine = d.my_hero and view and view.foes and #view.foes > 0
-	text(fonts.w600, 14, mine and L("bb_foe_title") or string.format(L("bb_pick_title"), L("bb_role_" .. (view and view.pick_role or my_position()))), 16, y, C.TEXT)
+	text(fonts.w600, 14, mine and L("bb_foe_title") or string.format(L("bb_pick_title"), L("bb_role_" .. (view and view.pick_role or my_position()))), 16, y, N.TEXT)
 	y = y + 26
 	if mine then
 		for i, f in ipairs(view.foes) do
 			if i > 5 then break end
 			local n = math.min(#f.items, 2)
 			local room = w - 130 - n * 38
-			rect(16, y, w - 32, 50, C.ROW, 8)
-			picture(hero_image(f.unit), 24, y + 9, 57, 32, 6)
-			text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(f.unit), room), 90, y + 7, C.TEXT)
-			text(fonts.w500, 13, fit(fonts.w500, 13, f.line, room), 90, y + 27, C.MUTED)
-			local px = w - 24
+			if i > 1 then rect(16, y - 3, w - 32, 1, N.LINE) end
+			W.pic(hero_image(f.unit), 16, y + 9, 57, 32, 6)
+			text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(f.unit), room), 84, y + 7, N.TEXT)
+			text(fonts.w500, 13, fit(fonts.w500, 13, f.line, room), 84, y + 27, N.MUTED)
+			local px = w - 16
 			for k = n, 1, -1 do
 				px = px - 34
 				W.icon(item_image(f.items[k]), px, y + 13, 34, 25, 5, "pki" .. i .. k)
-				frame_line(px, y + 13, 34, 25, C.VS, 5)
 				px = px - 4
 			end
 			y = y + 56
@@ -5869,7 +5858,7 @@ function PK.draw()
 			W.skeleton(16, y, w - 32, 56, i)
 			y = y + 62
 		end
-		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), 16, y + 2, C.MUTED)
+		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), 16, y + 2, N.MUTED)
 		y = y + 22
 	end
 	PK.h = y + 14
@@ -5930,6 +5919,15 @@ local function buy_item(name)
 	state.next_model = state.clock + 0.4
 end
 
+function LINK.open(kind)
+	local url = K.LINKS[kind]
+	if not url then return end
+	local js = ("$.DispatchEvent(%q, %q)"):format("ExternalBrowserGoToURL", url)
+	local ok, res = pcall(Engine.RunScript, js)
+	if not (ok and res) then pcall(Engine.RunScript, js, "Hud") end
+	state.win.status = L("bb_status_link")
+end
+
 local function click(key)
 	local win = state.win
 	local left = key == Enum.ButtonCode.KEY_MOUSE1
@@ -5984,6 +5982,8 @@ local function click(key)
 				W.card_act(b.value)
 			elseif b.kind == "onb" and left then
 				W.onb_act(b.value)
+			elseif b.kind == "link" and left then
+				LINK.open(b.value)
 			elseif b.kind == "upd" and left then
 				UPD.act(b.value)
 			elseif state.clock >= state.next_click and (b.kind == "item" or b.kind == "buy" or b.kind == "quick") then
@@ -6942,9 +6942,10 @@ local function frame()
 			if not okv then report("model", errv) end
 		end
 	end
-	local okt, errt = pcall(W.theme_tick)
-	if not okt then report("theme", errt) end
-	draw_window()
+	local okt, errt = pcall(W.style_tick)
+	if not okt then report("style", errt) end
+	local okw, errw = pcall(draw_window)
+	if not okw then report("window", errw) end
 	pcall(draw_pick)
 	if Engine.IsInGame() then
 		local ok, err = pcall(shop.draw)
