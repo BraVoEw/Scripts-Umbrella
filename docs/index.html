@@ -41,6 +41,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .nav.right { margin-left: auto; align-items: center; }
 .lang { display: inline-flex; gap: 8px; margin-left: 4px; }
 .lang button.on { color: #fff; }
+.nav a.tg { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px 0 9px; border-radius: 999px; background: #229ed9; color: #fff; font-size: 13px; font-weight: 500; transition: background .2s, transform .2s; }
+.nav a.tg:hover { background: #2aabee; transform: translateY(-1px); }
+.nav a.tg::after { display: none; }
+.tg svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
 
 .intro { padding-block: 56px 36px; }
 .intro h1 { margin: 0 0 14px; font-size: clamp(32px, 5vw, 46px); line-height: 1.12; letter-spacing: -.03em; font-weight: 500; }
@@ -249,6 +253,8 @@ footer a:hover { color: #fff; }
 
 @media (max-width: 680px) {
   .nav.main { margin-left: 0; order: 3; width: 100%; }
+  .nav a.tg { width: 28px; padding: 0; justify-content: center; }
+  .nav a.tg span { display: none; }
   .intro { padding-block: 32px 28px; }
   .script, .script:last-child { grid-template-columns: 80px minmax(0, 1fr) auto; gap: 12px; padding: 10px; }
   .script h2 { font-size: 16px; }
@@ -271,6 +277,7 @@ footer a:hover { color: #fff; }
     <a href="#install" data-i18n="nav_install"></a>
   </nav>
   <nav class="nav right">
+    <a class="tg" href="https://t.me/+JYe25eMFs7tkYjky" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span id="tg-l"></span></a>
     <a href="#support" data-i18n="nav_feedback"></a>
     <button type="button" data-donate data-i18n="donate_btn"></button>
     <span class="lang"><button type="button" data-lang="ru">RU</button><button type="button" data-lang="en">EN</button></span>
@@ -323,7 +330,7 @@ footer a:hover { color: #fff; }
 <script>
 (function () {
   var LOGO = '<svg viewBox="8 14 84 73" fill="currentColor" aria-hidden="true"><path d="M40 30v9.5L25 50l15 10.5V70L11 54.5v-9z"/><path d="M60 30v9.5L75 50 60 60.5V70l29-15.5v-9z"/><path d="M53 21.5 60.5 17 48 79.5 40.5 84z"/></svg>';
-  var WORDS = { ru: { back: "Все скрипты", ideas: "За идеи и баги", don: "За донаты", noDon: "Здесь будут те, кто поддержал скрипты." }, en: { back: "All scripts", ideas: "For ideas and bugs", don: "For donations", noDon: "People who supported the scripts will be listed here." } };
+  var WORDS = { ru: { back: "Все скрипты", ideas: "За идеи и баги", don: "За донаты", noDon: "Здесь будут те, кто поддержал скрипты.", tg: "Telegram канал" }, en: { back: "All scripts", ideas: "For ideas and bugs", don: "For donations", noDon: "People who supported the scripts will be listed here.", tg: "Telegram channel" } };
   var esc = Site.esc, $ = function (id) { return document.getElementById(id); };
   var listView = $("list-view"), detail = $("detail"), scripts = $("scripts");
   var shown = null;
@@ -563,6 +570,8 @@ footer a:hover { color: #fff; }
 
   Site.mount({
     render: function () {
+      $("tg-l").textContent = WORDS[Site.lang].tg;
+      $("tg-l").parentNode.setAttribute("aria-label", WORDS[Site.lang].tg);
       scripts.innerHTML = Site.catalog.map(rowHtml).join("");
       Array.prototype.forEach.call(scripts.children, hoverVideo);
       renderEnd();
