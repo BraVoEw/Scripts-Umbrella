@@ -13,33 +13,33 @@
   var CATALOG = [
     {
       key: "build-brain", name: "Build Brain", file: "build_brain.lua", folder: "build_brain",
-      ver: "1.1.0", date: "2026-10-30T12:00:00Z", first: "2026-10-22T13:32:08Z",
+      ver: "2.1.0", date: "2026-11-05T12:00:00Z", first: "2026-10-22T13:32:08Z",
       color: ["#3987e5", "#2a78d6"], tags: ["draft", "shop"], auto: true,
       video: "build-brain-1080.mp4", poster: "build-brain-poster-1080.webp",
       preview: "build-brain-720.mp4",
       shots: ["bb2-draft.webp", "bb2-build.webp", "bb2-autobuy.webp", "bb2-shop.webp"],
       ru: {
-        tagline: "Кого пикнуть и что собрать против этих врагов",
-        top: ["Пики по мете твоей позиции и матчапам", "Сборка с минутами прямо в магазине", "Контрпредметы против каждого врага"],
-        desc: "Кого пикнуть на твою роль и что собрать против именно этих врагов. Сборки по свежим пабам Божества и Титана прямо в магазине.",
+        tagline: "Кого пикнуть и что собрать против этих врагов, а купит он сам",
+        top: ["Автобай: сборка покупается сама по частям", "Советы с первого пика и разведка врагов", "Контры в реальном времени прямо в сборке"],
+        desc: "Кого пикнуть на твою роль и что собрать против именно этих врагов, а автобай сам купит сборку по частям. Сборки по свежим пабам Божества и Титана.",
         shots: ["Драфт: шанс на победу и кого опасаться", "Сборка на шкале минут", "Автобай: каждая покупка в чате", "Панель в магазине"],
         groups: [
-          ["Пики", ["Панель сама открывается на выборе героев", "Шанс на победу и пики обеих команд", "Мета позиции или только твои герои", "Топ-3 подсвечены в сетке героев"]],
-          ["Магазин", ["Старт, лайнинг и кор с минутами", "Против врагов: предмет и зачем он", "Прокачка на 18 уровней и таланты", "Клик в квикбай, ПКМ покупает"]],
-          ["Окно", ["Таблица «кто кого» в процентах", "Пропустить или заменить любой предмет", "Кто тебя убивает и чем", "Ульты и BKB врагов в кд"]],
-          ["Данные", ["STRATZ, текущий патч", "Матчапы от Легенды до Титана", "Обновление 2 раза в неделю и после патча", "Русский и английский"]]
+          ["Пики", ["Советы с самого первого пика", "Пик прямо из панели: клик и «Пикнуть»", "Разведка врагов: их герои за 30 дней и кого банить", "Шанс на победу и таблица «кто кого»"]],
+          ["Сборка", ["Автобай: только старт или вся игра", "Маршрут на шкале минут", "Враг купил предмет, контра сама встаёт в сборку", "Пропустить или заменить любой предмет"]],
+          ["Магазин", ["Старт, лайнинг и кор с минутами", "ЛКМ показывает рецепт, ПКМ покупает", "Против врагов: предмет и зачем он", "Прокачка на 18 уровней и таланты"]],
+          ["Бой и данные", ["Урон от вражеских героев и разбор последней смерти", "STRATZ, текущий патч, от Легенды до Титана", "Сборки обновляются 2 раза в неделю и после патча", "4 стиля окна, русский и английский"]]
         ]
       },
       en: {
-        tagline: "Who to pick and what to buy against these enemies",
-        top: ["Picks by your position's meta and matchups", "Build with timings right in the shop", "Counter items for every enemy"],
-        desc: "Who to pick for your role and what to buy against these exact enemies. Builds from fresh Divine and Immortal pubs right in the shop.",
+        tagline: "Who to pick and what to buy against these enemies, and it buys for you",
+        top: ["Auto-buy: your build buys itself part by part", "Picks from the first pick and enemy scouting", "Live counters right in your build"],
+        desc: "Who to pick for your role and what to buy against these exact enemies, and auto-buy gets the build part by part. Builds from fresh Divine and Immortal pubs.",
         shots: ["Draft: win chance and who to fear", "Build on a minute timeline", "Auto-buy: every purchase in chat", "Shop panel"],
         groups: [
-          ["Hero pick", ["Panel opens by itself on hero pick", "Win chance and both teams' picks", "Meta for your position or only your heroes", "Top 3 highlighted in the hero grid"]],
-          ["Shop", ["Starting, laning and core items with timings", "Counters to your enemies and why", "Skill order for 18 levels and talents", "Click to quick buy, right click buys"]],
-          ["Window", ["Who beats who table in percent", "Skip or replace any item", "Who kills you and with what", "Enemy ults and BKB on cooldown"]],
-          ["Data", ["STRATZ, current patch", "Matchups from Legend to Immortal", "Updated twice a week and after patches", "Russian and English"]]
+          ["Hero pick", ["Suggestions from the very first pick", "Pick right from the panel: click, then Pick", "Enemy scouting: their heroes for 30 days and who to ban", "Win chance and who beats who table"]],
+          ["Build", ["Auto-buy: starting items or the whole game", "Route on a minute timeline", "Enemy buys an item, the counter joins your build", "Skip or replace any item"]],
+          ["Shop", ["Starting, laning and core items with timings", "Left click shows the recipe, right click buys", "Counters to your enemies and why", "Skill order for 18 levels and talents"]],
+          ["Fight and data", ["Damage from enemy heroes and a last death breakdown", "STRATZ, current patch, Legend to Immortal", "Builds updated twice a week and after patches", "4 window styles, Russian and English"]]
         ]
       }
     },
