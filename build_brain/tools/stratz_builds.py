@@ -29,6 +29,8 @@ MAIN_PLAYERS = 25
 MAIN_PER = 15
 MAIN_MIN_GAMES = 15
 START_SLOTS = 6
+START_SHARE = 0.25
+COPY_SHARE = 0.5
 WARDS = {"item_ward_observer", "item_ward_sentry"}
 STACKS = {"item_tango", "item_clarity", "item_flask", "item_enchanted_mango", "item_ward_observer", "item_ward_sentry",
           "item_blood_grenade", "item_dust"}
@@ -471,7 +473,7 @@ def summarize(hero, data, weeks, items, ab, mainers=None):
         start, gold = [], START_GOLD
         for (iid, inst), c in sorted(d["start"].items(), key=lambda kv: -kv[1]):
             it = items["by_id"].get(iid)
-            if not it or c < n * 0.25 or it["name"] == "item_ward_dispenser":
+            if not it or c < n * (COPY_SHARE if inst > 0 else START_SHARE) or it["name"] == "item_ward_dispenser":
                 continue
             if it["cost"] <= gold:
                 gold -= it["cost"]
