@@ -47,6 +47,7 @@ BUY_COST = 1000
 MU_BRACKETS = "LEGEND_ANCIENT, DIVINE_IMMORTAL"
 MU_PRIOR = 300
 TRIES = 12
+TAL_REACH = (0.92, 0.74, 0.44)
 SKIP = {"item_tpscroll", "item_ward_observer", "item_ward_sentry", "item_ward_dispenser", "item_smoke_of_deceit", "item_dust",
         "item_tango", "item_clarity", "item_flask", "item_enchanted_mango", "item_faerie_fire", "item_blood_grenade",
         "item_aghanims_shard_roshan", "item_ultimate_scepter_roshan", "item_cheese", "item_refresher_shard", "item_aegis"}
@@ -301,17 +302,30 @@ def components_of(items, name, seen=None):
 
 def talent_tiers(hero, ab, tal):
     slots = {t["slot"]: t["abilityId"] for t in hero.get("talents") or []}
-    loose = sorted([a for a in tal if a not in slots.values()], key=lambda a: -tal[a])
-    tiers = []
+    loose = sorted([a for a in tal if a not in slots.values() and (ab.get(a) or {}).get("name") != "special_bonus_attributes"],
+                   key=lambda a: -tal[a])
+    pairs = []
     for tier in range(4):
         pair = []
         for slot in (tier * 2, tier * 2 + 1):
             aid = slots.get(slot)
             if aid is None and loose:
                 aid = loose.pop(0)
-            if aid is not None:
-                pair.append(aid)
-        best = max(pair, key=lambda a: tal.get(a, 0)) if pair else None
+            pair.append(aid)
+        pairs.append(pair)
+    totals = [sum(tal.get(a, 0) for a in p) if None not in p else None for p in pairs]
+    tiers = []
+    for tier, pair in enumerate(pairs):
+        known = [a for a in pair if a is not None]
+        best = max(known, key=lambda a: tal.get(a, 0)) if known else None
+        if best is not None and len(known) == 1:
+            reach = None
+            if tier > 0 and totals[tier - 1] is not None:
+                reach = totals[tier - 1] * TAL_REACH[tier - 1]
+            elif tier < 3 and totals[tier + 1] is not None:
+                reach = totals[tier + 1] / TAL_REACH[tier]
+            if reach is None or tal.get(best, 0) < reach / 2:
+                best = None
         tiers.append(ab[best]["name"] if best in ab and tal.get(best, 0) > 0 else None)
     return tiers
 
