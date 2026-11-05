@@ -358,7 +358,6 @@ local localization = qLocalization.new({
 		bb_shop_role_main = "Most played: %s",
 		bb_shop_start = "STARTING ITEMS",
 		bb_shop_early = "EARLY GAME",
-		bb_why_bottle = "Mid: regen and runes",
 		bb_shop_core = "CORE ITEMS",
 		bb_shop_sit = "ALSO BUILT",
 		bb_shop_vs = "AGAINST ENEMIES",
@@ -366,6 +365,7 @@ local localization = qLocalization.new({
 		bb_vs_eva = "evasion, you need true strike",
 		bb_vs_heal = "lots of healing, cut it",
 		bb_vs_inv = "goes invisible",
+		bb_vs_vision = "top players buy it %.1fx more often",
 		bb_vs_ill = "illusions and summons",
 		bb_vs_save = "saves and buffs, dispel them",
 		bb_vs_tgt = "single-target disables (hex, stuns, ults on you)",
@@ -594,6 +594,11 @@ local localization = qLocalization.new({
 		bb_tag_mag = "magic damage", bb_tag_phys = "physical damage", bb_tag_tank = "tanky",
 		bb_pick_title = "Who to pick (%s)",
 		bb_pick_vs = "strong against %s",
+		bb_pick_meta = "meta pick, %d%% wins in this role",
+		bb_pk_pick = "Pick",
+		bb_pick_own = "your hero",
+		bb_scout_title = "Enemies play (30 days)",
+		bb_scout_hint = "frame: many games and high win rate, worth a ban",
 		bb_foe_title = "Who to watch out for",
 		bb_next_usual = "usually bought at %d min · %d%% of games",
 		bb_route_title = "Route",
@@ -609,7 +614,7 @@ local localization = qLocalization.new({
 		bb_pool_pick = "Choose",
 		bb_pool_clear = "Clear",
 		bb_pool_done = "Done",
-		bb_pool_hint = "The draft suggests only these heroes. None marked means all heroes.",
+		bb_pool_hint = "The draft shows your 2 best heroes from this list plus the best meta picks.",
 		bb_attr_str = "Strength",
 		bb_attr_agi = "Agility",
 		bb_attr_int = "Intelligence",
@@ -646,6 +651,24 @@ local localization = qLocalization.new({
 		bb_vs_route = "vs %s on %s",
 		bb_menu_tg = "Telegram channel",
 		bb_onb_hello = "Let's set everything up for you",
+		bb_news_head = "Build Brain %s",
+		bb_news_title = "What's new",
+		bb_news_sub = "Fixed from your feedback",
+		bb_news_1 = "Bottle is no longer pushed on every mid hero",
+		bb_news_2 = "Starting items with the right amount",
+		bb_news_3 = "Shop: left click shows the recipe, right click buys",
+		bb_news_4 = "Quick buy from the draft survives the map loading",
+		bb_news_5 = "Pick grid highlight stays in place with Meta Tracker",
+		bb_news_6 = "Banned heroes no longer show up in pick advice",
+		bb_news_7 = "Fight: enemy hero damage only, plus a last death recap",
+		bb_news_8 = "Dust against invisible heroes, from top player games",
+		bb_news_9 = "Auto-buy: starting items or the whole build, turn it on in Settings",
+		bb_news_10 = "Pick from the draft widget: click a hero, then Pick",
+		bb_news_11 = "Enemy scouting: their main heroes for 30 days",
+		bb_news_12 = "Pick advice from the very first pick",
+		bb_news_tg = "Telegram channel",
+		bb_news_ok = "Got it",
+		bb_news_note = "News, test builds and giveaways go there first",
 		bb_onb_start = "Start",
 		bb_onb_note = "Takes 20 seconds, you can change it any time",
 		bb_onb_skip = "Skip",
@@ -796,8 +819,14 @@ local localization = qLocalization.new({
 		bb_why_disablers = "%d disablers in their draft",
 		bb_why_item = "%s has %s",
 		bb_why_invis = "%s goes invisible",
-		bb_fight_title = "What kills you",
+		bb_fight_title = "Damage from enemy heroes",
 		bb_fight_hint = "this game",
+		bb_fight_hint_death = "before death",
+		bb_fight_match = "Game",
+		bb_fight_death = "Last death",
+		bb_fight_death_n = "Death %d, %s, last 15 s",
+		bb_fight_sec = "%d s ago",
+		bb_fight_min = "%d min ago",
 		bb_fight_empty = "No damage taken yet",
 		bb_magic = "magic",
 		bb_phys = "physical",
@@ -810,6 +839,15 @@ local localization = qLocalization.new({
 		bb_set_rank = "Rank for stats",
 		bb_set_role = "Your role",
 		bb_set_auto = "Open on hero pick",
+		bb_set_autobuy = "Auto-buy",
+		bb_ab_0 = "Off",
+		bb_ab_1 = "Starting items",
+		bb_ab_2 = "Whole game",
+		bb_ab_part = "%s for %s",
+		bb_ab_done = "%s is complete",
+		bb_ab_full = "no free slot, waiting",
+		bb_ab_tag = "Auto-buy:",
+		bb_ab_start = "starting items bought, %d for %d gold",
 		bb_on = "on",
 		bb_off = "off",
 		bb_rank_0 = "All ranks",
@@ -833,6 +871,10 @@ local localization = qLocalization.new({
 		bb_status_loading = "Loading OpenDota stats",
 		bb_status_offline = "OpenDota is not answering, draft uses STRATZ data",
 		bb_status_quick = "Quick buy: %s",
+		bb_rc_from = "Built from",
+		bb_rc_into = "Builds into",
+		bb_rc_whole = "Bought as is, no parts",
+		bb_rc_hint = "Right click buys, drag to quick buy",
 		bb_status_buy = "Buying: %s",
 		bb_status_poor = "Not enough gold for %s",
 	},
@@ -852,7 +894,6 @@ local localization = qLocalization.new({
 		bb_shop_role_main = "Чаще всего: %s",
 		bb_shop_start = "НАЧАЛЬНЫЕ ПРЕДМЕТЫ",
 		bb_shop_early = "РАННЯЯ ИГРА",
-		bb_why_bottle = "Мид: реген и руны",
 		bb_shop_core = "ОСНОВНЫЕ ПРЕДМЕТЫ",
 		bb_shop_sit = "ЕЩЁ БЕРУТ",
 		bb_shop_vs = "ПРОТИВ ВРАГОВ",
@@ -860,6 +901,7 @@ local localization = qLocalization.new({
 		bb_vs_eva = "уклонение, нужна точность по атаке",
 		bb_vs_heal = "много лечения, его надо резать",
 		bb_vs_inv = "уходит в невидимость",
+		bb_vs_vision = "топы берут в %.1f раза чаще",
 		bb_vs_ill = "иллюзии и призванные юниты",
 		bb_vs_save = "сейвы и защитные баффы, их надо снимать",
 		bb_vs_tgt = "контроль в одну цель (хекс, станы, ульты в тебя)",
@@ -1088,6 +1130,11 @@ local localization = qLocalization.new({
 		bb_tag_mag = "магия", bb_tag_phys = "физ урон", bb_tag_tank = "толстый",
 		bb_pick_title = "Кого пикнуть (%s)",
 		bb_pick_vs = "силён против: %s",
+		bb_pick_meta = "мета, %d%% побед на этой роли",
+		bb_pk_pick = "Пикнуть",
+		bb_pick_own = "твой герой",
+		bb_scout_title = "Враги играют (30 дней)",
+		bb_scout_hint = "рамка: много игр и высокий винрейт, стоит банить",
 		bb_foe_title = "Кого опасаться",
 		bb_next_usual = "обычно берут на %d мин · %d%% игр",
 		bb_route_title = "Маршрут",
@@ -1103,7 +1150,7 @@ local localization = qLocalization.new({
 		bb_pool_pick = "Выбрать",
 		bb_pool_clear = "Очистить",
 		bb_pool_done = "Готово",
-		bb_pool_hint = "Драфт предлагает только этих героев. Никого не отметил, значит всех.",
+		bb_pool_hint = "Драфт покажет 2 лучших героя из этого списка и лучшие пики меты.",
 		bb_attr_str = "Сила",
 		bb_attr_agi = "Ловкость",
 		bb_attr_int = "Интеллект",
@@ -1140,6 +1187,24 @@ local localization = qLocalization.new({
 		bb_vs_route = "против %s у %s",
 		bb_menu_tg = "Telegram канал",
 		bb_onb_hello = "Давай настроим всё под тебя",
+		bb_news_head = "Build Brain %s",
+		bb_news_title = "Что нового",
+		bb_news_sub = "Исправили по вашим отзывам",
+		bb_news_1 = "Ботл больше не советуется всем мидерам подряд",
+		bb_news_2 = "Стартовый закуп с правильным количеством",
+		bb_news_3 = "В лавке ЛКМ показывает рецепт, ПКМ покупает",
+		bb_news_4 = "Квикбай с драфта сохраняется после загрузки карты",
+		bb_news_5 = "Подсветка в сетке пика не уезжает с Meta Tracker",
+		bb_news_6 = "Забаненные герои не попадают в советы пика",
+		bb_news_7 = "Бой: только урон героев и разбор последней смерти",
+		bb_news_8 = "Пыль против невидимых героев по матчам топ-игроков",
+		bb_news_9 = "Автобай: старт или вся сборка сама, включается в настройках",
+		bb_news_10 = "Пик прямо из окна драфта: клик по герою и «Пикнуть»",
+		bb_news_11 = "Разведка врагов: их главные герои за 30 дней",
+		bb_news_12 = "Советы пика с самого первого пика",
+		bb_news_tg = "Telegram канал",
+		bb_news_ok = "Понятно",
+		bb_news_note = "Новости, тестовые версии и розыгрыши сначала там",
 		bb_onb_start = "Начать",
 		bb_onb_note = "Займёт 20 секунд, поменять можно в любой момент",
 		bb_onb_skip = "Пропустить",
@@ -1290,8 +1355,14 @@ local localization = qLocalization.new({
 		bb_why_disablers = "%d героя с контролем у них",
 		bb_why_item = "у %s есть %s",
 		bb_why_invis = "%s уходит в инвиз",
-		bb_fight_title = "Тебя убивает",
+		bb_fight_title = "Урон от вражеских героев",
 		bb_fight_hint = "за игру",
+		bb_fight_hint_death = "перед смертью",
+		bb_fight_match = "Игра",
+		bb_fight_death = "Смерть",
+		bb_fight_death_n = "Смерть %d, %s, последние 15 с",
+		bb_fight_sec = "%d с назад",
+		bb_fight_min = "%d мин назад",
 		bb_fight_empty = "Урона по тебе пока не было",
 		bb_magic = "магия",
 		bb_phys = "физический",
@@ -1304,6 +1375,15 @@ local localization = qLocalization.new({
 		bb_set_rank = "Ранг для статистики",
 		bb_set_role = "Твоя роль",
 		bb_set_auto = "Открывать на пиках",
+		bb_set_autobuy = "Автобай",
+		bb_ab_0 = "Выкл",
+		bb_ab_1 = "Только старт",
+		bb_ab_2 = "Вся игра",
+		bb_ab_part = "%s для %s",
+		bb_ab_done = "%s собран",
+		bb_ab_full = "нет свободного слота, жду",
+		bb_ab_tag = "Автобай:",
+		bb_ab_start = "стартовый закуп куплен, %d шт. за %d золота",
 		bb_on = "вкл",
 		bb_off = "выкл",
 		bb_rank_0 = "Все ранги",
@@ -1327,6 +1407,10 @@ local localization = qLocalization.new({
 		bb_status_loading = "Загружаю статистику OpenDota",
 		bb_status_offline = "OpenDota не отвечает, драфт по данным STRATZ",
 		bb_status_quick = "В квикбай: %s",
+		bb_rc_from = "Собирается из",
+		bb_rc_into = "Входит в",
+		bb_rc_whole = "Покупается целиком",
+		bb_rc_hint = "ПКМ купить, перетащи в квикбай",
 		bb_status_buy = "Покупаю: %s",
 		bb_status_poor = "Не хватает золота на %s",
 	},
@@ -1430,7 +1514,7 @@ local K = {
 		"https://fastly.jsdelivr.net/gh/BraVoEw/Scripts-Umbrella@%s/%s",
 		"https://cdn.jsdelivr.net/gh/BraVoEw/Scripts-Umbrella@%s/%s",
 	},
-	SZ_CHECK = 86400,
+	SZ_CHECK = 3600,
 	PT_ITEMS = { ["Aghanim's Shard"] = "item_aghanims_shard", ["Aghanim's Blessing"] = "item_ultimate_scepter_2" },
 	RN_POS = { 2, 1, 3, 4, 5 },
 	CORE_SHARE = 0.3,
@@ -1465,9 +1549,36 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "2.0.0",
+	VERSION = "2.1.0",
 	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
 	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
+	NEWS = { "bb_news_9", "bb_news_10", "bb_news_11", "bb_news_12", "bb_news_1", "bb_news_2", "bb_news_3", "bb_news_4", "bb_news_5", "bb_news_6", "bb_news_7", "bb_news_8" },
+	NEWS_W = 420,
+	CHAT_BAN_TTL = 900,
+	VISION = { "item_dust", "item_ward_sentry", "item_ward_observer" },
+	FIGHT_TABS = { { "death", "bb_fight_death" }, { "match", "bb_fight_match" } },
+	RECAP_WIN = 15,
+	RECAP_MAX = 400,
+	RECAP_LAG = 0.5,
+	META_GAMES = 200,
+	PK_SEL = 8,
+	POOL_SHOW = 2,
+	STEAM_BASE = 76561197960265728,
+	SCOUT_DAYS = 30,
+	SCOUT_MIN = 3,
+	SCOUT_BAN_G = 8,
+	SCOUT_BAN_WR = 60,
+	AB_DELAY = 1,
+	AB_LATE = 30,
+	AB_STEP = 0.5,
+	AB_WAIT = 1.5,
+	AB_HOLD = 30,
+	AB_FAIL = 30,
+	AB_MINE = 6,
+	RC_W = 252,
+	QB_DELAY = 3,
+	QB_MAX = 8,
+	NEWS_BLUR = 1.5,
 	TG_ICON = "\u{f1d8}",
 	BUY_MIN = 3,
 	GRID_OFF = { "Banned", "AlreadyPicked", "Unavailable" },
@@ -1539,7 +1650,7 @@ local K = {
 		{ tag = "brk", items = { "item_silver_edge" } },
 		{ tag = "eva", items = { "item_monkey_king_bar", "item_bloodthorn" } },
 		{ tag = "heal", items = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" } },
-		{ tag = "inv", items = { "item_dust", "item_ward_sentry", "item_gem" } },
+		{ tag = "inv", items = { "item_dust", "item_ward_sentry" } },
 		{ tag = "ill", items = { "item_mjollnir", "item_bfury", "item_radiance", "item_shivas_guard", "item_maelstrom" } },
 		{ tag = "save", items = { "item_nullifier", "item_disperser", "item_sheepstick" } },
 		{ tag = "tgt", items = { "item_sphere", "item_lotus_orb", "item_aeon_disk", "item_black_king_bar" } },
@@ -1574,7 +1685,7 @@ local K = {
 		item_heavens_halberd = { "item_black_king_bar", "item_sphere", "item_lotus_orb" },
 		item_holy_locket = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" },
 		item_hurricane_pike = { "item_sheepstick", "item_abyssal_blade", "item_harpoon" },
-		item_invis_sword = { "item_dust", "item_ward_sentry", "item_gem" },
+		item_invis_sword = { "item_dust", "item_ward_sentry" },
 		item_lotus_orb = { "item_nullifier", "item_disperser" },
 		item_manta = { "item_mjollnir", "item_bfury", "item_shivas_guard", "item_radiance" },
 		item_monkey_king_bar = { "item_ghost", "item_heavens_halberd" },
@@ -1585,7 +1696,7 @@ local K = {
 		item_satanic = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_heavens_halberd" },
 		item_shadow_amulet = { "item_dust", "item_ward_sentry" },
 		item_sheepstick = { "item_sphere", "item_lotus_orb", "item_black_king_bar" },
-		item_silver_edge = { "item_dust", "item_ward_sentry", "item_gem" },
+		item_silver_edge = { "item_dust", "item_ward_sentry" },
 		item_sphere = { "item_rod_of_atos", "item_force_staff", "item_orchid", "item_cyclone", "item_dagon", "item_harpoon" },
 		item_wind_waker = { "item_sheepstick", "item_abyssal_blade" },
 	},
@@ -1630,11 +1741,13 @@ local K = {
 	ANYONE = {
 		item_dust = true,
 		item_ward_sentry = true,
+		item_ward_observer = true,
 		item_gem = true,
 	},
 	UNIVERSAL = {
 		item_dust = true,
 		item_ward_sentry = true,
+		item_ward_observer = true,
 		item_gem = true,
 		item_glimmer_cape = true,
 		item_force_staff = true,
@@ -1651,13 +1764,6 @@ local K = {
 	DRAG_MIN = 6,
 	IMG_BUDGET = 3,
 	LABEL_BUDGET = 1,
-	BOTTLE_TM = 150,
-	BOTTLE = {
-		storm_spirit = true, puck = true, queenofpain = true, pudge = true, kunkka = true, tinker = true, zuus = true,
-		ember_spirit = true, void_spirit = true, invoker = true, lina = true, leshrac = true, death_prophet = true,
-		templar_assassin = true, nevermore = true, batrider = true, mirana = true, windrunner = true, pugna = true,
-		shredder = true, tiny = true, magnataur = true, skywrath_mage = true,
-	},
 	THREATS = {
 		{ role = "Disabler", key = "disable", color = Color(251, 113, 133), letter = "C" },
 		{ role = "Nuker", key = "nuke", color = Color(96, 165, 250), letter = "M" },
@@ -1678,6 +1784,7 @@ local K = {
 		{ key = "mode", title = "bb_set_mode", count = 3, default = 0, label = "bb_mode_" },
 		{ key = "auto", title = "bb_set_auto", count = 2, default = 1, flag = true },
 		{ key = "shop", title = "bb_set_shop", count = 2, default = 1, flag = true },
+		{ key = "autobuy", title = "bb_set_autobuy", count = 3, default = 0, label = "bb_ab_", right = true },
 		{ key = "style", title = "bb_set_style", count = 4, default = 0, label = "bb_style_", right = true },
 		{ key = "scale", title = "bb_set_scale", count = 5, default = 1, values = { 90, 100, 110, 120, 130 } },
 		{ key = "update", title = "bb_set_update", count = 2, default = 1, flag = true, own = true },
@@ -1772,6 +1879,10 @@ local state = {
 	edits = {},
 	net = { busy = false, queue = {}, queued = {}, failed = {}, offline = false },
 	draft = { ours = {}, theirs = {}, bans = {}, my_team = nil, my_hero = nil, my_pos = nil, sig = "", phase = false },
+	chat_bans = {},
+	qb_pending = {},
+	qb_at = nil,
+	ab = { done = false, at = nil },
 	view = nil,
 	preview_hero = nil,
 	clock = 0,
@@ -1817,7 +1928,7 @@ local state = {
 local G = { ox = 0, oy = 0, s = 1, buttons = nil, alpha = 1 }
 
 local function new_damage()
-	return { phys = 0, mag = 0, pure = 0, src = {}, ctrl = 0, deaths = 0, alive = true, next_state = 0, first = false }
+	return { phys = 0, mag = 0, pure = 0, src = {}, ctrl = 0, deaths = 0, alive = true, next_state = 0, first = false, log = {}, last = nil }
 end
 
 state.dmg = new_damage()
@@ -1984,14 +2095,15 @@ local function load_catalog()
 		if type(entry) == "table" and name:match("^item_") then
 			local id = tonumber(entry.ID)
 			if id then
-				cat.by_name[name] = { id = id, cost = tonumber(entry.ItemCost) or 0, recipe = entry.ItemRecipe == "1", gone = entry.ItemPurchasable == "0" or entry.IsObsolete == "1" }
+				cat.by_name[name] = { id = id, cost = tonumber(entry.ItemCost) or 0, recipe = entry.ItemRecipe == "1", gone = entry.ItemPurchasable == "0" or entry.IsObsolete == "1", stack = entry.ItemStackable == "1" }
 				cat.by_id[id] = name
 			end
 		end
 	end
 	for name, entry in pairs(root) do
 		if type(entry) == "table" and entry.ItemRecipe == "1" and type(entry.ItemResult) == "string" then
-			local req = type(entry.ItemRequirements) == "table" and entry.ItemRequirements["01"] or nil
+			local reqs = type(entry.ItemRequirements) == "table" and entry.ItemRequirements or K.NONE
+			local req = reqs["01"] or reqs["02"] or reqs["03"]
 			if type(req) == "string" then
 				local parts = {}
 				for part in req:gmatch("[^;]+") do parts[#parts + 1] = (part:gsub("%*", "")) end
@@ -2336,6 +2448,12 @@ local function read_draft()
 			local flags = math.tointeger(tonumber(data.lane_selection_flags) or 0) or 0
 			local pos = K.LANE_BITS[flags]
 			local entry = { id = id > 0 and id or nil, slot = okslot and slot or 9, me = Player.GetPlayerID(p) == my_id, pos = pos, flags = flags }
+			local okd, pd = pcall(Player.GetPlayerData, p)
+			pd = okd and type(pd) == "table" and pd or K.NONE
+			local raw = pd.steamid
+			local sid = math.type(raw) == "integer" and raw or (type(raw) == "string" and math.tointeger(tonumber(raw) or 0)) or 0
+			if sid > K.STEAM_BASE and not pd.fakeClient then entry.acc = sid - K.STEAM_BASE end
+			entry.pname = type(pd.PlayerName) == "string" and pd.PlayerName or nil
 			if entry.me then my_pos, my_flags = pos, flags end
 			if team == my_team then ours[#ours + 1] = entry else theirs[#theirs + 1] = entry end
 		end
@@ -2350,6 +2468,18 @@ local function read_draft()
 			if valid_hero(bid) then bans[#bans + 1] = bid end
 		end
 	end
+	for bid, at in pairs(state.chat_bans) do
+		if state.clock - at > K.CHAT_BAN_TTL then
+			state.chat_bans[bid] = nil
+		else
+			local dup = false
+			for _, b in ipairs(bans) do
+				if b == bid then dup = true end
+			end
+			if not dup then bans[#bans + 1] = bid end
+		end
+	end
+	table.sort(bans)
 	local my_hero = nil
 	for _, e in ipairs(ours) do
 		if e.me then my_hero = e.id end
@@ -2591,6 +2721,22 @@ local function draft_positions(ours)
 	return list, 0
 end
 
+local function sz_vision()
+	if state.sz_vis ~= nil then return state.sz_vis or nil end
+	local text = sz_file()
+	if not text then return nil end
+	local out, any = {}, false
+	for item, group, base, list in text:gmatch("\nE\t(item_[%w_]+)\t(%d)\t(%d+)\t([^\n]*)") do
+		local foes = {}
+		for id, lift in list:gmatch("(%d+):(%d+)") do foes[tonumber(id)] = tonumber(lift) end
+		out[item] = out[item] or {}
+		out[item][tonumber(group)] = { base = tonumber(base), foes = foes }
+		any = true
+	end
+	state.sz_vis = any and out or false
+	return state.sz_vis or nil
+end
+
 local function sz_vs(id)
 	local sv = state.sz_vs
 	if not id or sv[id] ~= nil then return end
@@ -2654,14 +2800,6 @@ local function sz_route(d, pos, unit)
 	for _, r in ipairs(e.core or {}) do
 		local tm = r[2] or 0
 		if cat.by_name[r[1]] then route[#route + 1] = { name = r[1], stage = tm <= 720 and 2 or (tm <= 1560 and 3 or 4), share = (r[3] or 0) / 100, tm = tm } end
-	end
-	local short = unit and unit:gsub("^npc_dota_hero_", "")
-	if shown == 2 and short and K.BOTTLE[short] then
-		local has = false
-		for _, step in ipairs(route) do
-			if step.name == "item_bottle" then has = true end
-		end
-		if not has then route[#route + 1] = { name = "item_bottle", stage = 2, tm = K.BOTTLE_TM, early = true, reason = L("bb_why_bottle") } end
 	end
 	table.sort(route, function(p, q) return p.tm < q.tm end)
 	for _, r in ipairs(e.sit or {}) do
@@ -2942,11 +3080,38 @@ local function foe_counters(role, hero)
 			end
 		end
 	end
+	local vis = sz_vision()
+	local covered = {}
+	if vis then
+		local group = support and 2 or 1
+		for _, item in ipairs(K.VISION) do
+			local row = vis[item] and vis[item][group]
+			local units, best = {}, 0
+			for _, unit in ipairs(row and foes or K.NONE) do
+				local lift = row.foes[hero_id(unit)]
+				if lift then
+					units[#units + 1] = unit
+					covered[unit] = true
+					best = math.max(best, lift)
+				end
+			end
+			if #units > 0 then
+				local names = {}
+				for k, unit in ipairs(units) do
+					if k <= 2 then names[#names + 1] = hero_title(unit) end
+				end
+				local who = table.concat(names, ", ") .. (#units > 2 and (" +" .. (#units - 2)) or "")
+				local reason = string.format(L("bb_vs_vision"), best / 100)
+				threat(units, who .. ": " .. reason, reason, options({ item }), 1)
+			end
+		end
+	end
 	for r, rule in ipairs(K.RULES) do
 		local units = {}
 		for _, unit in ipairs(foes) do
 			local short = unit:gsub("^npc_dota_hero_", "")
-			if (" " .. (K.FOE_TAGS[short] or "") .. " "):find(" " .. rule.tag .. " ", 1, true) then units[#units + 1] = unit end
+			local skip = rule.tag == "inv" and covered[unit]
+			if not skip and (" " .. (K.FOE_TAGS[short] or "") .. " "):find(" " .. rule.tag .. " ", 1, true) then units[#units + 1] = unit end
 		end
 		if #units > 0 then
 			local names = {}
@@ -3301,11 +3466,12 @@ end
 local function grid_off(id)
 	local grid = state.grid
 	local unit = grid and hero_unit(id)
-	local card = unit and grid[unit:sub(15)]
-	if not card then return false end
-	for _, cls in ipairs(K.GRID_OFF) do
-		local ok, has = pcall(card.HasClass, card, cls)
-		if ok and has then return true end
+	local cards = unit and grid[unit:sub(15)]
+	for _, card in ipairs(cards or K.NONE) do
+		for _, cls in ipairs(K.GRID_OFF) do
+			local ok, has = pcall(card.HasClass, card, cls)
+			if ok and has then return true end
+		end
 	end
 	return false
 end
@@ -3336,7 +3502,7 @@ local function compute_view()
 			end
 			view.cells[a], view.totals[a] = row, total
 		end
-		if not d.my_hero and #theirs > 0 then
+		if not d.my_hero and d.phase then
 			local shares = sz_shares()
 			local taken = {}
 			for _, id in ipairs(ours) do taken[id] = true end
@@ -3377,17 +3543,25 @@ local function compute_view()
 					list[#list + 1] = { id = id, pos = pos, gain = gain, fits = fits, strong = good[1] and good[1].id, strong2 = good[2] and good[2].id }
 				end
 			end
-			if only then
-				local kept = {}
-				for _, b in ipairs(list) do
-					if mine[b.id] then kept[#kept + 1] = b end
-				end
-				if #kept > 0 then list = kept end
-			end
 			table.sort(list, function(p, q)
 				if p.fits ~= q.fits then return p.fits end
 				return p.gain > q.gain
 			end)
+			if only then
+				local own, rest = {}, {}
+				for _, b in ipairs(list) do
+					if mine[b.id] then
+						if #own < K.POOL_SHOW then
+							b.own = true
+							own[#own + 1] = b
+						end
+					elseif b.fits then
+						rest[#rest + 1] = b
+					end
+				end
+				list = own
+				for _, b in ipairs(rest) do list[#list + 1] = b end
+			end
 			for i = 1, math.min(4, #list) do
 				local b = list[i]
 				local names = {}
@@ -3395,7 +3569,14 @@ local function compute_view()
 					local su = hero_unit(sid)
 					if su then names[#names + 1] = hero_title(su) end
 				end
-				if #names > 0 then b.why = string.format(L("bb_pick_vs"), table.concat(names, ", ")) end
+				if #names > 0 then
+					b.why = string.format(L("bb_pick_vs"), table.concat(names, ", "))
+				else
+					local sh = shares and shares.heroes[b.id]
+					local r = sh and sh.wr[b.pos]
+					if r and r.g >= K.META_GAMES then b.why = string.format(L("bb_pick_meta"), math.floor(r.w / r.g * 100 + 0.5)) end
+				end
+				if b.own then b.why = b.why and (L("bb_pick_own") .. " · " .. b.why) or L("bb_pick_own") end
 				view.best[i] = b
 			end
 			if view.best[1] and view.chance then view.hint = { id = view.best[1].id, chance = math.floor(view.chance + view.best[1].gain + 0.5) } end
@@ -4508,20 +4689,34 @@ function W.next_block(x, y, w)
 	return b1y + 38
 end
 
-function W.shelf_data(view)
-	if view.shelves then return view.shelves end
-	local sh = { start = {}, early = {}, core = {}, more = {} }
-	local index, used, any = {}, {}, false
-	for _, name in ipairs(view.start or K.NONE) do
+local function start_slots(list, max)
+	local groups, index = {}, {}
+	for _, name in ipairs(list) do
 		local e = index[name]
 		if e then
 			e.count = e.count + 1
 		else
 			e = { name = name, count = 1 }
 			index[name] = e
-			sh.start[#sh.start + 1] = e
+			groups[#groups + 1] = e
 		end
 	end
+	local out, room = {}, max - #groups
+	for _, e in ipairs(groups) do
+		if e.count > 1 and e.count - 1 <= room then
+			room = room - (e.count - 1)
+			for _ = 1, e.count do out[#out + 1] = { name = e.name, count = 1 } end
+		else
+			out[#out + 1] = e
+		end
+	end
+	return out
+end
+
+function W.shelf_data(view)
+	if view.shelves then return view.shelves end
+	local sh = { start = start_slots(view.start or K.NONE, 12), early = {}, core = {}, more = {} }
+	local used, any = {}, false
 	for _, step in ipairs(view.route) do
 		used[step.name] = true
 		if step.done then any = true end
@@ -4592,16 +4787,19 @@ function W.timeline(x, y, w)
 	local sh = W.shelf_data(view)
 	local top = y + 30
 	text(fonts.w500, 12, L("bb_shelf_start"), x, top, N.DIM)
+	local cols = #sh.start > 8 and 3 or 2
+	local iw = cols == 3 and 27 or 32
+	local ih = cols == 3 and 20 or 23
 	for i, e in ipairs(sh.start) do
-		if i > 8 then break end
-		local col, row = (i - 1) % 2, math.floor((i - 1) / 2)
-		local px, py = x + col * 36, top + 20 + row * 28
-		W.pic(item_image(e.name), px, py, 32, 23, 5, e.done and 1 or 0, false, e.done and N.DONE or nil)
+		if i > cols * 4 then break end
+		local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
+		local px, py = x + col * (iw + 4), top + 20 + row * (ih + 5)
+		W.pic(item_image(e.name), px, py, iw, ih, 5, e.done and 1 or 0, false, e.done and N.DONE or nil)
 		if e.count and e.count > 1 then
-			rect(px + 18, py + 11, 14, 12, N.SHADE, 3)
-			text(fonts.d600, 11, tostring(e.count), px + 25, py + 11, N.TEXT, "center")
+			rect(px + iw - 14, py + ih - 12, 14, 12, N.SHADE, 3)
+			text(fonts.d600, 11, tostring(e.count), px + iw - 7, py + ih - 12, N.TEXT, "center")
 		end
-		button("item", px, py, 32, 23, e.name)
+		button("item", px, py, iw, ih, e.name)
 	end
 	local ax0 = x + 100
 	local aw = w - 100
@@ -4736,28 +4934,61 @@ function W.donut(cx, cy, r, th, mag, phys, grow)
 	if pure > 0.001 then Render.Circle(P(cx, cy), r * G.s, A(C.PURE), th * G.s, start, pure * grow, false, 64) end
 end
 
+function W.fight_killers(src, total)
+	if src.kk and src.kk_total == total then return src.kk end
+	local list = {}
+	for unit, value in pairs(src.src) do list[#list + 1] = { unit = unit, value = value, share = total > 0 and value / total or 0 } end
+	table.sort(list, function(p, q) return p.value > q.value end)
+	while #list > 3 do table.remove(list) end
+	src.kk, src.kk_total = list, total
+	return list
+end
+
+function W.fight_tabs(xr, y, death)
+	local x = xr
+	for _, t in ipairs(K.FIGHT_TABS) do
+		local label = L(t[2])
+		local tw = measure(fonts.w600, 13, label)
+		x = x - tw
+		local on = death == (t[1] == "death")
+		local hot = hover_t("fm_" .. t[1], x - 6, y - 4, tw + 12, 26)
+		text(fonts.w600, 13, label, x, y, on and N.TEXT or mix(N.MUTED, N.TEXT, hot))
+		local u = tween("fm_on_" .. t[1], on and 1 or 0, 14)
+		if u > 0.01 then rect(x, y + 20, tw * u, 2, N.ACCENT, 1) end
+		button("fmode", x - 6, y - 4, tw + 12, 26, t[1])
+		x = x - 20
+	end
+end
+
 function W.fight(w, h)
 	local view = state.view
 	local dmg = state.dmg
-	local total = dmg.phys + dmg.mag + dmg.pure
+	local death = W.fmode == "death" and dmg.last ~= nil
+	local src = death and dmg.last or dmg
+	local total = src.phys + src.mag + src.pure
 	local lx, lw = N.X, 404
 	local rx = lx + lw + 44
 	local rw = w - N.X - rx
 	local top, bottom = N.TOP, h - 24
 	W.block(0)
-	W.head(L("bb_fight_title"), lx, top, lw, dmg.deaths > 0 and string.format(L("bb_kill_deaths"), dmg.deaths) or nil)
+	if dmg.last then
+		W.head(L("bb_fight_title"), lx, top, lw)
+		W.fight_tabs(lx + lw, top, death)
+	else
+		W.head(L("bb_fight_title"), lx, top, lw, dmg.deaths > 0 and string.format(L("bb_kill_deaths"), dmg.deaths) or nil)
+	end
 	local ky = top + 30
 	if total <= 0 then
 		W.empty(L("bb_fight_empty"), lx, ky + 4, lw)
 	else
 		local cx, cy = lx + 66, ky + 70
 		local grow = tween("fight_ring", 1, 3.6)
-		local mag = tween("f_mag", dmg.mag / total, 6)
-		local phys = tween("f_phys", dmg.phys / total, 6)
+		local mag = tween("f_mag", src.mag / total, 6)
+		local phys = tween("f_phys", src.phys / total, 6)
 		Render.Circle(P(cx, cy), 60 * G.s, A(N.TRACK), 8 * G.s, 0, 1, false, 64)
 		W.donut(cx, cy, 60, 8, mag, phys, grow)
 		text(fonts.d600, 24, W.num(W.count("f_total", math.floor(total * grow))), cx, cy - 18, N.TEXT, "center")
-		text(fonts.w500, 12, L("bb_fight_hint"), cx, cy + 10, N.MUTED, "center")
+		text(fonts.w500, 12, L(death and "bb_fight_hint_death" or "bb_fight_hint"), cx, cy + 10, N.MUTED, "center")
 		local gx, gr = lx + 162, lx + lw
 		for i, r in ipairs(K.DMG_ROWS) do
 			local ly = ky + 28 + (i - 1) * 30
@@ -4767,11 +4998,15 @@ function W.fight(w, h)
 			text(fonts.d600, 15, math.floor(part * 100 + 0.5) .. "%", gr, ly, N.TEXT, "right")
 		end
 		local ry = ky + 154
-		if dmg.deaths > 0 then
+		if death then
+			local ago = math.floor(state.clock - src.at)
+			text(fonts.w500, 13, fit(fonts.w500, 13, string.format(L("bb_fight_death_n"), src.n, ago < 60 and string.format(L("bb_fight_sec"), ago) or string.format(L("bb_fight_min"), math.floor(ago / 60))), lw), lx, ry, N.MUTED)
+			ry = ry + 28
+		elseif dmg.deaths > 0 then
 			text(fonts.w500, 13, fit(fonts.w500, 13, string.format(L("bb_kill_ctrl"), dmg.ctrl / dmg.deaths), lw), lx, ry, N.MUTED)
 			ry = ry + 28
 		end
-		for i, s in ipairs(view and view.killers or K.NONE) do
+		for i, s in ipairs(W.fight_killers(src, total)) do
 			if ry + 34 > top + 300 then break end
 			if s.unit:match("^npc_dota_hero_") then W.pic(hero_image(s.unit), lx, ry, 26, 26, 13, 0, true) end
 			text(fonts.w500, 14, fit(fonts.w500, 14, hero_title(s.unit), lw - 150), lx + 38, ry, N.TEXT)
@@ -4945,6 +5180,13 @@ function W.updates(x, y, cw, half, x1, x2)
 	local rh = 56
 	rect(x1, ry + rh - 1, half, 1, N.LINE)
 	text(fonts.w600, 15, UPD.title, x1, ry + 8, N.TEXT)
+	local nl = L("bb_news_title")
+	local nx = x1 + measure(fonts.w600, 15, UPD.title) + 14
+	local nw = measure(fonts.w500, 13, nl)
+	local nh = hover_t("news_open", nx - 4, ry + 6, nw + 8, 22)
+	text(fonts.w500, 13, nl, nx, ry + 10, mix(N.ACCENT, N.TEXT, nh))
+	rect(nx, ry + 27, nw, 1, alpha(N.ACCENT, 0.4 + 0.6 * nh))
+	button("news", nx - 4, ry + 6, nw + 8, 22, "open")
 	local line, tone = UPD.line()
 	local col = (tone == C.LOSE and N.LOSE) or (tone == C.WIN and N.WIN) or (tone == C.ACCENT and N.ACCENT) or N.MUTED
 	local act = UPD.action()
@@ -5328,6 +5570,83 @@ function W.onboard(w, h)
 	G.alpha, G.ox = ba, bx0
 end
 
+W.news = { active = false, pending = false, at = 0, x = 0, y = 0, w = 0, h = 0, was = false }
+
+function W.news_close()
+	W.news.active = false
+	Config.WriteString(K.CONFIG, "news_seen", K.VERSION)
+	state.win.visible = W.news.was
+end
+
+function W.news_act(v)
+	if v == "none" then return end
+	if v == "open" then
+		W.news.active, W.news.pending, W.news.at, W.news.was = true, false, state.clock, state.win.visible
+		state.win.dropdown = nil
+		return
+	end
+	if v == "tg" then LINK.open("tg") end
+	W.news_close()
+end
+
+function W.news_draw(open)
+	local n = W.news
+	local s, screen = W.scale()
+	local w = K.NEWS_W
+	local x = 28
+	local rows, rows_h = {}, 0
+	for i, key in ipairs(K.NEWS) do
+		rows[i] = wrap(fonts.w500, 13, L(key), w - x * 2 - 30, 2)
+		rows_h = rows_h + 32 + (#rows[i] - 1) * 18
+	end
+	local h = 150 + rows_h + 104
+	n.w, n.h = w * s, h * s
+	n.x, n.y = math.floor((screen.x - n.w) / 2), math.floor((screen.y - n.h) / 2)
+	local t = state.clock - n.at
+	local e = W.ease(t / 0.45)
+	local fade = open * W.ease(t / 0.3)
+	G.ox, G.oy, G.s, G.alpha = 0, 0, 1, fade
+	pcall(Render.Blur, Vec2(0, 0), Vec2(screen.x, screen.y), K.NEWS_BLUR, fade, 0)
+	rect(0, 0, screen.x, screen.y, alpha(N.BG, 0.45))
+	button("news", 0, 0, screen.x, screen.y, "ok")
+	G.ox, G.oy, G.s, G.alpha = n.x, n.y + (1 - e) * 12 * s, s, open * e
+	local ba, by0 = G.alpha, G.oy
+	W.shell(w, h)
+	button("news", 0, 0, w, h, "none")
+	text(fonts.w500, 12, string.format(L("bb_news_head"), K.VERSION), x, 24, N.MUTED)
+	local bx, by, bw, bh, hot = W.btn("news_x", w - 48, 14, 28, 28)
+	if hot > 0.01 then rect(bx, by, bw, bh, alpha(N.HOT, hot), 9) end
+	W.glyph(K.CLOSE, 13, bx + bw / 2, by + bh / 2, mix(N.MUTED, N.TEXT, hot))
+	button("news", w - 48, 14, 28, 28, "ok")
+	W.onb_rise(t, 0.08, ba, by0)
+	text(fonts.d600, 26, L("bb_news_title"), x, 52, N.TEXT)
+	text(fonts.w500, 13, L("bb_news_sub"), x, 92, N.MUTED)
+	local y = 130
+	for i, lines in ipairs(rows) do
+		W.onb_rise(t, 0.16 + i * 0.07, ba, by0)
+		rect(x, y - 8, w - x * 2, 1, N.LINE)
+		W.glyph(K.ONB_CHECK, 11, x + 7, y + 12, N.ACCENT)
+		for k, line in ipairs(lines) do text(fonts.w500, 13, line, x + 24, y + 3 + (k - 1) * 18, N.TEXT) end
+		y = y + 32 + (#lines - 1) * 18
+	end
+	rect(x, y - 8, w - x * 2, 1, N.LINE)
+	W.onb_rise(t, 0.2 + #K.NEWS * 0.07, ba, by0)
+	y = y + 16
+	local okw = 104
+	local tw = w - x * 2 - okw - 10
+	local tx, ty, tww, thh, th = W.btn("news_tg", x, y, tw, 40)
+	rect(tx, ty, tww, thh, mix(N.TG, N.TG_HOT, th), 10)
+	local label = L("bb_news_tg")
+	local lw, lh = measure(fonts.w600, 14, label)
+	local gx = tx + tww / 2 - (lw + 22) / 2
+	W.glyph(K.TG_ICON, 13, gx + 7, ty + thh / 2 + 1, N.TEXT_ON)
+	text(fonts.w600, 14, label, gx + 22, ty + (thh - lh) / 2, N.TEXT_ON)
+	button("news", x, y, tw, 40, "tg")
+	W.button_ghost("news_ok", L("bb_news_ok"), x + tw + 10, y, okw, 40, "news", "ok")
+	text(fonts.w500, 12, L("bb_news_note"), w / 2, y + 54, N.DIM, "center")
+	G.alpha, G.oy = ba, by0
+end
+
 function W.card_hit()
 	local r = W.cardst and W.cardst.rect
 	return r ~= nil and cursor_in(r.x1, r.y1, r.x2, r.y2)
@@ -5498,7 +5817,22 @@ local function draw_window()
 	for i = #list, 1, -1 do list[i] = nil end
 	if W.onb.active == nil then
 		W.onb.active = false
-		if not Config.mem and Config.ReadInt(K.CONFIG, "onboard2", 0) == 0 then W.onb_start() end
+		if not Config.mem and Config.ReadInt(K.CONFIG, "onboard2", 0) == 0 then
+			W.onb_start()
+			Config.WriteString(K.CONFIG, "news_seen", K.VERSION)
+		elseif not Config.mem and Config.ReadString(K.CONFIG, "news_seen", "") ~= K.VERSION then
+			W.news.pending = true
+		end
+	elseif W.news.pending then
+		local okg, gs = pcall(GameRules.GetGameState)
+		if not okg or gs ~= Enum.GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+			W.news.pending = false
+			W.news.active, W.news.at, W.news.was = true, state.clock, win.visible
+			win.visible, win.dropdown = true, nil
+		end
+	elseif W.news.active and not win.visible then
+		W.news.active = false
+		Config.WriteString(K.CONFIG, "news_seen", K.VERSION)
 	elseif W.onb.active and not win.visible then
 		W.onb.active = false
 		Config.WriteInt(K.CONFIG, "onboard2", 1)
@@ -5546,6 +5880,11 @@ local function draw_window()
 		G.alpha, G.oy, G.ox = 1, base_y, win.x
 		return
 	end
+	if W.news.active then
+		W.news_draw(open)
+		G.alpha = 1
+		return
+	end
 	W.shell(w, h)
 	W.header(w)
 	local out = win.prev_tab and (state.clock - win.tab_at) / 0.14 or 1
@@ -5570,6 +5909,68 @@ local function draw_window()
 	G.alpha = 1
 end
 
+local SC = { data = {}, asked = {} }
+
+function SC.compact(rows)
+	local out = {}
+	for _, r in ipairs(type(rows) == "table" and rows or K.NONE) do
+		local id, g, w = tonumber(r.hero_id), tonumber(r.games) or 0, tonumber(r.win) or 0
+		if id and g >= K.SCOUT_MIN then out[#out + 1] = { id = id, g = g, w = w } end
+	end
+	table.sort(out, function(a, b) return a.g > b.g end)
+	while #out > 3 do table.remove(out) end
+	return out
+end
+
+function SC.tick()
+	local d = state.draft
+	if not d.phase then return end
+	for _, e in ipairs(d.theirs) do
+		local acc = e.acc
+		if acc and not SC.asked[acc] then
+			SC.asked[acc] = true
+			local net = state.net
+			net.queue[#net.queue + 1] = {
+				key = "scout",
+				path = "players/" .. acc .. "/heroes?date=" .. K.SCOUT_DAYS,
+				done = function(data) SC.data[acc] = SC.compact(data) end,
+			}
+		end
+	end
+end
+
+function SC.draw(y, w)
+	local rows = {}
+	for _, e in ipairs(state.draft.theirs) do
+		local list = e.acc and SC.data[e.acc]
+		if list and #list > 0 then rows[#rows + 1] = { e = e, list = list } end
+	end
+	if #rows == 0 then return y end
+	y = y + 8
+	rect(16, y, w - 32, 1, N.LINE)
+	y = y + 12
+	text(fonts.w600, 14, L("bb_scout_title"), 16, y, N.TEXT)
+	y = y + 26
+	for _, r in ipairs(rows) do
+		text(fonts.w500, 13, fit(fonts.w500, 13, r.e.pname or "?", 96), 16, y + 2, N.MUTED)
+		local x = 120
+		for _, h in ipairs(r.list) do
+			local unit = hero_unit(h.id)
+			if unit then
+				local wr = math.floor(h.w / h.g * 100 + 0.5)
+				local hot = h.g >= K.SCOUT_BAN_G and wr >= K.SCOUT_BAN_WR
+				W.pic(hero_image(unit), x, y, 34, 19, 4)
+				if hot then frame_line(x, y, 34, 19, N.ACCENT, 4, 1.5) end
+				text(fonts.d600, 12, wr .. "%", x + 38, y + 2, hot and N.ACCENT or N.TEXT)
+				x = x + 68
+			end
+		end
+		y = y + 27
+	end
+	text(fonts.w500, 12, fit(fonts.w500, 12, L("bb_scout_hint"), w - 32), 16, y, N.DIM)
+	return y + 18
+end
+
 local PK = { cards = {}, buttons = {}, stack = {}, map = nil, fresh = nil, next_scan = 0, next_pos = 0, hl = { {}, {}, {} }, leader = nil, flash_at = -10, h = 300, x = nil, y = nil, drag = nil }
 
 function PK.hit()
@@ -5590,6 +5991,21 @@ function PK.click(key)
 			elseif b.kind == "hero" then
 				state.preview_hero = b.value
 				state.next_model, state.next_data = 0, 0
+				local unit = hero_unit(b.value)
+				if PK.sel and PK.sel.id == b.value then
+					PK.sel = nil
+				elseif unit then
+					PK.sel = { id = b.value, at = state.clock }
+					local ok = pcall(Engine.ExecuteCommand, "possible_hero " .. unit)
+					log("pick select " .. unit .. ": " .. tostring(ok))
+				end
+			elseif b.kind == "pick" then
+				local unit = hero_unit(b.value)
+				PK.sel = nil
+				if unit then
+					local ok = pcall(Engine.ExecuteCommand, "dota_select_hero " .. unit)
+					log("pick lock " .. unit .. ": " .. tostring(ok))
+				end
 			end
 			return
 		end
@@ -5603,6 +6019,7 @@ function PK.scan()
 		if ok and root then
 			PK.stack[1] = root
 			PK.fresh = {}
+			PK.root = root
 		end
 	end
 	local n = 0
@@ -5616,7 +6033,14 @@ function PK.scan()
 			local oks, src = false, nil
 			if oki and img then oks, src = pcall(img.GetImageSrc, img) end
 			local name = oks and type(src) == "string" and src:match("npc_dota_hero_([%w_]+)") or nil
-			if name and PK.fresh then PK.fresh[name] = p end
+			if name and PK.fresh then
+				local list = PK.fresh[name]
+				if not list then
+					list = {}
+					PK.fresh[name] = list
+				end
+				list[#list + 1] = p
+			end
 		elseif okc then
 			local okn, count = pcall(p.GetChildCount, p)
 			if okn and count then
@@ -5633,23 +6057,54 @@ function PK.scan()
 	end
 end
 
+function PK.shown(card)
+	local p, depth = card, 0
+	while p and depth < 40 do
+		local okv, vis = pcall(p.IsVisible, p)
+		if not okv or not vis then return false end
+		local okw, pw = pcall(p.GetLayoutWidth, p)
+		local okh, ph = pcall(p.GetLayoutHeight, p)
+		if not okw or not okh or (tonumber(pw) or 0) < 2 or (tonumber(ph) or 0) < 2 then return false end
+		if PK.root and p == PK.root then return true end
+		local okp, parent = pcall(p.GetParent, p)
+		p = okp and parent or nil
+		depth = depth + 1
+	end
+	return true
+end
+
+function PK.area()
+	local root = PK.root
+	if not root then return nil end
+	local okp, pos = pcall(root.GetPositionWithinWindow, root)
+	local okw, rw = pcall(root.GetLayoutWidth, root)
+	local okh, rh = pcall(root.GetLayoutHeight, root)
+	if not okp or not pos or not okw or not okh then return nil end
+	return { x = pos.x, y = pos.y, w = tonumber(rw) or 0, h = tonumber(rh) or 0 }
+end
+
 function PK.grid(view)
 	if not PK.map or not view or #view.best == 0 then return end
 	if state.clock >= PK.next_pos then
 		PK.next_pos = state.clock + K.GRID_HL
+		local area = PK.area()
 		for i = 1, 3 do
 			local slot = PK.hl[i]
 			slot.on = false
 			local b = view.best[i]
 			local unit = b and hero_unit(b.id)
-			local card = unit and PK.map[unit:sub(15)]
-			if card then
-				local okv, vis = pcall(card.IsVisible, card)
-				local okp, pos = pcall(card.GetPositionWithinWindow, card)
-				local okw, cw = pcall(card.GetLayoutWidth, card)
-				local okh, ch = pcall(card.GetLayoutHeight, card)
-				if okv and vis and okp and pos and okw and okh and (tonumber(cw) or 0) > 4 and (tonumber(ch) or 0) > 4 then
-					slot.on, slot.x, slot.y, slot.w, slot.h, slot.gain = true, pos.x, pos.y, cw, ch, b.gain
+			local cards = unit and PK.map[unit:sub(15)]
+			for _, card in ipairs(cards or K.NONE) do
+				if not slot.on and PK.shown(card) then
+					local okp, pos = pcall(card.GetPositionWithinWindow, card)
+					local okw, cw = pcall(card.GetLayoutWidth, card)
+					local okh, ch = pcall(card.GetLayoutHeight, card)
+					cw, ch = okw and tonumber(cw) or 0, okh and tonumber(ch) or 0
+					if okp and pos and cw > 4 and ch > 4 then
+						local mx, my = pos.x + cw / 2, pos.y + ch / 2
+						local inside = not area or (mx >= area.x and mx <= area.x + area.w and my >= area.y and my <= area.y + area.h)
+						if inside then slot.on, slot.x, slot.y, slot.w, slot.h, slot.gain = true, pos.x, pos.y, cw, ch, b.gain end
+					end
 				end
 			end
 		end
@@ -5695,7 +6150,8 @@ function PK.card(c, b, x, y, w, leader)
 	if math.abs(b.gain - c.g) < 0.01 then c.g = b.gain end
 	local gain = string.format("%+.1f%%", c.g)
 	local gsize = leader and 18 or 15
-	text(fonts.d600, gsize, gain, cx + cw2 - 10, cy + (leader and 9 or 7), b.gain >= 0 and N.WIN or N.LOSE, "right")
+	local sel = PK.sel and PK.sel.id == b.id and state.clock < PK.sel.at + K.PK_SEL
+	if not sel then text(fonts.d600, gsize, gain, cx + cw2 - 10, cy + (leader and 9 or 7), b.gain >= 0 and N.WIN or N.LOSE, "right") end
 	local room = left - measure(fonts.d600, gsize, "+00.0%") - 8
 	if leader then
 		local tw = measure(fonts.w700, 11, L("bb_top")) + 12
@@ -5705,8 +6161,22 @@ function PK.card(c, b, x, y, w, leader)
 	else
 		text(fonts.w600, 14, fit(fonts.w600, 14, hero_title(unit), room), tx, cy + 8, N.TEXT)
 	end
-	if b.why then text(fonts.w500, 13, fit(fonts.w500, 13, b.why, left), tx, cy + ch2 - 22, N.MUTED) end
+	if sel then
+		rect(cx, cy, cw2, ch2, alpha(N.ACCENT, 0.12), 10)
+		frame_line(cx, cy, cw2, ch2, N.ACCENT, 10, 1.5)
+	end
+	if b.why then text(fonts.w500, 13, fit(fonts.w500, 13, b.why, left - (sel and 90 or 0)), tx, cy + ch2 - 22, N.MUTED) end
 	button("hero", cx, cy, cw2, ch2, b.id)
+	if sel then
+		local label = L("bb_pk_pick")
+		local bw = measure(fonts.w700, 13, label) + 24
+		local bx, by = cx + cw2 - bw - 8, cy + 8
+		local bh = ch2 - 16
+		local bhot = hover_t("pk_pick", bx, by, bw, bh)
+		rect(bx, by, bw, bh, mix(N.ACCENT, N.TEXT, bhot * 0.25), 8)
+		text(fonts.w700, 13, label, bx + bw / 2, by + (bh - 16) / 2, N.INK, "center")
+		button("pick", bx, by, bw, bh, b.id)
+	end
 end
 
 function PK.draw()
@@ -5861,6 +6331,7 @@ function PK.draw()
 		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), 16, y + 2, N.MUTED)
 		y = y + 22
 	end
+	y = SC.draw(y, w)
 	PK.h = y + 14
 	G.alpha, G.buttons = 1, nil
 end
@@ -5871,6 +6342,7 @@ end
 
 local function quick_buy(name)
 	local ok = pcall(Engine.SetQuickBuy, short_name(name), false)
+	if not Heroes.GetLocal() and #state.qb_pending < K.QB_MAX then state.qb_pending[#state.qb_pending + 1] = name end
 	log("quickbuy " .. name .. ": " .. tostring(ok))
 	state.win.status = string.format(L("bb_status_quick"), item_title(name))
 end
@@ -5958,6 +6430,8 @@ local function click(key)
 			elseif b.kind == "header" and left then
 				local cx, cy = Input.GetCursorPos()
 				win.drag = { dx = cx - win.x, dy = cy - win.y }
+			elseif b.kind == "fmode" and left then
+				W.fmode = b.value
 			elseif b.kind == "tab" and left then
 				if win.tab ~= b.value then state.anim.tab = 0 end
 				win.tab = b.value
@@ -5982,6 +6456,8 @@ local function click(key)
 				W.card_act(b.value)
 			elseif b.kind == "onb" and left then
 				W.onb_act(b.value)
+			elseif b.kind == "news" and left then
+				W.news_act(b.value)
 			elseif b.kind == "link" and left then
 				LINK.open(b.value)
 			elseif b.kind == "upd" and left then
@@ -6002,7 +6478,9 @@ end
 
 local function window_hit()
 	local win = state.win
-	if not win.visible or not win.x then return false end
+	if not win.visible then return false end
+	if W.news.active then return true end
+	if not win.x then return false end
 	local sc = win.scale or G.s
 	return cursor_in(win.x, win.y, win.x + K.WIN_W * sc, win.y + K.WIN_H * sc)
 end
@@ -6237,21 +6715,6 @@ do
 		return list
 	end
 
-	function shop.group_items(list)
-		local out, index = {}, {}
-		for _, name in ipairs(list) do
-			local e = index[name]
-			if e then
-				e.count = e.count + 1
-			else
-				e = { name = name, count = 1 }
-				index[name] = e
-				out[#out + 1] = e
-			end
-		end
-		return out
-	end
-
 	function shop.title(label, y, bw)
 		local w = measure(fonts.w800, 11, label)
 		text(fonts.w800, 11, label, bw / 2, y, C.TITLE, "center")
@@ -6365,7 +6828,7 @@ do
 		local s = state.shop
 		if s.start_src ~= items then
 			s.start_src = items
-			s.start_list = shop.group_items(items)
+			s.start_list = start_slots(items, 99)
 		end
 		y = shop.title(L("bb_shop_start"), y, bw)
 		for i, e in ipairs(s.start_list) do e.key = "start" .. i end
@@ -6568,7 +7031,7 @@ do
 		for _, l in ipairs(lines) do tw = math.max(tw, measure(fonts.w500, 11, l)) end
 		tw = tw + 20
 		local th = 12 + #title_lines * 16 + #lines * 14
-		local x, y = bw + 8, math.max(4, math.min(bh - th - 4, tip.y))
+		local x, y = bw + 8 + (state.shop.recipe_w or 0), math.max(4, math.min(bh - th - 4, tip.y))
 		shadow(x, y, tw, th, 8, 16)
 		rect(x, y, tw, th, C.TIP, 8)
 		frame_line(x, y, tw, th, C.EDGE, 8)
@@ -6581,6 +7044,115 @@ do
 			text(fonts.w500, 11, l, x + 10, ly, C.GOLD)
 			ly = ly + 14
 		end
+		G.alpha = saved
+	end
+
+	function shop.into(name)
+		local cat = load_catalog()
+		if not cat.into then
+			local into = {}
+			for result, parts in pairs(cat.parts) do
+				local entry = cat.by_name[result]
+				if entry and not entry.gone then
+					for _, part in ipairs(parts) do
+						local list = into[part]
+						if not list then
+							list = {}
+							into[part] = list
+						end
+						local dup = false
+						for _, v in ipairs(list) do
+							if v == result then dup = true end
+						end
+						if not dup then list[#list + 1] = result end
+					end
+				end
+			end
+			for _, list in pairs(into) do
+				table.sort(list, function(a, b)
+					local ca, cb = item_cost(a), item_cost(b)
+					if ca ~= cb then return ca < cb end
+					return a < b
+				end)
+			end
+			cat.into = into
+		end
+		return cat.into[name] or K.NONE
+	end
+
+	function shop.draw_recipe(bw, bh)
+		local s = state.shop
+		local r = s.recipe
+		s.recipe_rect, s.recipe_w = nil, nil
+		if not r then return end
+		local cat = load_catalog()
+		local name = r.name
+		local parts, rname, rcost = {}, nil, 0
+		for _, part in ipairs(cat.parts[name] or K.NONE) do
+			local entry = cat.by_name[part]
+			if entry and entry.recipe then
+				rname, rcost = part, rcost + entry.cost
+			else
+				parts[#parts + 1] = part
+			end
+		end
+		local into = shop.into(name)
+		local w, iw, ih, gap = K.RC_W, 40, 29, 6
+		local per = math.floor((w - 24 + gap) / (iw + gap))
+		local slots = #parts + (rname and 1 or 0)
+		local shown = math.min(#into, per * 2)
+		local h = 58 + 18 + (slots > 0 and math.ceil(slots / per) * (ih + gap) or 20) + (shown > 0 and 20 + math.ceil(shown / per) * (ih + gap) or 0) + 24
+		local x = bw + 8
+		local y = math.max(4, math.min(bh - h - 4, (r.y - G.oy) / G.s - 20))
+		local saved = G.alpha
+		G.alpha = saved * W.ease((state.clock - r.at) / 0.18)
+		shadow(x, y, w, h, 8, 16)
+		rect(x, y, w, h, C.TIP, 8)
+		frame_line(x, y, w, h, C.EDGE, 8)
+		local a, b = P(x, y), P(x + w, y + h)
+		s.recipe_rect, s.recipe_w = { x = a.x, y = a.y, w = b.x - a.x, h = b.y - a.y }, w + 8
+		picture(item_image(name), x + 12, y + 12, 46, 34, 5, 0, false)
+		text(fonts.w700, 13, fit(fonts.w700, 13, item_title(name), w - 100), x + 68, y + 12, C.TEXT)
+		text(fonts.w700, 12, tostring(item_cost(name)), x + 68, y + 31, C.GOLD)
+		local cx, cy = x + w - 22, y + 8
+		local hot = hover_t("rc_close", cx, cy, 16, 16)
+		W.glyph(K.CLOSE, 10, cx + 8, cy + 8, mix(C.MUTED, C.TEXT, hot))
+		button("rclose", cx - 2, cy - 2, 20, 20)
+		local ly = y + 58
+		text(fonts.w600, 11, L("bb_rc_from"), x + 12, ly, C.MUTED)
+		ly = ly + 18
+		if slots == 0 then
+			text(fonts.w500, 11, L("bb_rc_whole"), x + 12, ly, C.DIM)
+			ly = ly + 20
+		else
+			local col = 0
+			for i, part in ipairs(parts) do
+				shop.item(part, x + 12 + col * (iw + gap), ly, iw, ih, { key = "rcp" .. i .. part })
+				col = col + 1
+				if col >= per then col, ly = 0, ly + ih + gap end
+			end
+			if rname then
+				local px = x + 12 + col * (iw + gap)
+				picture(item_image(rname), px, ly, iw, ih, 5, 0, false)
+				frame_line(px, ly, iw, ih, C.EDGE, 5)
+				rect(px + 2, ly + ih - 13, iw - 4, 12, C.BADGE, 3)
+				text(fonts.w700, 10, tostring(rcost), px + iw / 2, ly + ih - 14, C.GOLD, "center")
+				col = col + 1
+			end
+			if col > 0 then ly = ly + ih + gap end
+		end
+		if shown > 0 then
+			text(fonts.w600, 11, L("bb_rc_into"), x + 12, ly + 2, C.MUTED)
+			ly = ly + 20
+			local col = 0
+			for i = 1, shown do
+				shop.item(into[i], x + 12 + col * (iw + gap), ly, iw, ih, { key = "rci" .. i .. into[i] })
+				col = col + 1
+				if col >= per then col, ly = 0, ly + ih + gap end
+			end
+			if col > 0 then ly = ly + ih + gap end
+		end
+		text(fonts.w500, 10, L("bb_rc_hint"), x + 12, ly + 4, C.DIM)
 		G.alpha = saved
 	end
 
@@ -6671,7 +7243,7 @@ do
 		s.buttons, s.rect, s.tip = {}, nil, nil
 		if not Engine.IsShopOpen() then
 			state.anim.shop = 0
-			s.press, s.open = nil, false
+			s.press, s.open, s.recipe, s.recipe_rect = nil, false, nil, nil
 			return
 		end
 		local p = shop.shop_panels()
@@ -6705,6 +7277,11 @@ do
 		Render.PopClip()
 		if not ok then error(err, 0) end
 		if s.press and s.press.drag then s.tip = nil end
+		local okr, errr = pcall(shop.draw_recipe, bw, bh)
+		if not okr then
+			s.recipe = nil
+			Log.Write("[Build Brain] recipe: " .. tostring(errr))
+		end
 		shop.draw_tip(bw, bh)
 		shop.draw_drag()
 		G.alpha = 1
@@ -6753,7 +7330,11 @@ do
 		if press.drag then
 			if shop.over_zone() then quick_buy(press.name) end
 		elseif shop.hit() then
-			quick_buy(press.name)
+			if s.recipe and s.recipe.name == press.name then
+				s.recipe = nil
+			else
+				s.recipe = { name = press.name, y = s.recipe and s.recipe.y or press.y, at = state.clock }
+			end
 		end
 		return true
 	end
@@ -6785,6 +7366,8 @@ do
 	end
 
 	function shop.hit()
+		local rc = state.shop.recipe_rect
+		if rc and cursor_in(rc.x, rc.y, rc.x + rc.w, rc.y + rc.h) then return true end
 		local r = state.shop.rect
 		if not r then return false end
 		return cursor_in(r.x, r.y, r.x + r.w, r.y + r.h)
@@ -6804,6 +7387,8 @@ do
 						state.next_model, state.next_data = 0, 0
 						log("shop role " .. b.value)
 					end
+				elseif b.kind == "rclose" and left then
+					s.recipe = nil
 				elseif b.kind == "collapse" and left then
 					s.off = true
 				elseif b.kind == "expand" and left then
@@ -6823,14 +7408,33 @@ do
 	end
 end
 
+local function death_recap(dmg)
+	local at = dmg.died_at or state.clock
+	dmg.recap_at, dmg.died_at = nil, nil
+	local last = { phys = 0, mag = 0, pure = 0, src = {}, at = at, n = dmg.deaths }
+	for _, e in ipairs(dmg.log) do
+		if at - e.t <= K.RECAP_WIN then
+			last[e.kind] = last[e.kind] + e.d
+			last.src[e.unit] = (last.src[e.unit] or 0) + e.d
+		end
+	end
+	dmg.log = {}
+	if last.phys + last.mag + last.pure > 0 then
+		dmg.last = last
+		W.fmode = "death"
+	end
+end
+
 local function track_damage(hero)
 	local dmg = state.dmg
 	local alive = Entity.IsAlive(hero)
 	if dmg.alive and not alive then
 		dmg.deaths = dmg.deaths + 1
+		dmg.died_at, dmg.recap_at = state.clock, state.clock + K.RECAP_LAG
 		state.next_model = 0
 		log("death " .. dmg.deaths)
 	end
+	if dmg.recap_at and state.clock >= dmg.recap_at then death_recap(dmg) end
 	dmg.alive = alive
 	if state.clock < dmg.next_state then return end
 	dmg.next_state = state.clock + K.STATE_STEP
@@ -6887,7 +7491,7 @@ local function sz_sync()
 			out:write(body)
 			out:close()
 			Config.WriteString(K.CONFIG, "sz_version", body:match("^BB1\t([^\t\n]+\t%d+)") or version)
-			state.sz, state.sz_text, state.sz_next, state.sz_pos, state.sz_vs, state.sz_vidx, state.sz_wr = {}, nil, 0, nil, {}, nil, nil
+			state.sz, state.sz_text, state.sz_next, state.sz_pos, state.sz_vs, state.sz_vidx, state.sz_wr, state.sz_vis = {}, nil, 0, nil, {}, nil, nil, nil
 			state.next_model = 0
 			log("builds updated " .. version)
 		end, "bb_builds")
@@ -6956,9 +7560,226 @@ local function frame()
 	end
 end
 
+local function quick_restore(hero)
+	if not hero or #state.qb_pending == 0 then return end
+	if not state.qb_at then state.qb_at = state.clock + K.QB_DELAY end
+	if state.clock < state.qb_at then return end
+	for i, name in ipairs(state.qb_pending) do pcall(Engine.SetQuickBuy, short_name(name), i == 1) end
+	log("quickbuy restored " .. #state.qb_pending)
+	state.qb_pending, state.qb_at = {}, nil
+end
+
+local AB = {}
+
+function AB.owned(hero)
+	local owned = {}
+	local cat = load_catalog()
+	for slot = 0, 16 do
+		local item = NPC.GetItemByIndex(hero, slot)
+		local name = item and Ability.GetName(item)
+		if name then
+			local count = 1
+			local entry = cat.by_name[name]
+			if entry and entry.stack then
+				local okc, cur = pcall(Item.GetCurrentCharges, item)
+				local oki, init = pcall(Item.GetInitialCharges, item)
+				cur, init = okc and tonumber(cur) or 0, oki and tonumber(init) or 0
+				if init > 0 then count = math.max(1, math.ceil(cur / init)) end
+			end
+			if name == "item_ward_dispenser" then
+				owned.item_ward_observer = (owned.item_ward_observer or 0) + 1
+				owned.item_ward_sentry = (owned.item_ward_sentry or 0) + 1
+			end
+			owned[name] = (owned[name] or 0) + count
+		end
+	end
+	return owned
+end
+
+function AB.chat(names, msg)
+	local icons = {}
+	for _, name in ipairs(names) do icons[#icons + 1] = '<img class="ChatItemIcon" src="file://{images}/items/' .. short_name(name) .. '.png"/>' end
+	local c = N.ACCENT
+	local tag = string.format('<font color="#%02x%02x%02x">%s</font>', math.floor(c.r + 0.5), math.floor(c.g + 0.5), math.floor(c.b + 0.5), L("bb_ab_tag"))
+	local ok, err = pcall(Chat.Print, "ConsoleChat", table.concat(icons) .. " " .. tag .. " " .. msg)
+	if not ok then Log.Write("[Build Brain] chat: " .. tostring(err)) end
+end
+
+function AB.start(hero)
+	local ab = state.ab
+	if ab.done or not hero or setting("autobuy") < 1 then return end
+	local gs = GameRules.GetGameState()
+	local early = gs == Enum.GameState.DOTA_GAMERULES_STATE_PRE_GAME
+		or (gs == Enum.GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS and (GameRules.GetDOTATime() or 0) < K.AB_LATE)
+	if not early and gs == Enum.GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		early = true
+		for slot = 0, 14 do
+			local item = NPC.GetItemByIndex(hero, slot)
+			local name = item and Ability.GetName(item)
+			if name and name ~= "item_tpscroll" then early = false end
+		end
+	end
+	if not early then
+		ab.done = true
+		local view = state.view
+		log("auto start skipped: state " .. tostring(gs) .. ", time " .. math.floor(GameRules.GetDOTATime() or 0) .. ", start items " .. #(view and view.start or K.NONE))
+		return
+	end
+	if not ab.at then ab.at = state.clock + K.AB_DELAY end
+	if state.clock < ab.at then return end
+	local view = state.view
+	local list = view and view.start
+	local player = Players.GetLocal()
+	if not list or #list == 0 or not player then return end
+	ab.done, ab.next = true, state.clock + K.AB_WAIT
+	local owned = AB.owned(hero)
+	local cat = load_catalog()
+	local gold = Player.GetTotalGold(player) or 0
+	local bought, spent = {}, 0
+	for _, name in ipairs(list) do
+		if (owned[name] or 0) > 0 then
+			owned[name] = owned[name] - 1
+		else
+			local entry = cat.by_name[name]
+			if entry and not entry.gone and entry.cost <= gold and purchase(entry.id) then
+				gold, spent = gold - entry.cost, spent + entry.cost
+				bought[#bought + 1] = name
+				ab.mine = ab.mine or {}
+				ab.mine[name] = state.clock + K.AB_MINE
+			end
+		end
+	end
+	log("auto start: bought " .. #bought .. " of " .. #list .. ", " .. spent .. " gold")
+	if #bought == 0 then return end
+	local titles = {}
+	for _, name in ipairs(bought) do titles[#titles + 1] = item_title(name) end
+	state.win.status = string.format(L("bb_status_buy"), table.concat(titles, ", "))
+	AB.chat(bought, string.format(L("bb_ab_start"), #bought, spent))
+end
+
+function AB.need(name, owned)
+	local need = {}
+	local function walk(item, depth)
+		if depth > 0 and (owned[item] or 0) > 0 then
+			owned[item] = owned[item] - 1
+			return
+		end
+		local parts = load_catalog().parts[item]
+		if not parts or depth > 6 then
+			need[#need + 1] = item
+			return
+		end
+		for _, part in ipairs(parts) do walk(part, depth + 1) end
+	end
+	walk(name, 0)
+	return need
+end
+
+function AB.snapshot(hero)
+	local counts, free = {}, 0
+	for slot = 0, 14 do
+		local item = NPC.GetItemByIndex(hero, slot)
+		local name = item and Ability.GetName(item)
+		if name then counts[name] = (counts[name] or 0) + 1 else free = free + 1 end
+	end
+	return counts, free
+end
+
+function AB.related(name, view)
+	for _, step in ipairs(view and view.route or K.NONE) do
+		if step.name == name or contains(step.name, name) then return true end
+	end
+	return false
+end
+
+function AB.game(hero)
+	local ab = state.ab
+	if not hero or not ab.done or setting("autobuy") ~= 2 then return end
+	if state.clock < (ab.next or 0) then return end
+	ab.next = state.clock + K.AB_STEP
+	local gs = GameRules.GetGameState()
+	if gs ~= Enum.GameState.DOTA_GAMERULES_STATE_PRE_GAME and gs ~= Enum.GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then return end
+	local player = Players.GetLocal()
+	local view = state.view
+	if not player or not view then return end
+	local gold = Player.GetTotalGold(player) or 0
+	local counts, free = AB.snapshot(hero)
+	ab.mine = ab.mine or {}
+	ab.fail = ab.fail or {}
+	if ab.snap then
+		for name, n in pairs(counts) do
+			local was = ab.snap[name] or 0
+			if n > was then
+				local mine = ab.mine[name]
+				if mine and state.clock < mine then
+					ab.mine[name] = nil
+				elseif not AB.related(name, view) then
+					ab.hold = state.clock + K.AB_HOLD
+					log("autobuy pause, bought by hand: " .. name)
+				end
+			end
+		end
+	end
+	ab.snap = counts
+	local pend = ab.pending
+	if pend then
+		if state.clock < pend.at then return end
+		ab.pending = nil
+		if gold > pend.gold - pend.cost * 0.5 and (counts[pend.name] or 0) <= pend.had and (counts[pend.step] or 0) <= pend.had_step then
+			ab.fail[pend.name] = state.clock + K.AB_FAIL
+			log("autobuy failed: " .. pend.name)
+		end
+	end
+	if state.clock < (ab.hold or 0) then return end
+	local step = view.next
+	if not step or step.skipped or step.done then return end
+	if free < 1 then
+		if not ab.full then
+			ab.full = true
+			AB.chat({}, L("bb_ab_full"))
+		end
+		return
+	end
+	ab.full = nil
+	local need = AB.need(step.name, owned_items(hero))
+	if #need == 0 then return end
+	local cat = load_catalog()
+	local parts_left = false
+	for _, part in ipairs(need) do
+		local entry = cat.by_name[part]
+		if entry and not entry.recipe then parts_left = true end
+	end
+	local pick = nil
+	for _, part in ipairs(need) do
+		local entry = cat.by_name[part]
+		if entry and not entry.gone and entry.cost > 0 and entry.cost <= gold and state.clock >= (ab.fail[part] or 0) and not (entry.recipe and parts_left) then
+			if not pick or entry.cost > pick.cost then pick = { name = part, cost = entry.cost, id = entry.id } end
+		end
+	end
+	if not pick or not purchase(pick.id) then return end
+	ab.pending = { name = pick.name, cost = pick.cost, gold = gold, had = counts[pick.name] or 0, step = step.name, had_step = counts[step.name] or 0, at = state.clock + K.AB_WAIT }
+	ab.mine[pick.name] = state.clock + K.AB_MINE
+	ab.mine[step.name] = state.clock + K.AB_MINE
+	state.next_model = state.clock + 0.4
+	state.win.status = string.format(L("bb_status_buy"), item_title(pick.name))
+	local msg
+	if #need == 1 then
+		msg = pick.name == step.name and item_title(step.name) or string.format(L("bb_ab_done"), item_title(step.name))
+	else
+		msg = string.format(L("bb_ab_part"), item_title(pick.name), item_title(step.name))
+	end
+	if step.vs_reason then msg = msg .. ", " .. step.vs_reason end
+	AB.chat(#need == 1 and { step.name } or { pick.name }, msg)
+	log("autobuy " .. pick.name .. " for " .. step.name)
+end
+
 local function update()
 	local hero = Heroes.GetLocal()
 	if hero then track_damage(hero) end
+	quick_restore(hero)
+	AB.start(hero)
+	SC.tick()
+	AB.game(hero)
 	if state.clock >= state.next_foes then
 		state.next_foes = state.clock + K.FOE_STEP
 		scan_foes()
@@ -7034,30 +7855,60 @@ function script.OnKeyEvent(data)
 	return false
 end
 
+local function hurt_owner(source, me)
+	if not source then return nil end
+	local okt, team = pcall(Entity.GetTeamNum, source)
+	local okm, mine = pcall(Entity.GetTeamNum, me)
+	if not okt or not okm or team == mine or (team ~= 2 and team ~= 3) then return nil end
+	local unit = source
+	for _ = 1, 4 do
+		local okh, is_hero = pcall(NPC.IsHero, unit)
+		if okh and is_hero then
+			local okn, name = pcall(NPC.GetUnitName, unit)
+			if okn and type(name) == "string" and name:match("^npc_dota_hero_") then return name end
+		end
+		local oko, owner = pcall(NPC.GetOwnerNPC, unit)
+		owner = oko and owner or nil
+		if not owner then
+			local oke, ent = pcall(Entity.GetOwner, unit)
+			owner = oke and ent or nil
+			local okp, is_player = false, false
+			if owner then okp, is_player = pcall(Entity.IsPlayer, owner) end
+			if okp and is_player then
+				local oka, h = pcall(Player.GetAssignedHero, owner)
+				owner = oka and h or nil
+			end
+		end
+		if not owner or owner == unit then return nil end
+		unit = owner
+	end
+	return nil
+end
+
 local function on_hurt(data)
 	if not data.target then return end
 	local hero = Heroes.GetLocal()
 	if not hero or not same(data.target, hero) then return end
+	local unit = hurt_owner(data.source, hero)
+	if not unit then return end
+	local damage = tonumber(data.damage) or 0
+	if damage <= 0 then return end
 	local dmg = state.dmg
 	local kind = "phys"
 	if data.ability then
 		local ok, dtype = pcall(Ability.GetDamageType, data.ability)
-		if ok and dtype == Enum.DamageTypes.DAMAGE_TYPE_MAGICAL then
-			kind = "mag"
-		elseif ok and dtype == Enum.DamageTypes.DAMAGE_TYPE_PURE then
+		if ok and (dtype == Enum.DamageTypes.DAMAGE_TYPE_PURE or dtype == Enum.DamageTypes.DAMAGE_TYPE_HP_REMOVAL) then
 			kind = "pure"
+		elseif not ok or dtype ~= Enum.DamageTypes.DAMAGE_TYPE_PHYSICAL then
+			kind = "mag"
 		end
 	end
-	local damage = tonumber(data.damage) or 0
 	dmg[kind] = dmg[kind] + damage
-	local source = data.source
-	local unit = source and NPC.GetUnitName(source) or "unknown"
-	if not unit:match("^npc_dota_hero_") and source then
-		local owner = Entity.GetOwner(source)
-		local ok, oname = pcall(NPC.GetUnitName, owner)
-		if owner and ok and oname and oname:match("^npc_dota_hero_") then unit = oname end
-	end
 	dmg.src[unit] = (dmg.src[unit] or 0) + damage
+	local list = dmg.log
+	list[#list + 1] = { t = state.clock, kind = kind, unit = unit, d = damage }
+	while #list > 0 and state.clock - list[1].t > K.RECAP_WIN + 1 do table.remove(list, 1) end
+	if #list > K.RECAP_MAX then table.remove(list, 1) end
 	if not dmg.first then
 		dmg.first = true
 		log("OnEntityHurt works: " .. unit .. " " .. kind .. " " .. math.floor(damage))
@@ -7083,6 +7934,21 @@ function script.OnGameEnd()
 	state.grid = nil
 	state.route_sig = ""
 	state.draft = { ours = {}, theirs = {}, bans = {}, my_team = nil, my_hero = nil, my_pos = nil, sig = "", phase = false }
+	state.chat_bans = {}
+	state.qb_pending, state.qb_at = {}, nil
+	state.ab = { done = false, at = nil }
+	SC.data, SC.asked = {}, {}
+end
+
+function script.OnChatEvent(data)
+	if not ui.enable:Get() or type(data) ~= "table" then return end
+	if data.type ~= Enum.DotaChatMessage.CHAT_MESSAGE_HERO_BANNED then return end
+	local id = math.tointeger(tonumber(data.value) or 0) or 0
+	if id > 0 and valid_hero(id) then
+		state.chat_bans[id] = state.clock
+		state.next_model = 0
+		log("chat ban " .. id .. " " .. tostring(hero_unit(id)))
+	end
 end
 
 return script
