@@ -596,6 +596,9 @@ local localization = qLocalization.new({
 		bb_pick_vs = "strong against %s",
 		bb_pick_meta = "meta pick, %d%% wins in this role",
 		bb_pk_pick = "Pick",
+		bb_mate_title = "For teammates",
+		bb_mate_free = "open role",
+		bb_mate_name = "Teammate",
 		bb_pick_own = "your hero",
 		bb_scout_title = "Enemies play (30 days)",
 		bb_scout_hint = "frame: many games and high win rate, worth a ban",
@@ -654,18 +657,15 @@ local localization = qLocalization.new({
 		bb_news_head = "Build Brain %s",
 		bb_news_title = "What's new",
 		bb_news_sub = "Fixed from your feedback",
-		bb_news_1 = "Bottle is no longer pushed on every mid hero",
-		bb_news_2 = "Starting items with the right amount",
-		bb_news_3 = "Shop: left click shows the recipe, right click buys",
-		bb_news_4 = "Quick buy from the draft survives the map loading",
-		bb_news_5 = "Pick grid highlight stays in place with Meta Tracker",
-		bb_news_6 = "Banned heroes no longer show up in pick advice",
-		bb_news_7 = "Fight: enemy hero damage only, plus a last death recap",
-		bb_news_8 = "Dust against invisible heroes, from top player games",
 		bb_news_9 = "Auto-buy: starting items or the whole build, turn it on in Settings",
 		bb_news_10 = "Pick from the draft widget: click a hero, then Pick",
 		bb_news_11 = "Enemy scouting: their main heroes for 30 days",
 		bb_news_12 = "Pick advice from the very first pick",
+		bb_news_13 = "Pick advice for teammates: click a hero to suggest it to your team",
+		bb_news_14 = "Auto-buy no longer rebuys items your courier is carrying",
+		bb_news_15 = "Auto-buy gets starting items one by one, like by hand",
+		bb_news_16 = "Ctrl or Shift + left click in the shop adds an item to quick buy",
+		bb_news_17 = "Rank for win rates is now a range: Ancient+, Divine+",
 		bb_news_tg = "Telegram channel",
 		bb_news_ok = "Got it",
 		bb_news_note = "News, test builds and giveaways go there first",
@@ -836,7 +836,7 @@ local localization = qLocalization.new({
 		bb_enemies = "Enemy items",
 		bb_enemies_hint = "seen on them",
 		bb_enemies_empty = "No enemies seen yet",
-		bb_set_rank = "Rank for stats",
+		bb_set_rank = "Rank for hero win rates",
 		bb_set_role = "Your role",
 		bb_set_auto = "Open on hero pick",
 		bb_set_autobuy = "Auto-buy",
@@ -851,13 +851,13 @@ local localization = qLocalization.new({
 		bb_on = "on",
 		bb_off = "off",
 		bb_rank_0 = "All ranks",
-		bb_rank_1 = "Herald",
-		bb_rank_2 = "Guardian",
-		bb_rank_3 = "Crusader",
-		bb_rank_4 = "Archon",
-		bb_rank_5 = "Legend",
-		bb_rank_6 = "Ancient",
-		bb_rank_7 = "Divine",
+		bb_rank_1 = "Herald+",
+		bb_rank_2 = "Guardian+",
+		bb_rank_3 = "Crusader+",
+		bb_rank_4 = "Archon+",
+		bb_rank_5 = "Legend+",
+		bb_rank_6 = "Ancient+",
+		bb_rank_7 = "Divine+",
 		bb_rank_8 = "Immortal",
 		bb_role_0 = "auto",
 		bb_role_1 = "carry",
@@ -1132,6 +1132,9 @@ local localization = qLocalization.new({
 		bb_pick_vs = "силён против: %s",
 		bb_pick_meta = "мета, %d%% побед на этой роли",
 		bb_pk_pick = "Пикнуть",
+		bb_mate_title = "Тиммейтам",
+		bb_mate_free = "свободная роль",
+		bb_mate_name = "Тиммейт",
 		bb_pick_own = "твой герой",
 		bb_scout_title = "Враги играют (30 дней)",
 		bb_scout_hint = "рамка: много игр и высокий винрейт, стоит банить",
@@ -1190,18 +1193,15 @@ local localization = qLocalization.new({
 		bb_news_head = "Build Brain %s",
 		bb_news_title = "Что нового",
 		bb_news_sub = "Исправили по вашим отзывам",
-		bb_news_1 = "Ботл больше не советуется всем мидерам подряд",
-		bb_news_2 = "Стартовый закуп с правильным количеством",
-		bb_news_3 = "В лавке ЛКМ показывает рецепт, ПКМ покупает",
-		bb_news_4 = "Квикбай с драфта сохраняется после загрузки карты",
-		bb_news_5 = "Подсветка в сетке пика не уезжает с Meta Tracker",
-		bb_news_6 = "Забаненные герои не попадают в советы пика",
-		bb_news_7 = "Бой: только урон героев и разбор последней смерти",
-		bb_news_8 = "Пыль против невидимых героев по матчам топ-игроков",
 		bb_news_9 = "Автобай: старт или вся сборка сама, включается в настройках",
 		bb_news_10 = "Пик прямо из окна драфта: клик по герою и «Пикнуть»",
 		bb_news_11 = "Разведка врагов: их главные герои за 30 дней",
 		bb_news_12 = "Советы пика с самого первого пика",
+		bb_news_13 = "Советы пиков тиммейтам: клик по герою предлагает его команде",
+		bb_news_14 = "Автобай больше не докупает то, что везёт курьер",
+		bb_news_15 = "Автобай берёт стартовые вещи по одной, как руками",
+		bb_news_16 = "Ctrl или Shift + ЛКМ в лавке кидает предмет в квикбай",
+		bb_news_17 = "Ранг для винрейта теперь с плюсом: Властелин+, Божество+",
 		bb_news_tg = "Telegram канал",
 		bb_news_ok = "Понятно",
 		bb_news_note = "Новости, тестовые версии и розыгрыши сначала там",
@@ -1372,7 +1372,7 @@ local localization = qLocalization.new({
 		bb_enemies = "Предметы врагов",
 		bb_enemies_hint = "что на них видели",
 		bb_enemies_empty = "Врагов пока не видели",
-		bb_set_rank = "Ранг для статистики",
+		bb_set_rank = "Ранг для винрейта героев",
 		bb_set_role = "Твоя роль",
 		bb_set_auto = "Открывать на пиках",
 		bb_set_autobuy = "Автобай",
@@ -1387,13 +1387,13 @@ local localization = qLocalization.new({
 		bb_on = "вкл",
 		bb_off = "выкл",
 		bb_rank_0 = "Все ранги",
-		bb_rank_1 = "Рекрут",
-		bb_rank_2 = "Страж",
-		bb_rank_3 = "Рыцарь",
-		bb_rank_4 = "Герой",
-		bb_rank_5 = "Легенда",
-		bb_rank_6 = "Властелин",
-		bb_rank_7 = "Божество",
+		bb_rank_1 = "Рекрут+",
+		bb_rank_2 = "Страж+",
+		bb_rank_3 = "Рыцарь+",
+		bb_rank_4 = "Герой+",
+		bb_rank_5 = "Легенда+",
+		bb_rank_6 = "Властелин+",
+		bb_rank_7 = "Божество+",
 		bb_rank_8 = "Титан",
 		bb_role_0 = "авто",
 		bb_role_1 = "керри",
@@ -1487,6 +1487,7 @@ local K = {
 	LOGO = "\u{f5dc}",
 	CLOSE = "\u{f00d}",
 	ICON_OPEN = "\u{f2d0}",
+	ICON_FLAG = "\u{f024}",
 	PICK_W = 340,
 	GRID_SCAN = 4,
 	GRID_STEP = 12,
@@ -1549,10 +1550,10 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "2.1.0",
+	VERSION = "2.2.0",
 	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
 	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
-	NEWS = { "bb_news_9", "bb_news_10", "bb_news_11", "bb_news_12", "bb_news_1", "bb_news_2", "bb_news_3", "bb_news_4", "bb_news_5", "bb_news_6", "bb_news_7", "bb_news_8" },
+	NEWS = { "bb_news_13", "bb_news_14", "bb_news_15", "bb_news_16", "bb_news_17", "bb_news_9", "bb_news_10", "bb_news_11", "bb_news_12" },
 	NEWS_W = 420,
 	CHAT_BAN_TTL = 900,
 	VISION = { "item_dust", "item_ward_sentry", "item_ward_observer" },
@@ -1562,6 +1563,12 @@ local K = {
 	RECAP_LAG = 0.5,
 	META_GAMES = 200,
 	PK_SEL = 8,
+	MATE_HEROES = 3,
+	META_W = 0.5,
+	TAL_REACH = { 0.92, 0.74, 0.44 },
+	SUGGEST = "suggest_hero_pick %s 0",
+	SUGGEST_GAP = 1.5,
+	SUGGEST_MAX = 2,
 	POOL_SHOW = 2,
 	STEAM_BASE = 76561197960265728,
 	SCOUT_DAYS = 30,
@@ -1572,12 +1579,15 @@ local K = {
 	AB_LATE = 30,
 	AB_STEP = 0.5,
 	AB_WAIT = 1.5,
+	AB_GAP = 0.3,
+	AB_JIT = 0.4,
 	AB_HOLD = 30,
 	AB_FAIL = 30,
 	AB_MINE = 6,
 	RC_W = 252,
 	QB_DELAY = 3,
 	QB_MAX = 8,
+	QB_KEYS = { Enum.ButtonCode.KEY_LCONTROL, Enum.ButtonCode.KEY_RCONTROL, Enum.ButtonCode.KEY_LSHIFT, Enum.ButtonCode.KEY_RSHIFT },
 	NEWS_BLUR = 1.5,
 	TG_ICON = "\u{f1d8}",
 	BUY_MIN = 3,
@@ -1779,7 +1789,7 @@ local K = {
 		Enum.ModifierState.MODIFIER_STATE_ROOTED,
 	},
 	SETTINGS = {
-		{ key = "rank", title = "bb_set_rank", count = 9, default = 0, label = "bb_rank_" },
+		{ key = "rank", title = "bb_set_rank", count = 9, default = 0, label = "bb_rank_", skip = { [1] = true } },
 		{ key = "role", title = "bb_set_role", count = 6, default = 0, label = "bb_role_" },
 		{ key = "mode", title = "bb_set_mode", count = 3, default = 0, label = "bb_mode_" },
 		{ key = "auto", title = "bb_set_auto", count = 2, default = 1, flag = true },
@@ -2370,7 +2380,7 @@ local function base_logit(id)
 	local rank = setting("rank")
 	local picks, wins = 0, 0
 	for b = 1, 8 do
-		if rank == 0 or b == rank then
+		if b >= rank then
 			picks = picks + (row.p[b] or 0)
 			wins = wins + (row.w[b] or 0)
 		end
@@ -2912,14 +2922,25 @@ local function role_route(id)
 	return role
 end
 
-local function owned_items(hero)
-	local owned = {}
-	if not hero then return owned end
-	for slot = 0, 16 do
+local function carried(hero, fn, last)
+	if not hero then return end
+	for slot = 0, last or 16 do
 		local item = NPC.GetItemByIndex(hero, slot)
 		local name = item and Ability.GetName(item)
-		if name then owned[name] = (owned[name] or 0) + 1 end
+		if name then fn(item, name) end
 	end
+	local okc, courier = pcall(Couriers.GetLocal)
+	if not okc or not courier then return end
+	for slot = 0, 8 do
+		local oki, item = pcall(NPC.GetItemByIndex, courier, slot)
+		local name = oki and item and Ability.GetName(item)
+		if name then fn(item, name) end
+	end
+end
+
+local function owned_items(hero)
+	local owned = {}
+	carried(hero, function(_, name) owned[name] = (owned[name] or 0) + 1 end)
 	return owned
 end
 
@@ -3476,6 +3497,100 @@ local function grid_off(id)
 	return false
 end
 
+local MATE = {}
+
+function MATE.roles(d, shares)
+	local used, open = {}, {}
+	local mine = setting("role")
+	if mine == 0 then mine = d.my_pos end
+	for _, e in ipairs(d.ours) do
+		local sh = e.id and shares and shares.heroes[e.id]
+		if e.me then
+			local p = mine or (sh and sh.main)
+			if p then used[p] = true end
+		elseif e.id then
+			local p = e.pos or (sh and sh.main)
+			if p then used[p] = true end
+		else
+			open[#open + 1] = { e = e }
+		end
+	end
+	for _, m in ipairs(open) do
+		local p = m.e.pos
+		if p and not used[p] then m.pos, m.known, used[p] = p, true, true end
+	end
+	for _, m in ipairs(open) do
+		local flags = m.e.flags or 0
+		if not m.pos and flags ~= 0 then
+			for p = 1, 5 do
+				if not m.pos and not used[p] and flags & K.POS_BITS[p] ~= 0 then m.pos, used[p] = p, true end
+			end
+		end
+	end
+	for _, m in ipairs(open) do
+		if not m.pos then
+			for p = 1, 5 do
+				if not m.pos and not used[p] then m.pos, used[p] = p, true end
+			end
+		end
+	end
+	return open
+end
+
+function MATE.build(d, x, pool, theirs, view)
+	local shares = sz_shares()
+	local mates = MATE.roles(d, shares)
+	if #mates == 0 then return nil end
+	local taken = {}
+	for _, e in ipairs(d.ours) do
+		if e.id then taken[e.id] = true end
+	end
+	for _, id in ipairs(theirs) do taken[id] = true end
+	for _, id in ipairs(d.bans) do taken[id] = true end
+	for _, b in ipairs(view.best) do taken[b.id] = true end
+	local out = {}
+	for _, m in ipairs(mates) do
+		if m.pos then
+			local list = {}
+			for id in pairs(pool) do
+				if not taken[id] and role_fits(id, m.pos, shares) and not grid_off(id) then
+					local meta = pos_logit(id, m.pos, shares)
+					local add, good = meta, {}
+					for _, b in ipairs(theirs) do
+						local v = pair_vs(id, b)
+						add = add + v
+						if v > 0 then good[#good + 1] = { id = b, v = v } end
+					end
+					table.sort(good, function(p, q) return p.v > q.v end)
+					local score = add - meta * (1 - K.META_W)
+					list[#list + 1] = { id = id, gain = (sigmoid(x + score) - sigmoid(x)) * 100, score = score, strong = good[1] and good[1].id, strong2 = good[2] and good[2].id }
+				end
+			end
+			table.sort(list, function(p, q) return p.score > q.score end)
+			local heroes = {}
+			for i = 1, math.min(K.MATE_HEROES, #list) do
+				local b = list[i]
+				taken[b.id] = true
+				local names = {}
+				for _, sid in ipairs({ b.strong, b.strong2 }) do
+					local su = hero_unit(sid)
+					if su then names[#names + 1] = hero_title(su) end
+				end
+				if #names > 0 then
+					b.why = string.format(L("bb_pick_vs"), table.concat(names, ", "))
+				else
+					local sh = shares and shares.heroes[b.id]
+					local r = sh and sh.wr[m.pos]
+					if r and r.g >= K.META_GAMES then b.why = string.format(L("bb_pick_meta"), math.floor(r.w / r.g * 100 + 0.5)) end
+				end
+				heroes[#heroes + 1] = b
+			end
+			if #heroes > 0 then out[#out + 1] = { name = m.e.pname, pos = m.pos, known = m.known, heroes = heroes } end
+		end
+	end
+	return #out > 0 and out or nil
+end
+
 local function compute_view()
 	local d = state.draft
 	local ours, theirs = picked(d.ours), picked(d.theirs)
@@ -3538,14 +3653,15 @@ local function compute_view()
 						add = add + v
 						if v > 0 then good[#good + 1] = { id = b, v = v } end
 					end
-					local gain = (sigmoid(x + add) - sigmoid(x)) * 100
 					table.sort(good, function(p, q) return p.v > q.v end)
-					list[#list + 1] = { id = id, pos = pos, gain = gain, fits = fits, strong = good[1] and good[1].id, strong2 = good[2] and good[2].id }
+					local score = add - pos_logit(id, pos, shares) * (1 - K.META_W)
+					local gain = (sigmoid(x + score) - sigmoid(x)) * 100
+					list[#list + 1] = { id = id, pos = pos, gain = gain, score = score, fits = fits, strong = good[1] and good[1].id, strong2 = good[2] and good[2].id }
 				end
 			end
 			table.sort(list, function(p, q)
 				if p.fits ~= q.fits then return p.fits end
-				return p.gain > q.gain
+				return p.score > q.score
 			end)
 			if only then
 				local own, rest = {}, {}
@@ -3581,6 +3697,7 @@ local function compute_view()
 			end
 			if view.best[1] and view.chance then view.hint = { id = view.best[1].id, chance = math.floor(view.chance + view.best[1].gain + 0.5) } end
 		end
+		if d.phase and #ours + #theirs > 0 then view.mates = MATE.build(d, x, pool, theirs, view) end
 		for _, t in ipairs(K.THREATS) do
 			local units = {}
 			for _, id in ipairs(theirs) do
@@ -5145,7 +5262,11 @@ function W.dropdown(drop, h)
 	local s = drop.def
 	local t = tween("dropdown", 1, 16)
 	local row = 34
-	local full = s.count * row + 8
+	local shown = {}
+	for v = 0, s.count - 1 do
+		if not (s.skip and s.skip[v]) then shown[#shown + 1] = v end
+	end
+	local full = #shown * row + 8
 	local y = drop.y
 	if y + full > h - 16 then y = drop.y - 41 - full end
 	local k = 0.03 * (1 - t)
@@ -5156,8 +5277,8 @@ function W.dropdown(drop, h)
 	rect(dx, dy, dw, dh, N.PANEL, 12)
 	frame_line(dx, dy, dw, dh, N.LINE, 12)
 	local current = setting(s.key)
-	for v = 0, s.count - 1 do
-		local oy = y + 4 + v * row
+	for i, v in ipairs(shown) do
+		local oy = y + 4 + (i - 1) * row
 		local hot = hover_t("option" .. v, drop.x + 4, oy, drop.w - 8, row - 2)
 		if hot > 0.01 then rect(drop.x + 4, oy, drop.w - 8, row - 2, alpha(N.HOT, hot), 8) end
 		text(fonts.w500, 14, fit(fonts.w500, 14, W.label(s, v), drop.w - 44), drop.x + 14, oy + 8, v == current and N.ACCENT or N.TEXT)
@@ -5971,7 +6092,7 @@ function SC.draw(y, w)
 	return y + 18
 end
 
-local PK = { cards = {}, buttons = {}, stack = {}, map = nil, fresh = nil, next_scan = 0, next_pos = 0, hl = { {}, {}, {} }, leader = nil, flash_at = -10, h = 300, x = nil, y = nil, drag = nil }
+local PK = { flags = {}, sug_at = 0, cards = {}, buttons = {}, stack = {}, map = nil, fresh = nil, next_scan = 0, next_pos = 0, hl = { {}, {}, {} }, leader = nil, flash_at = -10, h = 300, x = nil, y = nil, drag = nil }
 
 function PK.hit()
 	return PK.x1 ~= nil and cursor_in(PK.x1, PK.y1, PK.x2, PK.y2)
@@ -5999,6 +6120,8 @@ function PK.click(key)
 					local ok = pcall(Engine.ExecuteCommand, "possible_hero " .. unit)
 					log("pick select " .. unit .. ": " .. tostring(ok))
 				end
+			elseif b.kind == "suggest" then
+				PK.suggest(b.value)
 			elseif b.kind == "pick" then
 				local unit = hero_unit(b.value)
 				PK.sel = nil
@@ -6010,6 +6133,73 @@ function PK.click(key)
 			return
 		end
 	end
+end
+
+function PK.flagged(id)
+	for _, f in ipairs(PK.flags) do
+		if f == id then return true end
+	end
+	return false
+end
+
+function PK.suggest(id)
+	local unit = hero_unit(id)
+	if not unit or PK.flagged(id) or state.clock < PK.sug_at then return end
+	PK.sug_at = state.clock + K.SUGGEST_GAP
+	local ok = pcall(Engine.ExecuteCommand, string.format(K.SUGGEST, unit:sub(15)))
+	log("suggest " .. unit .. ": " .. tostring(ok))
+	PK.flags[#PK.flags + 1] = id
+	while #PK.flags > K.SUGGEST_MAX do table.remove(PK.flags, 1) end
+end
+
+function PK.mates(y, w, view)
+	local mates = view and view.mates
+	if not mates then return y end
+	y = y + 8
+	rect(16, y, w - 32, 1, N.LINE)
+	y = y + 12
+	text(fonts.w600, 14, L("bb_mate_title"), 16, y, N.TEXT)
+	y = y + 26
+	local tip = nil
+	local iw, ih = 44, 25
+	for i, m in ipairs(mates) do
+		if i > 1 then rect(16, y - 4, w - 32, 1, N.LINE) end
+		rect(16, y + 7, 22, 22, N.SLOT, 6)
+		text(fonts.d600, 13, tostring(m.pos), 27, y + 10, N.TEXT, "center")
+		local n = #m.heroes
+		local room = w - 32 - 38 - n * (iw + 4)
+		local name = (m.name and m.name ~= "") and m.name or L("bb_mate_name")
+		text(fonts.w600, 13, fit(fonts.w600, 13, name, room), 46, y + 3, N.TEXT)
+		local sub = m.known and L("bb_role_" .. m.pos) or L("bb_mate_free")
+		text(fonts.w500, 12, fit(fonts.w500, 12, sub, room), 46, y + 20, N.MUTED)
+		local px = w - 16 - n * (iw + 4) + 4
+		for _, b in ipairs(m.heroes) do
+			local unit = hero_unit(b.id)
+			if unit then
+				local hot = hover_t("pkm" .. b.id, px, y + 6, iw, ih)
+				W.pic(hero_image(unit), px, y + 6, iw, ih, 5)
+				if PK.flagged(b.id) then
+					frame_line(px, y + 6, iw, ih, N.ACCENT, 5, 1.5)
+					rect(px + iw - 14, y + 7, 13, 12, N.SHADE, 4)
+					W.glyph(K.ICON_FLAG, 8, px + iw - 7.5, y + 13, N.ACCENT)
+				elseif hot > 0.01 then
+					frame_line(px, y + 6, iw, ih, alpha(N.TEXT, 0.6 * hot), 5, 1)
+				end
+				if hot > 0.5 then tip = { unit = unit, why = b.why, gain = b.gain } end
+				button("suggest", px, y + 6, iw, ih, b.id)
+			end
+			px = px + iw + 4
+		end
+		y = y + 40
+	end
+	if tip then
+		local gain = string.format("%+.1f%%", tip.gain)
+		local gw = measure(fonts.d600, 12, gain)
+		text(fonts.d600, 12, gain, w - 16, y, tip.gain >= 0 and N.WIN or N.LOSE, "right")
+		local line = hero_title(tip.unit) .. (tip.why and (" · " .. tip.why) or "")
+		text(fonts.w500, 12, fit(fonts.w500, 12, line, w - 40 - gw), 16, y, N.MUTED)
+	end
+	return y + 18
 end
 
 function PK.scan()
@@ -6191,6 +6381,7 @@ function PK.draw()
 		return
 	end
 	if d.phase then PK.scan() end
+	if not d.phase and #PK.flags > 0 then PK.flags = {} end
 	local screen = Render.ScreenSize()
 	local s = math.max(0.5, screen.y / K.BASE_H) * (90 + setting("scale") * 10) / 100
 	G.alpha = vis
@@ -6331,6 +6522,7 @@ function PK.draw()
 		text(fonts.w500, 13, (view and #view.theirs > 0) and L("bb_best_loading") or L("bb_best_empty"), 16, y + 2, N.MUTED)
 		y = y + 22
 	end
+	y = PK.mates(y, w, view)
 	y = SC.draw(y, w)
 	PK.h = y + 14
 	G.alpha, G.buttons = 1, nil
@@ -6977,6 +7169,32 @@ do
 		if hot > 0.5 then state.shop.tip = { title = label, line = share and (share .. "%") or nil, y = y } end
 	end
 
+	function shop.talent_split(talents, counts)
+		local tiers, totals = {}, {}
+		for pair = 1, 4 do
+			local cr, cl = counts[talents[pair * 2 - 1].id], counts[talents[pair * 2].id]
+			tiers[pair] = { r = cr, l = cl }
+			if cr and cl then totals[pair] = cr + cl end
+		end
+		for pair = 1, 4 do
+			local t = tiers[pair]
+			if (t.r == nil) ~= (t.l == nil) then
+				local reach = nil
+				if totals[pair - 1] then
+					reach = totals[pair - 1] * K.TAL_REACH[pair - 1]
+				elseif totals[pair + 1] then
+					reach = totals[pair + 1] / K.TAL_REACH[pair]
+				end
+				if reach then
+					for up = pair + 1, 4 do reach = math.max(reach, (tiers[up].r or 0) + (tiers[up].l or 0)) end
+					local miss = math.max(0, reach - (t.r or t.l))
+					if t.r then t.l = miss else t.r = miss end
+				end
+			end
+		end
+		return tiers
+	end
+
 	function shop.draw_talents(hero, y, bw, role)
 		if not role then return y end
 		local map = shop.hero_abilities(hero)
@@ -6990,14 +7208,15 @@ do
 		frame_line(10, y, bw - 20, box_h, C.EDGE, 8)
 		local cw = (bw - 30 - mid) / 2
 		local ry = y + 5
+		local split = od and od.counts and shop.talent_split(talents, od.counts)
 		for pair = 4, 1, -1 do
 			local right, left = talents[pair * 2 - 1], talents[pair * 2]
 			local left_pick, share_l, share_r = false, nil, nil
 			local pt = role.src == "pt" and role.talents and role.talents[pair]
 			if pt then
 				left_pick = pt.pick == left.name
-			elseif od and od.counts then
-				local cr, cl = od.counts[right.id] or 0, od.counts[left.id] or 0
+			elseif split and split[pair].r and split[pair].l then
+				local cr, cl = split[pair].r, split[pair].l
 				local total = cl + cr
 				left_pick = cl > cr
 				if total > 0 then share_l, share_r = math.floor(cl / total * 100 + 0.5), math.floor(cr / total * 100 + 0.5) end
@@ -7395,7 +7614,13 @@ do
 					s.off = false
 					state.anim.shop = 0
 				elseif b.kind == "item" then
-					if left then
+					local mod = false
+					for _, k in ipairs(K.QB_KEYS) do
+						if Input.IsKeyDown(k, true) then mod = true end
+					end
+					if left and mod then
+						quick_buy(b.value)
+					elseif left then
 						local cx, cy = Input.GetCursorPos()
 						s.press = { name = b.value, x = cx, y = cy }
 					else
@@ -7574,25 +7799,21 @@ local AB = {}
 function AB.owned(hero)
 	local owned = {}
 	local cat = load_catalog()
-	for slot = 0, 16 do
-		local item = NPC.GetItemByIndex(hero, slot)
-		local name = item and Ability.GetName(item)
-		if name then
-			local count = 1
-			local entry = cat.by_name[name]
-			if entry and entry.stack then
-				local okc, cur = pcall(Item.GetCurrentCharges, item)
-				local oki, init = pcall(Item.GetInitialCharges, item)
-				cur, init = okc and tonumber(cur) or 0, oki and tonumber(init) or 0
-				if init > 0 then count = math.max(1, math.ceil(cur / init)) end
-			end
-			if name == "item_ward_dispenser" then
-				owned.item_ward_observer = (owned.item_ward_observer or 0) + 1
-				owned.item_ward_sentry = (owned.item_ward_sentry or 0) + 1
-			end
-			owned[name] = (owned[name] or 0) + count
+	carried(hero, function(item, name)
+		local count = 1
+		local entry = cat.by_name[name]
+		if entry and entry.stack then
+			local okc, cur = pcall(Item.GetCurrentCharges, item)
+			local oki, init = pcall(Item.GetInitialCharges, item)
+			cur, init = okc and tonumber(cur) or 0, oki and tonumber(init) or 0
+			if init > 0 then count = math.max(1, math.ceil(cur / init)) end
 		end
-	end
+		if name == "item_ward_dispenser" then
+			owned.item_ward_observer = (owned.item_ward_observer or 0) + 1
+			owned.item_ward_sentry = (owned.item_ward_sentry or 0) + 1
+		end
+		owned[name] = (owned[name] or 0) + count
+	end)
 	return owned
 end
 
@@ -7609,7 +7830,7 @@ function AB.start(hero)
 	local ab = state.ab
 	if ab.done or not hero or setting("autobuy") < 1 then return end
 	local gs = GameRules.GetGameState()
-	local early = gs == Enum.GameState.DOTA_GAMERULES_STATE_PRE_GAME
+	local early = ab.queue ~= nil or gs == Enum.GameState.DOTA_GAMERULES_STATE_PRE_GAME
 		or (gs == Enum.GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS and (GameRules.GetDOTATime() or 0) < K.AB_LATE)
 	if not early and gs == Enum.GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		early = true
@@ -7627,34 +7848,44 @@ function AB.start(hero)
 	end
 	if not ab.at then ab.at = state.clock + K.AB_DELAY end
 	if state.clock < ab.at then return end
-	local view = state.view
-	local list = view and view.start
 	local player = Players.GetLocal()
-	if not list or #list == 0 or not player then return end
-	ab.done, ab.next = true, state.clock + K.AB_WAIT
-	local owned = AB.owned(hero)
-	local cat = load_catalog()
-	local gold = Player.GetTotalGold(player) or 0
-	local bought, spent = {}, 0
-	for _, name in ipairs(list) do
-		if (owned[name] or 0) > 0 then
-			owned[name] = owned[name] - 1
-		else
-			local entry = cat.by_name[name]
-			if entry and not entry.gone and entry.cost <= gold and purchase(entry.id) then
-				gold, spent = gold - entry.cost, spent + entry.cost
-				bought[#bought + 1] = name
-				ab.mine = ab.mine or {}
-				ab.mine[name] = state.clock + K.AB_MINE
+	if not player then return end
+	if not ab.queue then
+		local view = state.view
+		local list = view and view.start
+		if not list or #list == 0 then return end
+		local owned = AB.owned(hero)
+		ab.queue, ab.bought, ab.spent, ab.gold, ab.qnext = {}, {}, 0, Player.GetTotalGold(player) or 0, 0
+		for _, name in ipairs(list) do
+			if (owned[name] or 0) > 0 then
+				owned[name] = owned[name] - 1
+			else
+				ab.queue[#ab.queue + 1] = name
 			end
 		end
 	end
-	log("auto start: bought " .. #bought .. " of " .. #list .. ", " .. spent .. " gold")
+	if state.clock < ab.qnext then return end
+	local name = table.remove(ab.queue, 1)
+	if name then
+		local entry = load_catalog().by_name[name]
+		ab.gold = math.min(ab.gold, Player.GetTotalGold(player) or 0)
+		if entry and not entry.gone and entry.cost <= ab.gold and purchase(entry.id) then
+			ab.gold, ab.spent = ab.gold - entry.cost, ab.spent + entry.cost
+			ab.bought[#ab.bought + 1] = name
+			ab.mine = ab.mine or {}
+			ab.mine[name] = state.clock + K.AB_MINE
+			ab.qnext = state.clock + K.AB_GAP + math.random() * K.AB_JIT
+		end
+		if #ab.queue > 0 then return end
+	end
+	ab.done, ab.next, ab.queue = true, state.clock + K.AB_WAIT, nil
+	local bought = ab.bought
+	log("auto start: bought " .. #bought .. ", " .. ab.spent .. " gold")
 	if #bought == 0 then return end
 	local titles = {}
-	for _, name in ipairs(bought) do titles[#titles + 1] = item_title(name) end
+	for _, item in ipairs(bought) do titles[#titles + 1] = item_title(item) end
 	state.win.status = string.format(L("bb_status_buy"), table.concat(titles, ", "))
-	AB.chat(bought, string.format(L("bb_ab_start"), #bought, spent))
+	AB.chat(bought, string.format(L("bb_ab_start"), #bought, ab.spent))
 end
 
 function AB.need(name, owned)
@@ -7678,10 +7909,9 @@ end
 function AB.snapshot(hero)
 	local counts, free = {}, 0
 	for slot = 0, 14 do
-		local item = NPC.GetItemByIndex(hero, slot)
-		local name = item and Ability.GetName(item)
-		if name then counts[name] = (counts[name] or 0) + 1 else free = free + 1 end
+		if not NPC.GetItemByIndex(hero, slot) then free = free + 1 end
 	end
+	carried(hero, function(_, name) counts[name] = (counts[name] or 0) + 1 end, 14)
 	return counts, free
 end
 
@@ -7938,6 +8168,7 @@ function script.OnGameEnd()
 	state.qb_pending, state.qb_at = {}, nil
 	state.ab = { done = false, at = nil }
 	SC.data, SC.asked = {}, {}
+	PK.flags = {}
 end
 
 function script.OnChatEvent(data)
