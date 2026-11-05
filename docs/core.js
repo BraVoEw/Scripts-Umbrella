@@ -17,12 +17,12 @@
       color: ["#3987e5", "#2a78d6"], tags: ["draft", "shop"], auto: true,
       video: "build-brain-1080.mp4", poster: "build-brain-poster-1080.webp",
       preview: "build-brain-720.mp4",
-      shots: ["bb-pick.webp", "bb-draft.webp", "bb-build.webp", "bb-shop.webp"],
+      shots: ["bb2-draft.webp", "bb2-build.webp", "bb2-autobuy.webp", "bb2-shop.webp"],
       ru: {
         tagline: "Кого пикнуть и что собрать против этих врагов",
         top: ["Пики по мете твоей позиции и матчапам", "Сборка с минутами прямо в магазине", "Контрпредметы против каждого врага"],
         desc: "Кого пикнуть на твою роль и что собрать против именно этих врагов. Сборки по свежим пабам Божества и Титана прямо в магазине.",
-        shots: ["Панель на пиках", "Вкладка Драфт", "Вкладка Сборка", "Панель в магазине"],
+        shots: ["Драфт: шанс на победу и кого опасаться", "Сборка на шкале минут", "Автобай: каждая покупка в чате", "Панель в магазине"],
         groups: [
           ["Пики", ["Панель сама открывается на выборе героев", "Шанс на победу и пики обеих команд", "Мета позиции или только твои герои", "Топ-3 подсвечены в сетке героев"]],
           ["Магазин", ["Старт, лайнинг и кор с минутами", "Против врагов: предмет и зачем он", "Прокачка на 18 уровней и таланты", "Клик в квикбай, ПКМ покупает"]],
@@ -34,7 +34,7 @@
         tagline: "Who to pick and what to buy against these enemies",
         top: ["Picks by your position's meta and matchups", "Build with timings right in the shop", "Counter items for every enemy"],
         desc: "Who to pick for your role and what to buy against these exact enemies. Builds from fresh Divine and Immortal pubs right in the shop.",
-        shots: ["Hero pick panel", "Draft tab", "Build tab", "Shop panel"],
+        shots: ["Draft: win chance and who to fear", "Build on a minute timeline", "Auto-buy: every purchase in chat", "Shop panel"],
         groups: [
           ["Hero pick", ["Panel opens by itself on hero pick", "Win chance and both teams' picks", "Meta for your position or only your heroes", "Top 3 highlighted in the hero grid"]],
           ["Shop", ["Starting, laning and core items with timings", "Counters to your enemies and why", "Skill order for 18 levels and talents", "Click to quick buy, right click buys"]],
