@@ -338,6 +338,25 @@ local localization = qLocalization.new({
 		hc_chip_week = "7 days",
 		hc_chip_month = "30 days",
 		hc_chip_record = "%d W · %d L",
+		hc_rank = "Rank in the pill",
+		hc_rank_tip = "Medal, MMR and how much is left\nto the next star and rank",
+		hc_rank_to = "+%d to",
+		hc_rank_1 = "Herald",
+		hc_rank_2 = "Guardian",
+		hc_rank_3 = "Crusader",
+		hc_rank_4 = "Archon",
+		hc_rank_5 = "Legend",
+		hc_rank_6 = "Ancient",
+		hc_rank_7 = "Divine",
+		hc_rank_8 = "Immortal",
+		hc_rank_name_1 = "Herald",
+		hc_rank_name_2 = "Guardian",
+		hc_rank_name_3 = "Crusader",
+		hc_rank_name_4 = "Archon",
+		hc_rank_name_5 = "Legend",
+		hc_rank_name_6 = "Ancient",
+		hc_rank_name_7 = "Divine",
+		hc_rank_name_8 = "Immortal",
 		hc_fx = "Effect",
 		hc_fx_tip = "Neon makes MMR and the pill glow,\nRGB cycles through every color",
 		hc_gear_fx = "Effect settings",
@@ -394,6 +413,25 @@ local localization = qLocalization.new({
 		hc_chip_week = "7 дней",
 		hc_chip_month = "30 дней",
 		hc_chip_record = "%d вин · %d луз",
+		hc_rank = "Ранг в плашке",
+		hc_rank_tip = "Медаль, MMR и сколько осталось\nдо следующей звезды и ранга",
+		hc_rank_to = "+%d до",
+		hc_rank_1 = "Рекрута",
+		hc_rank_2 = "Стража",
+		hc_rank_3 = "Рыцаря",
+		hc_rank_4 = "Героя",
+		hc_rank_5 = "Легенды",
+		hc_rank_6 = "Властелина",
+		hc_rank_7 = "Божества",
+		hc_rank_8 = "Титана",
+		hc_rank_name_1 = "Рекрут",
+		hc_rank_name_2 = "Страж",
+		hc_rank_name_3 = "Рыцарь",
+		hc_rank_name_4 = "Герой",
+		hc_rank_name_5 = "Легенда",
+		hc_rank_name_6 = "Властелин",
+		hc_rank_name_7 = "Божество",
+		hc_rank_name_8 = "Титан",
 		hc_fx = "Эффект",
 		hc_fx_tip = "Неон подсвечивает MMR и плашку,\nRGB переливается всеми цветами",
 		hc_gear_fx = "Настройка эффекта",
@@ -457,7 +495,9 @@ do
 	ui.day:ToolTip("hc_day_tip")
 	ui.period = g_main:Combo("hc_period", { "hc_periods_day", "hc_periods_week", "hc_periods_month" }, 1)
 	ui.period:Icon("\u{f017}")
-	ui.fx = g_main:Combo("hc_fx", { "hc_fx_none", "hc_fx_neon", "hc_fx_rgb" }, 0)
+	ui.rank = g_main:Switch("hc_rank", true, "\u{f091}")
+	ui.rank:ToolTip("hc_rank_tip")
+	ui.fx =g_main:Combo("hc_fx", { "hc_fx_none", "hc_fx_neon", "hc_fx_rgb" }, 0)
 	ui.fx:Icon("\u{f0d0}")
 	ui.fx:ToolTip("hc_fx_tip")
 	local g_fx = ui.fx:Gear("hc_gear_fx")
@@ -498,6 +538,7 @@ local function refresh_disabled()
 	ui.dump_key:Disabled(not on)
 	ui.day:Disabled(not on)
 	ui.period:Disabled(not on or not ui.day:Get())
+	ui.rank:Disabled(not on or not ui.day:Get())
 	ui.fx:Disabled(not on)
 	local fx = ui.fx:Get()
 	local rgb = on and fx == FX.RGB
@@ -570,7 +611,7 @@ local K = {
 	PAGE_DEPTH = 16,
 	PAGE_MANAGER = "PageManager",
 	PAGE_VISIBLE = "PageVisible",
-	CHIP_SCALE = 1.46,
+	CHIP_SCALE = 1.05,
 	CHIP_SHIFT_X = 12,
 	CHIP_SHIFT_Y = 64,
 	CHIP_ABOVE = 14,
@@ -600,7 +641,36 @@ local K = {
 	GLOW_ALPHA_UNIT = 24,
 	BORDER = 1.5,
 	NO_GLOW = "text-shadow: 0px 0px 0px 0.0 #00000000;",
+	RANK_STAR = 154,
+	RANK_STARS = 5,
+	RANK_DIVINE = 4620,
+	RANK_DIVINE_STAR = 200,
+	RANK_IMMORTAL = 5620,
+	RANK_DIVINE_TIER = 7,
+	RANK_IMMORTAL_TIER = 8,
+	MEDAL_IMAGE = "panorama/images/rank_tier_icons/mini/rank%d_psd.vtex_c",
+	STAR_ICON = "\u{f005}",
+	STAR_COLOR = Color(255, 204, 92),
+	WHITE = Color(255, 255, 255),
+	SEPARATOR_TEXT = Color(255, 255, 255, 90),
+	BAR_H = 30,
+	BAR_LIFT = -2,
+	BAR_TUCK = 6,
+	BAR_ROUND = 10,
+	BAR_PAD = 12,
+	BAR_GAP = 24,
+	BAR_ICON = 16,
+	BAR_TEXT_Y = 16,
+	BAR_LINE_Y = 24,
+	BAR_LINE_H = 3,
+	BAR_BG = Color(14, 16, 18, 200),
+	BAR_TRACK = Color(255, 255, 255, 28),
+	BAR_FILL_END = Color(255, 236, 170),
+	BAR_BORDER_ALPHA = 150,
+	BAR_GLOW_ALPHA = 8,
 }
+
+local UI_STATE = Enum.UIState or {}
 
 local fonts = {
 	bold = Render.LoadFont("Inter", Enum.FontCreate.FONTFLAG_ANTIALIAS, Enum.FontWeight.BOLD),
@@ -635,6 +705,8 @@ local state = {
 	search_text = nil,
 	fx_rows = {},
 	next_fx = 0,
+	images = {},
+	ui_state = nil,
 }
 
 local function decode(name, buffer, size)
@@ -1221,11 +1293,56 @@ local function log_periods(now)
 	end
 end
 
+local function current_mmr(account)
+	local last
+	for _, m in pairs(state.matches) do
+		if m.account == account and (m.ranked or m.calib) and (not last or m.start > last.start) then
+			last = m
+		end
+	end
+	if last and last.ranked then return math.floor(last.prev + last.change) end
+end
+
+local function star_start(tier, stars)
+	if tier >= K.RANK_IMMORTAL_TIER then return K.RANK_IMMORTAL end
+	if tier == K.RANK_DIVINE_TIER then return K.RANK_DIVINE + (stars - 1) * K.RANK_DIVINE_STAR end
+	return ((tier - 1) * K.RANK_STARS + stars - 1) * K.RANK_STAR
+end
+
+local function rank_of(mmr)
+	if mmr >= K.RANK_IMMORTAL then return K.RANK_IMMORTAL_TIER, 0 end
+	if mmr >= K.RANK_DIVINE then
+		return K.RANK_DIVINE_TIER, math.min(K.RANK_STARS, math.floor((mmr - K.RANK_DIVINE) / K.RANK_DIVINE_STAR) + 1)
+	end
+	local index = math.floor(math.max(0, mmr) / K.RANK_STAR)
+	return index // K.RANK_STARS + 1, index % K.RANK_STARS + 1
+end
+
+local function rank_info(account)
+	local mmr = account and current_mmr(account)
+	if not mmr then return nil end
+	local tier, stars = rank_of(mmr)
+	local info = { mmr = mmr, tier = tier, stars = stars, progress = 1 }
+	if tier < K.RANK_IMMORTAL_TIER then
+		local next_start = star_start(tier + 1, 1)
+		if stars < K.RANK_STARS then
+			info.star = stars + 1
+			next_start = star_start(tier, stars + 1)
+			info.star_left = next_start - mmr
+		end
+		info.medal_left = star_start(tier + 1, 1) - mmr
+		local from = star_start(tier, stars)
+		info.progress = math.max(0, math.min(1, (mmr - from) / (next_start - from)))
+	end
+	return info
+end
+
 local function period_stats()
 	local now = os.time()
 	local period = ui.period:Get()
 	local stats = window_stats(K.PERIODS[period + 1] or K.WEEK, now)
 	stats.title = L(K.PERIOD_TITLES[period + 1] or "hc_chip_week")
+	stats.rank = ui.rank:Get() and rank_info(state.shown_account) or nil
 	log_periods(now)
 	return stats
 end
@@ -1294,6 +1411,118 @@ local function mmr_color(value)
 	return ui.zero_color:Get()
 end
 
+local function load_image(path)
+	local handle = state.images[path]
+	if handle == nil then
+		local ok, h = pcall(Render.LoadImage, path)
+		handle = ok and h or false
+		state.images[path] = handle
+	end
+	return handle or nil
+end
+
+local function measure(pieces)
+	local width = 0
+	for _, p in ipairs(pieces) do
+		p.sz = Render.TextSize(p.font, p.size, p.text)
+		width = width + p.gap + p.sz.x
+	end
+	return pieces, width
+end
+
+local function piece(font, size, text, color, gap)
+	return { font = font, size = size, text = text, color = color, gap = gap }
+end
+
+local function rank_left(rank, s, sub)
+	local pieces = { piece(fonts.bold, sub, L("hc_rank_name_" .. rank.tier), K.TEXT, 0) }
+	if rank.stars > 0 then
+		pieces[#pieces + 1] = piece(fonts.icon, sub * 0.9, K.STAR_ICON, K.STAR_COLOR, 5 * s)
+		pieces[#pieces + 1] = piece(fonts.bold, sub, tostring(rank.stars), K.TEXT, 3 * s)
+	end
+	pieces[#pieces + 1] = piece(fonts.normal, sub, rank.mmr .. " MMR", K.GRAY, 9 * s)
+	return measure(pieces)
+end
+
+local function rank_right(rank, s, sub)
+	local pieces = {}
+	if rank.star then
+		pieces[#pieces + 1] = piece(fonts.normal, sub, string.format(L("hc_rank_to"), rank.star_left), K.GRAY, 0)
+		pieces[#pieces + 1] = piece(fonts.icon, sub * 0.9, K.STAR_ICON, K.STAR_COLOR, 4 * s)
+		pieces[#pieces + 1] = piece(fonts.normal, sub, tostring(rank.star), K.GRAY, 3 * s)
+	end
+	if rank.medal_left then
+		if rank.star then
+			pieces[#pieces + 1] = piece(fonts.normal, sub, "·", K.SEPARATOR_TEXT, 7 * s)
+		end
+		pieces[#pieces + 1] = piece(fonts.normal, sub,
+			string.format(L("hc_rank_to"), rank.medal_left) .. " " .. L("hc_rank_" .. (rank.tier + 1)),
+			K.GRAY, rank.star and 7 * s or 0)
+	end
+	return measure(pieces)
+end
+
+local function draw_pieces(pieces, x, cy)
+	for _, p in ipairs(pieces) do
+		x = x + p.gap
+		Render.Text(p.font, p.size, p.text, Vec2(x, cy - p.sz.y / 2), p.color)
+		x = x + p.sz.x
+	end
+end
+
+local function rank_layout(rank, s, sub)
+	local left, left_w = rank_left(rank, s, sub)
+	local right, right_w = rank_right(rank, s, sub)
+	local icon = K.BAR_ICON * s
+	local width = K.BAR_PAD * s * 2 + icon + 6 * s + left_w + (right_w > 0 and (K.BAR_GAP * s + right_w) or 0)
+	return { left = left, right = right, right_w = right_w, icon = icon, width = width }
+end
+
+local function draw_rank_bar(rank, layout, x0, x1, y0, s, mode, glow, corners)
+	local y1 = y0 + K.BAR_H * s
+	local flags = Enum.DrawFlags.RoundCornersBottom
+	local round = K.BAR_ROUND * s
+	Render.FilledRect(Vec2(x0, y0), Vec2(x1, y1), K.BAR_BG, round, flags)
+	if corners then
+		Render.OutlineGradient(Vec2(x0, y0), Vec2(x1, y1), corners[3], corners[4], corners[3], corners[4],
+			round, flags, K.BORDER * s)
+	elseif mode == FX.NEON then
+		Render.Rect(Vec2(x0, y0), Vec2(x1, y1), with_alpha(glow, K.BAR_BORDER_ALPHA), round, flags, K.BORDER * s)
+	end
+
+	local pad = K.BAR_PAD * s
+	local cy = y0 + K.BAR_TEXT_Y * s
+	local medal = load_image(string.format(K.MEDAL_IMAGE, rank.tier))
+	if medal then
+		Render.Image(medal, Vec2(x0 + pad, cy - layout.icon / 2), Vec2(layout.icon, layout.icon), K.WHITE)
+	end
+	draw_pieces(layout.left, x0 + pad + layout.icon + 6 * s, cy)
+	if layout.right_w > 0 then
+		draw_pieces(layout.right, x1 - pad - layout.right_w, cy)
+	end
+
+	local by0 = y0 + K.BAR_LINE_Y * s
+	local by1 = by0 + K.BAR_LINE_H * s
+	local bx0, bx1 = x0 + pad, x1 - pad
+	local line_round = K.BAR_LINE_H * s / 2
+	Render.FilledRect(Vec2(bx0, by0), Vec2(bx1, by1), K.BAR_TRACK, line_round, Enum.DrawFlags.RoundCornersAll)
+	local fill = bx0 + (bx1 - bx0) * rank.progress
+	if fill - bx0 < K.BAR_LINE_H * s then return end
+	local c0, c1 = K.STAR_COLOR, K.BAR_FILL_END
+	if mode == FX.RGB then
+		local t = rgb_time()
+		c0, c1 = palette_color(t), palette_color(t + 0.35)
+	elseif mode == FX.NEON then
+		c0, c1 = glow, lighten(glow)
+	end
+	if mode ~= FX.NONE then
+		local g = ui.fx_glow:Get() * K.BAR_GLOW_ALPHA
+		Render.FilledRect(Vec2(bx0 - 2 * s, by0 - 2 * s), Vec2(fill + 2 * s, by1 + 2 * s), with_alpha(c1, g),
+			line_round + 2 * s, Enum.DrawFlags.RoundCornersAll)
+	end
+	Render.Gradient(Vec2(bx0, by0), Vec2(fill, by1), c0, c1, c0, c1, line_round, Enum.DrawFlags.RoundCornersAll)
+end
+
 local function draw_chip()
 	local anchor = state.anchor
 	local stats = state.summary
@@ -1315,12 +1544,19 @@ local function draw_chip()
 	local record_sz = Render.TextSize(fonts.normal, sub, record)
 	local delta_sz = Render.TextSize(fonts.bold, main, delta)
 
+	local rank = stats.rank
+	local layout = rank and rank_layout(rank, s, sub)
+
 	local content = r + 18 * s
 	local w = content + title_sz.x + 17 * s + record_sz.x + 8 * s + delta_sz.x + 12 * s
+	if layout then
+		w = math.max(w, layout.width + 2 * r)
+	end
 	w = math.floor(w / 2 + 0.5) * 2
 
 	local x = math.floor(anchor.x - w / 2 + K.CHIP_SHIFT_X * ui_scale + 0.5)
-	local y = math.floor(anchor.y - h - K.CHIP_ABOVE * s + K.CHIP_SHIFT_Y * ui_scale + 0.5)
+	local lift = layout and (K.BAR_H - K.BAR_TUCK + K.BAR_LIFT) * s or 0
+	local y = math.floor(anchor.y - h - K.CHIP_ABOVE * s + K.CHIP_SHIFT_Y * ui_scale - lift + 0.5)
 	local cy = y + r
 
 	local mode = ui.fx:Get()
@@ -1347,6 +1583,12 @@ local function draw_chip()
 		end
 	end
 
+	if layout then
+		local x0, x1, y0 = x + r, x + w - r, y + h
+		Render.PushClip(Vec2(x0 - 8 * s, y0), Vec2(x1 + 8 * s, y0 + (K.BAR_H + 8) * s), true)
+		draw_rank_bar(rank, layout, x0, x1, y0 - K.BAR_TUCK * s, s, mode, glow, corners)
+		Render.PopClip()
+	end
 	Render.FilledRect(Vec2(x, y), Vec2(x + w, y + h), K.BG, r, Enum.DrawFlags.RoundCornersAll)
 	if corners then
 		Render.OutlineGradient(Vec2(x, y), Vec2(x + w, y + h), corners[1], corners[2], corners[3], corners[4],
@@ -1363,7 +1605,7 @@ local function draw_chip()
 	Render.FilledRect(Vec2(tx, cy - 7 * s), Vec2(tx + 1, cy + 7 * s), K.SEPARATOR)
 	tx = tx + 1 + 8 * s
 	Render.Text(fonts.normal, sub, record, Vec2(tx, cy - record_sz.y / 2), K.GRAY)
-	tx = tx + record_sz.x + 8 * s
+	tx = x + w - 12 * s - delta_sz.x
 	Render.Text(fonts.bold, main, delta, Vec2(tx, cy - delta_sz.y / 2), mmr_color(stats.mmr))
 	Render.PopClip()
 end
@@ -1426,7 +1668,8 @@ local function dump()
 	end
 
 	local lines = { "dump: matches " .. total .. ", ranked " .. ranked .. ", own account " .. tostring(own_account())
-		.. ", shown account " .. tostring(state.shown_account) }
+		.. ", shown account " .. tostring(state.shown_account) .. ", mmr " .. tostring(current_mmr(state.shown_account))
+		.. ", ui state " .. tostring(state.ui_state) }
 	local root = find_root()
 	lines[#lines + 1] = "root " .. (root and panel_line(root, 0) or "not found")
 	local table_panel, reason = table_container()
@@ -1447,6 +1690,16 @@ local function dump()
 	for _, line in ipairs(lines) do
 		Log.Write("[History Changer] " .. line)
 	end
+end
+
+local function game_view()
+	local ok, value = pcall(Engine.GetUIState)
+	if not ok then return false end
+	if value ~= state.ui_state then
+		state.ui_state = value
+		log("ui state " .. tostring(value))
+	end
+	return value ~= nil and (value == UI_STATE.DOTA_GAME_UI_DOTA_INGAME or value == UI_STATE.DOTA_GAME_UI_STATE_LOADING_SCREEN)
 end
 
 local function tick()
@@ -1490,11 +1743,12 @@ local function tick()
 				log("page tracking: " .. tostring(err))
 			end
 		end
-		if ui.fx:Get() == FX.RGB and not state.left and state.clock >= state.next_fx then
+		local hidden = state.left or game_view()
+		if ui.fx:Get() == FX.RGB and not hidden and state.clock >= state.next_fx then
 			state.next_fx = state.clock + K.FX_INTERVAL
 			animate_rows()
 		end
-		if ui.day:Get() and not state.left then
+		if ui.day:Get() and not hidden then
 			draw_chip()
 		end
 	end

@@ -1,5 +1,11 @@
 # История изменений
 
+## 1.0.4 (05.11.2026)
+
+- Ранг под плашкой MMR: медаль, звезды, текущий MMR и сколько осталось до следующей звезды и следующей медали. Полоса снизу заполняется до следующей звезды и светится вместе с эффектом. Отключается пунктом «Ранг в плашке».
+- Плашка стала компактнее.
+- Исправлено: если открыть историю профиля прямо в матче и вернуться в игру по стрелке, не выходя из истории, плашка оставалась поверх игры. Теперь она прячется, как только видна игра.
+
 ## 1.0.3 (30.10.2026)
 
 - Эффекты: «Неон» и «RGB». В неоне MMR в истории и твой текст вместо героя светятся цветом победы или поражения, у плашки светящаяся рамка. В RGB цифры переливаются по строкам, а по рамке плашки бежит перелив.
@@ -29,6 +35,12 @@
 ---
 
 # Changelog
+
+## 1.0.4 (2026-11-05)
+
+- Rank under the MMR pill: medal, stars, current MMR and how much is left to the next star and the next medal. The bar at the bottom fills up to the next star and glows with the effect. Turn it off with Rank in the pill.
+- The pill is more compact.
+- Fixed: if you opened the profile history during a match and went back to the game with the arrow without leaving the history, the pill stayed on top of the game. It now hides as soon as the game is on screen.
 
 ## 1.0.3 (2026-10-30)
 
