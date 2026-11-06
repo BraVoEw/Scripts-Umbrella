@@ -12,7 +12,7 @@
 <link rel="icon" href="logo/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="logo/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="logo/apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="core.css?v=14">
 <style>
 /* Minimal black: one centered column, white type, hairlines. Color comes only from the logo and the media. */
@@ -234,12 +234,27 @@ footer a:hover { color: #fff; }
 .end2 p { margin: 0 auto 26px; max-width: 520px; color: var(--muted); }
 .end2 .btns { justify-content: center; }
 .end2 .dl, .end2 .ghost { padding: 12px 22px; font-size: 15px; }
-.support-line { display: inline-flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 4px 10px; margin-top: 40px; padding: 10px 18px; border: 1px solid #1c1c1c; border-radius: 999px; background: #080808; font-size: 14.5px; transition: border-color .25s, transform .25s cubic-bezier(.2, .8, .2, 1); }
-.support-line:hover { border-color: #e5484d; transform: translateY(-1px); }
-.support-line b { font-weight: 500; }
-.support-line span { color: var(--muted); }
-.support-line svg { width: 16px; height: 16px; }
-.support-line .heart { color: #e5484d; }
+.pay { display: grid; place-items: center; padding: 6px 0 10px; }
+.rc { --paper: #efece4; position: relative; width: min(380px, 100%); padding: 28px 26px 36px; background: var(--paper); color: #111; font: 400 14px/1.6 "JetBrains Mono", ui-monospace, monospace; text-align: left; transform: rotate(-1.2deg); transition: transform .5s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 30px 80px -30px rgba(255, 255, 255, .18);
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 51% repeat-x, linear-gradient(#000 0 0) top / 100% 51% no-repeat;
+          mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 51% repeat-x, linear-gradient(#000 0 0) top / 100% 51% no-repeat; }
+.rc:hover { transform: rotate(0deg) translateY(-4px); }
+.rc-top { text-align: center; margin-bottom: 14px; }
+.rc-top b { display: block; font-size: 16px; font-weight: 500; letter-spacing: .12em; }
+.rc-top span { color: #666; font-size: 12px; }
+.rc-ln { display: flex; justify-content: space-between; gap: 12px; }
+.rc-ln span:last-child { white-space: nowrap; }
+.rc-cut { margin: 12px 0; border-top: 1.5px dashed #9a978f; }
+.rc-sum { font-weight: 500; font-size: 15px; }
+.rc-tip { margin: 2px 0 10px; color: #555; }
+.rc-pay { display: grid; gap: 6px; }
+.rc-pay a, .rc-pay button { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 1.5px solid #111; text-align: left; transition: background .15s, color .15s; }
+.rc-pay a:hover, .rc-pay button:hover { background: #111; color: var(--paper); }
+.rc-pay small { font-size: 11.5px; opacity: .7; }
+.rc-bar { height: 34px; margin-top: 18px; background: repeating-linear-gradient(90deg, #111 0 2px, transparent 2px 4px, #111 4px 5px, transparent 5px 8px, #111 8px 11px, transparent 11px 12px); }
+.rc-thx { margin-top: 6px; text-align: center; font-size: 12px; color: #555; }
+.ask { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 12px; margin-top: 34px; color: var(--muted); font-size: 15px; }
+.ask .ghost { padding: 8px 16px; font-size: 14px; }
 
 .thx { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
 .thx .light { padding: 22px; min-height: 148px; }
@@ -278,7 +293,7 @@ footer a:hover { color: #fff; }
   </nav>
   <nav class="nav right">
     <a class="tg" href="https://t.me/+JYe25eMFs7tkYjky" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span id="tg-l"></span></a>
-    <a href="#support" data-i18n="nav_feedback"></a>
+    <a href="#feedback" data-i18n="nav_feedback"></a>
     <button type="button" data-donate data-i18n="donate_btn"></button>
     <span class="lang"><button type="button" data-lang="ru">RU</button><button type="button" data-lang="en">EN</button></span>
   </nav>
@@ -323,14 +338,14 @@ footer a:hover { color: #fff; }
 
 <footer><div class="col"><span>BraVoEw</span><a href="https://github.com/BraVoEw/Scripts-Umbrella" target="_blank" rel="noopener">GitHub</a></div></footer>
 
-<div class="win" id="fbw" hidden><div class="win-back" data-close></div><div class="win-box" role="dialog" aria-modal="true" aria-labelledby="fbw-t"><button class="x" type="button" data-close></button><h2 id="fbw-t" data-i18n="fb_pay"></h2><p class="sub" data-i18n="fb_how3"></p><div id="fb-body"></div></div></div>
-<div class="win" id="dnw" hidden><div class="win-back" data-close></div><div class="win-box" role="dialog" aria-modal="true" aria-labelledby="dnw-t"><button class="x" type="button" data-close></button><h2 id="dnw-t" data-i18n="dn_side"></h2><p class="sub" data-i18n="dn_side_lead"></p><div id="dn-body"></div></div></div>
+<div class="win" id="fbw" hidden><div class="win-back" data-close></div><div class="win-box" role="dialog" aria-modal="true" aria-labelledby="fbw-t"><button class="x" type="button" data-close></button><h2 id="fbw-t" data-i18n="fb_title"></h2><p class="sub" id="fbw-s"></p><div id="fb-body"></div></div></div>
+<div class="win" id="dnw" hidden><div class="win-back" data-close></div><div class="win-box" role="dialog" aria-modal="true" aria-labelledby="dnw-t"><button class="x" type="button" data-close></button><h2 id="dnw-t" data-i18n="dn_side"></h2><p class="sub" id="dnw-s"></p><div id="dn-body"></div></div></div>
 
 <script src="core.js?v=14"></script>
 <script>
 (function () {
   var LOGO = '<svg viewBox="8 14 84 73" fill="currentColor" aria-hidden="true"><path d="M40 30v9.5L25 50l15 10.5V70L11 54.5v-9z"/><path d="M60 30v9.5L75 50 60 60.5V70l29-15.5v-9z"/><path d="M53 21.5 60.5 17 48 79.5 40.5 84z"/></svg>';
-  var WORDS = { ru: { back: "Все скрипты", ideas: "За идеи и баги", don: "За донаты", noDon: "Здесь будут те, кто поддержал скрипты.", tg: "Telegram канал" }, en: { back: "All scripts", ideas: "For ideas and bugs", don: "For donations", noDon: "People who supported the scripts will be listed here.", tg: "Telegram channel" } };
+  var WORDS = { ru: { back: "Все скрипты", ideas: "За идеи и баги", don: "За донаты", noDon: "Здесь будут те, кто поддержал скрипты.", tg: "Telegram канал", payTitle: "Скрипты бесплатные", payLead: "Донаты идут на новые функции и обновления. Донат с сообщением появится на сайте.", ask: "Нашёл баг или есть идея?", fbSub: "Читаю каждое сообщение. Оставь ник в Telegram, если хочешь ответ.", rcSub: "скрипты для Umbrella", rcUpd: "Обновления", rcZero: "0 ₽", rcSum: "ИТОГО", rcFree: "бесплатно", rcTip: "Чаевые разработчику:", ruR: "РФ, СНГ", uaR: "Україна", worldR: "скопировать", rcThx: "спасибо, что играешь со скриптами" }, en: { back: "All scripts", ideas: "For ideas and bugs", don: "For donations", noDon: "People who supported the scripts will be listed here.", tg: "Telegram channel", payTitle: "The scripts are free", payLead: "Donations go into new features and updates. A donation with a message shows up on the site.", ask: "Found a bug or have an idea?", fbSub: "I read every message. Leave your Telegram if you want a reply.", rcSub: "scripts for Umbrella", rcUpd: "Updates", rcZero: "$0", rcSum: "TOTAL", rcFree: "free", rcTip: "Tip the developer:", ruR: "Russia, CIS", uaR: "Ukraine", worldR: "copy", rcThx: "thanks for playing with the scripts" } };
   var esc = Site.esc, $ = function (id) { return document.getElementById(id); };
   var listView = $("list-view"), detail = $("detail"), scripts = $("scripts");
   var shown = null;
@@ -508,27 +523,24 @@ footer a:hover { color: #fff; }
   /* ---------- donations: region tabs, recent donations ---------- */
 
   var dnTab = (navigator.language || "").toLowerCase().indexOf("uk") === 0 ? "ua" : "";
-  function dnHtml() {
-    var d = Site.cfg.donate, tab = dnTab || (Site.lang === "en" ? "world" : "ru"), pane;
-    if (tab === "world") {
-      pane = "<h4>USDT · TRC20</h4><p>" + Site.t("dn_world_desc") + "</p>" + (d.usdt
-        ? '<div class="addr"><code>' + esc(d.usdt) + '</code><button type="button" data-copy>' + Site.t("dn_copy") + '</button></div><div class="warn">' + Site.t("dn_warn") + "</div>"
-        : '<span class="empty">' + Site.t("dn_soon") + "</span>");
-    } else {
-      var url = tab === "ru" ? d.ru : d.ua;
-      pane = "<h4>" + (tab === "ru" ? "DonationAlerts" : "Donatello") + "</h4><p>" + Site.t(tab === "ru" ? "dn_ru_desc" : "dn_ua_desc") + "</p>" +
-        (url ? '<a class="dl" href="' + esc(url) + '" target="_blank" rel="noopener">' + Site.t("dn_go") + "</a>" : '<span class="empty">' + Site.t("dn_soon") + "</span>");
-    }
-    return '<div class="seg" role="tablist">' + ["ru", "ua", "world"].map(function (k) {
-      return '<button type="button" role="tab" data-tab="' + k + '"' + (k === tab ? ' class="on" aria-selected="true"' : "") + ">" + Site.t("dn_tab_" + k) + "</button>";
-    }).join("") + '</div><div class="pane">' + pane + "</div>";
+  var PAY = [{ k: "ru", name: "DonationAlerts" }, { k: "ua", name: "Donatello" }, { k: "world", name: "USDT TRC20" }];
+  function payHtml() {
+    var d = Site.cfg.donate, w = WORDS[Site.lang], first = dnTab || (Site.lang === "en" ? "world" : "ru");
+    var ln = function (a, b) { return '<div class="rc-ln"><span>' + a + "</span><span>" + b + "</span></div>"; };
+    var pay = PAY.slice().sort(function (x, y) { return (y.k === first) - (x.k === first); }).map(function (p) {
+      var inner = "<span>" + p.name + "</span><small>" + w[p.k + "R"] + "</small>";
+      if (p.k === "world") return d.usdt ? '<button type="button" data-copy title="' + esc(d.usdt) + '">' + inner + "</button>" : "";
+      return d[p.k] ? '<a href="' + esc(d[p.k]) + '" target="_blank" rel="noopener">' + inner + "</a>" : "";
+    }).join("");
+    return '<div class="pay"><div class="rc"><div class="rc-top"><b>BRAVOEW</b><span>' + w.rcSub + "</span></div>" +
+      Site.catalog.map(function (e) { return ln(esc(e.name), w.rcZero); }).join("") + ln(w.rcUpd, w.rcZero) +
+      '<div class="rc-cut"></div><div class="rc-ln rc-sum"><span>' + w.rcSum + "</span><span>" + w.rcFree + '</span></div><div class="rc-cut"></div>' +
+      '<div class="rc-tip">' + w.rcTip + '</div><div class="rc-pay">' + pay + '</div><div class="rc-bar"></div><div class="rc-thx">' + w.rcThx + "</div></div></div>";
   }
-  function openDn() { $("dn-body").innerHTML = dnHtml(); open($("dnw")); }
-  $("dnw").addEventListener("click", function (ev) {
-    var t = ev.target.closest("[data-tab]");
-    if (t) { dnTab = t.getAttribute("data-tab"); $("dn-body").innerHTML = dnHtml(); return; }
-    var c = ev.target.closest("[data-copy]");
-    if (c && navigator.clipboard) navigator.clipboard.writeText(Site.cfg.donate.usdt).then(function () { c.textContent = Site.t("dn_copied"); });
+  function openDn() { $("dn-body").innerHTML = payHtml(); open($("dnw")); }
+  document.addEventListener("click", function (ev) {
+    var c = ev.target.closest && ev.target.closest("[data-copy]");
+    if (c && navigator.clipboard) navigator.clipboard.writeText(Site.cfg.donate.usdt).then(function () { (c.querySelector("small") || c).textContent = Site.t("dn_copied"); });
   });
   function money(x) {
     var n = Number(x.amount) || 0, c = String(x.currency || "").toUpperCase();
@@ -553,12 +565,12 @@ footer a:hover { color: #fff; }
 
   /* ---------- bottom of the page ---------- */
 
-  var HEART = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.1 5.3 3 1.7-1.9 3.2-3 5.3-3 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>';
   function renderEnd() {
-    var t = Site.t;
-    $("end").innerHTML = '<div class="end2"><h2>' + esc(t("fb_pay")).replace(/(\S+)$/, "<em>$1</em>") + "</h2><p>" + t("fb_pay_lead") + "</p>" +
-      '<div class="btns"><button type="button" class="dl" data-fb="idea">' + t("fb_btn_idea") + '</button><button type="button" class="ghost" data-fb="bug">' + t("fb_btn_bug") + "</button></div>" +
-      '<button type="button" class="support-line" data-donate><span class="heart">' + HEART + "</span><b>" + t("donate_btn") + "</b><span>DonationAlerts · Donatello · USDT</span></button></div>";
+    var t = Site.t, w = WORDS[Site.lang];
+    $("fbw-s").textContent = w.fbSub;
+    $("dnw-s").textContent = w.payLead;
+    $("end").innerHTML = '<div class="end2"><h2>' + esc(w.payTitle).replace(/(\S+)$/, "<em>$1</em>") + "</h2><p>" + w.payLead + "</p>" + payHtml() +
+      '<div class="ask"><span>' + w.ask + '</span><button type="button" class="ghost" data-fb="bug">' + t("fb_btn_bug") + '</button><button type="button" class="ghost" data-fb="idea">' + t("fb_btn_idea") + "</button></div></div>";
   }
   document.addEventListener("pointermove", function (ev) {
     var el = ev.target.closest && ev.target.closest(".light");
@@ -579,7 +591,7 @@ footer a:hover { color: #fff; }
       renderThanks();
       if (shown) { var key = shown; shown = null; showDetail(key); }
       if ($("fbw").hidden === false) { $("fb-body").innerHTML = fbHtml(); fbBind(); }
-      if ($("dnw").hidden === false) $("dn-body").innerHTML = dnHtml();
+      if ($("dnw").hidden === false) $("dn-body").innerHTML = payHtml();
     },
     route: function (h) {
       if (h === "#feedback") { showList(); openFb(); return true; }
