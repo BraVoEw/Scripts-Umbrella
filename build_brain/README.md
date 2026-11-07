@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.2.0/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.3.0/build_brain.lua)**
 
 ## Что умеет
 
@@ -29,6 +29,7 @@
 - Драфт: кого пикнуть на твою роль и почему, кого опасаться у врагов и что против них брать, шанс на победу и таблица «кто кого».
 - Сборка: следующий предмет сверху, вся сборка одной лентой по этапам с минутами по твоему доходу, против каждой угрозы несколько вариантов предметов и кто тебя убивает в этой игре. Любой предмет можно пропустить или заменить, наведя на него.
 - Бой: какой урон тебе наносят вражеские герои и кто именно, разбор последней смерти, у кого из врагов ульта или BKB на кулдауне и кого можно бить прямо сейчас.
+- Пати: поиск тиммейтов среди игроков с Build Brain. Создаёшь пати (режим, кого ищешь, разброс по рангу, язык), другие видят её в списке и заходят в один клик: твой скрипт сам приглашает, их скрипт сам принимает. Можно одобрять каждого вручную. Пати сама убирается из списка, когда ты начал поиск игры, вышел из пати или набралось пятеро.
 
 Если тебя в основном бьют магией или ты часто стоишь в контроле, скрипт это заметит и подскажет защиту.
 
@@ -38,7 +39,8 @@
 - Робот на GitHub пересобирает их два раза в неделю, а после нового патча, как только наберутся игры.
 - Скрипт раз в час проверяет, есть ли свежий файл, и скачивает его, около 0.8 МБ. Если интернета нет, работает с последним скачанным. Если GitHub недоступен, файл качается через зеркало jsDelivr.
 - Матчапы в драфте и роли героев считаются по пабам высокого рейтинга (STRATZ), общий винрейт героя на твоём ранге берётся из OpenDota.
-- Скрипт ничего не отправляет о тебе и твоём аккаунте. Для разведки он спрашивает у OpenDota открытую статистику врагов по их ID.
+- Скрипт ничего не отправляет о тебе и твоём аккаунте, пока ты сам не включил вкладку «Пати». Для разведки он спрашивает у OpenDota открытую статистику врагов по их ID.
+- Вкладка «Пати» включается отдельной кнопкой. После этого на наш сервер уходят твой Steam ID, ник, ранг и роли пати, а аватарки участников подгружаются через Steam. Пати хранится 10 минут, заявка на вход 2 минуты, потом всё удаляется.
 
 ## Установка
 
@@ -69,7 +71,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.2.0/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.3.0/build_brain.lua)**
 
 ### Features
 
@@ -79,6 +81,7 @@ Umbrella script for Dota 2. Shows a build for your hero and role in the shop, ba
 - A draft panel that opens by itself on hero pick: win chance, both teams' picks and who to pick for your role from the first pick (meta heroes of that position, ranked by matchups against the enemy picks). Click a hero to mark it, then Pick to take it. A "For teammates" block gives 3 heroes for every teammate without a hero, click one to suggest it to your team. The top 3 are highlighted in the Dota hero grid, and the panel can be dragged.
 - Enemy scouting: each enemy's main heroes for the last 30 days with win rates from OpenDota, a frame marks ban candidates.
 - A window (on a key) with Draft, Build and Fight tabs: who to pick, who to watch out for, what kills you, enemy ult and BKB cooldowns and when you can fight.
+- Party tab: find teammates among Build Brain users. Create a party (mode, roles you need, rank range, language), others join it in one click: your script invites them and theirs accepts. Manual approval is optional. The party leaves the list by itself when you start a search, leave the party or it is full. It is off until you turn it on: then your Steam ID, nickname, rank and party roles go to our party server and are deleted after 10 minutes.
 - Skip or replace any item of the build from its hover card, and remember the choice for the hero. Item minutes follow your real income, Turbo gets its own minutes.
 - Your own hero pool: mark the heroes you play and the draft shows your 2 best of them on top of the meta picks.
 - A short first-run setup (role, heroes, game mode) and window styles: Scoreboard, Mono, Gold, Ruby.

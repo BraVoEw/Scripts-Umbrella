@@ -657,15 +657,12 @@ local localization = qLocalization.new({
 		bb_news_head = "Build Brain %s",
 		bb_news_title = "What's new",
 		bb_news_sub = "Fixed from your feedback",
-		bb_news_9 = "Auto-buy: starting items or the whole build, turn it on in Settings",
-		bb_news_10 = "Pick from the draft widget: click a hero, then Pick",
-		bb_news_11 = "Enemy scouting: their main heroes for 30 days",
-		bb_news_12 = "Pick advice from the very first pick",
 		bb_news_13 = "Pick advice for teammates: click a hero to suggest it to your team",
-		bb_news_14 = "Auto-buy no longer rebuys items your courier is carrying",
-		bb_news_15 = "Auto-buy gets starting items one by one, like by hand",
 		bb_news_16 = "Ctrl or Shift + left click in the shop adds an item to quick buy",
 		bb_news_17 = "Rank for win rates is now a range: Ancient+, Divine+",
+		bb_news_18 = "New Party tab: find teammates and join a party in one click",
+		bb_news_19 = "Your party shows avatars, roles and rank, it closes by itself when you start a search",
+		bb_news_20 = "Auto-buy tells you in chat when it could not buy an item",
 		bb_news_tg = "Telegram channel",
 		bb_news_ok = "Got it",
 		bb_news_note = "News, test builds and giveaways go there first",
@@ -768,6 +765,66 @@ local localization = qLocalization.new({
 		bb_tab_draft = "Draft",
 		bb_tab_build = "Build",
 		bb_tab_fight = "Fight",
+		bb_tab_party = "Party",
+		bb_lfg_new = "+ Create party",
+		bb_lfg_join = "Join",
+		bb_lfg_rank_no = "not your rank",
+		bb_lfg_my_rank = "Only my rank",
+		bb_lfg_mode_0 = "All Pick",
+		bb_lfg_mode_1 = "Ranked",
+		bb_lfg_mode_2 = "Turbo",
+		bb_lfg_mode_3 = "Single Draft",
+		bb_lfg_want = "Looking for:",
+		bb_lfg_any = "any role",
+		bb_lfg_anyone = "Anyone",
+		bb_lfg_closed_full = "The party is full, it is off the list",
+		bb_lfg_closed_leave = "You left the party, it is off the list",
+		bb_lfg_closed_find = "You started a search, the party is off the list",
+		bb_lfg_joined_chat = "Build Brain: %s is joining your party",
+		bb_lfg_extend = "+10 min",
+		bb_lfg_range_all = "Lets everyone in",
+		bb_lfg_range_one = "Lets in: %s only",
+		bb_lfg_range = "Lets in: %s to %s",
+		bb_lfg_f_lang = "Language",
+		bb_lfg_we = "need %s",
+		bb_lfg_they = "looking for %s",
+		bb_lfg_empty = "No open parties right now",
+		bb_lfg_form = "New party",
+		bb_lfg_f_mode = "Mode",
+		bb_lfg_f_roles = "Roles you need",
+		bb_lfg_f_rank = "Who can join by rank",
+		bb_lfg_spread_0 = "Close",
+		bb_lfg_spread_1 = "Wider",
+		bb_lfg_spread_2 = "Any",
+		bb_lfg_auto = "Accept by myself",
+		bb_lfg_create = "Create",
+		bb_lfg_mine = "Your party",
+		bb_lfg_left = "%d min left",
+		bb_lfg_close = "Cancel",
+		bb_lfg_asks = "%s wants in",
+		bb_lfg_yes = "Accept",
+		bb_lfg_no = "No",
+		bb_lfg_wait = "Waiting for an invite from %s",
+		bb_lfg_in = "Invite accepted, you are in the party",
+		bb_lfg_declined = "The host declined",
+		bb_lfg_gone = "The party is gone",
+		bb_lfg_err_full = "The party is full",
+		bb_lfg_err_rank = "Your rank does not fit this party",
+		bb_lfg_err_busy = "You are already waiting to join a party",
+		bb_lfg_err_net = "No connection to the party server",
+		bb_lfg_consent_title = "Find a teammate",
+		bb_lfg_consent = "When on, the script sends your Steam ID, nickname, rank and roles to our party server. Players with Build Brain see your party and can join it in one click.",
+		bb_lfg_enable = "Turn on",
+		bb_lfg_pick_role = "Pick at least one role",
+		bb_lfg_norank = "Uncalibrated",
+		bb_medal_1 = "Herald",
+		bb_medal_2 = "Guardian",
+		bb_medal_3 = "Crusader",
+		bb_medal_4 = "Archon",
+		bb_medal_5 = "Legend",
+		bb_medal_6 = "Ancient",
+		bb_medal_7 = "Divine",
+		bb_medal_8 = "Immortal",
 		bb_tab_settings = "Settings",
 		bb_light = "Radiant",
 		bb_dark = "Dire",
@@ -846,6 +903,7 @@ local localization = qLocalization.new({
 		bb_ab_part = "%s for %s",
 		bb_ab_done = "%s is complete",
 		bb_ab_full = "no free slot, waiting",
+		bb_ab_fail = "could not buy %s, trying again in 30 s",
 		bb_ab_tag = "Auto-buy:",
 		bb_ab_start = "starting items bought, %d for %d gold",
 		bb_on = "on",
@@ -1193,15 +1251,12 @@ local localization = qLocalization.new({
 		bb_news_head = "Build Brain %s",
 		bb_news_title = "Что нового",
 		bb_news_sub = "Исправили по вашим отзывам",
-		bb_news_9 = "Автобай: старт или вся сборка сама, включается в настройках",
-		bb_news_10 = "Пик прямо из окна драфта: клик по герою и «Пикнуть»",
-		bb_news_11 = "Разведка врагов: их главные герои за 30 дней",
-		bb_news_12 = "Советы пика с самого первого пика",
 		bb_news_13 = "Советы пиков тиммейтам: клик по герою предлагает его команде",
-		bb_news_14 = "Автобай больше не докупает то, что везёт курьер",
-		bb_news_15 = "Автобай берёт стартовые вещи по одной, как руками",
 		bb_news_16 = "Ctrl или Shift + ЛКМ в лавке кидает предмет в квикбай",
 		bb_news_17 = "Ранг для винрейта теперь с плюсом: Властелин+, Божество+",
+		bb_news_18 = "Новая вкладка «Пати»: найди тиммейтов и зайди в пати в один клик",
+		bb_news_19 = "Своя пати с аватарками, ролями и рангом, сама закрывается при поиске игры",
+		bb_news_20 = "Автобай пишет в чат, если не смог что-то купить",
 		bb_news_tg = "Telegram канал",
 		bb_news_ok = "Понятно",
 		bb_news_note = "Новости, тестовые версии и розыгрыши сначала там",
@@ -1304,6 +1359,66 @@ local localization = qLocalization.new({
 		bb_tab_draft = "Драфт",
 		bb_tab_build = "Сборка",
 		bb_tab_fight = "Бой",
+		bb_tab_party = "Пати",
+		bb_lfg_new = "+ Создать пати",
+		bb_lfg_join = "Зайти",
+		bb_lfg_rank_no = "не твой ранг",
+		bb_lfg_my_rank = "Только мой ранг",
+		bb_lfg_mode_0 = "All Pick",
+		bb_lfg_mode_1 = "Рейтинг",
+		bb_lfg_mode_2 = "Турбо",
+		bb_lfg_mode_3 = "Сингл драфт",
+		bb_lfg_want = "Ищут:",
+		bb_lfg_any = "любая роль",
+		bb_lfg_anyone = "Любые",
+		bb_lfg_closed_full = "Пати полная, она убрана из списка",
+		bb_lfg_closed_leave = "Ты вышел из пати, она убрана из списка",
+		bb_lfg_closed_find = "Ты начал поиск игры, пати убрана из списка",
+		bb_lfg_joined_chat = "Build Brain: %s заходит к тебе в пати",
+		bb_lfg_extend = "+10 мин",
+		bb_lfg_range_all = "Пустим всех",
+		bb_lfg_range_one = "Пустим только «%s»",
+		bb_lfg_range = "Пустим: от «%s» до «%s»",
+		bb_lfg_f_lang = "Язык",
+		bb_lfg_we = "ищем %s",
+		bb_lfg_they = "ищут %s",
+		bb_lfg_empty = "Сейчас открытых пати нет",
+		bb_lfg_form = "Новая пати",
+		bb_lfg_f_mode = "Режим",
+		bb_lfg_f_roles = "Кого ищу",
+		bb_lfg_f_rank = "Кого пускать по рангу",
+		bb_lfg_spread_0 = "Близкий",
+		bb_lfg_spread_1 = "Пошире",
+		bb_lfg_spread_2 = "Любой",
+		bb_lfg_auto = "Принимать сам",
+		bb_lfg_create = "Создать",
+		bb_lfg_mine = "Твоя пати",
+		bb_lfg_left = "ещё %d мин",
+		bb_lfg_close = "Отменить",
+		bb_lfg_asks = "%s хочет зайти",
+		bb_lfg_yes = "Принять",
+		bb_lfg_no = "Нет",
+		bb_lfg_wait = "Ждём приглашение от %s",
+		bb_lfg_in = "Приглашение принято, ты в пати",
+		bb_lfg_declined = "Хост отказал",
+		bb_lfg_gone = "Этой пати уже нет",
+		bb_lfg_err_full = "Пати уже полная",
+		bb_lfg_err_rank = "Твой ранг не подходит этой пати",
+		bb_lfg_err_busy = "Ты уже ждёшь вход в другую пати",
+		bb_lfg_err_net = "Нет связи с сервером пати",
+		bb_lfg_consent_title = "Найти тиммейта",
+		bb_lfg_consent = "Если включить, скрипт отправит на наш сервер пати твой Steam ID, ник, ранг и роли. Игроки с Build Brain увидят твою пати и смогут зайти в один клик.",
+		bb_lfg_enable = "Включить",
+		bb_lfg_pick_role = "Выбери хотя бы одну роль",
+		bb_lfg_norank = "Калибровка",
+		bb_medal_1 = "Рекрут",
+		bb_medal_2 = "Страж",
+		bb_medal_3 = "Рыцарь",
+		bb_medal_4 = "Герой",
+		bb_medal_5 = "Легенда",
+		bb_medal_6 = "Властелин",
+		bb_medal_7 = "Божество",
+		bb_medal_8 = "Титан",
 		bb_tab_settings = "Настройки",
 		bb_light = "Свет",
 		bb_dark = "Тьма",
@@ -1382,6 +1497,7 @@ local localization = qLocalization.new({
 		bb_ab_part = "%s для %s",
 		bb_ab_done = "%s собран",
 		bb_ab_full = "нет свободного слота, жду",
+		bb_ab_fail = "не получилось купить %s, попробую через 30 с",
 		bb_ab_tag = "Автобай:",
 		bb_ab_start = "стартовый закуп куплен, %d шт. за %d золота",
 		bb_on = "вкл",
@@ -1550,10 +1666,10 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "2.2.0",
+	VERSION = "2.3.0",
 	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
 	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
-	NEWS = { "bb_news_13", "bb_news_14", "bb_news_15", "bb_news_16", "bb_news_17", "bb_news_9", "bb_news_10", "bb_news_11", "bb_news_12" },
+	NEWS = { "bb_news_18", "bb_news_19", "bb_news_20", "bb_news_13", "bb_news_16", "bb_news_17" },
 	NEWS_W = 420,
 	CHAT_BAN_TTL = 900,
 	VISION = { "item_dust", "item_ward_sentry", "item_ward_observer" },
@@ -1563,6 +1679,30 @@ local K = {
 	RECAP_LAG = 0.5,
 	META_GAMES = 200,
 	PK_SEL = 8,
+	LFG_URL = "https://bb-party.bravoyt11.workers.dev",
+	LFG_LIST = 10,
+	LFG_HOST = 3,
+	LFG_HOST_IDLE = 6,
+	LFG_JOIN = 2,
+	LFG_WAIT = 120,
+	LFG_TTL = 600,
+	LFG_MSG = 6,
+	LFG_SPREAD = { 1, 2, 99 },
+	LFG_LANGS = { "ru", "en" },
+	LFG_ROW = 68,
+	LFG_AV_STEP = 1,
+	LFG_AV_RETRY = 10,
+	LFG_AV_BATCH = 10,
+	LFG_AV_MIN = 100,
+	LFG_TINTS = { Color(59, 91, 219), Color(194, 65, 12), Color(15, 118, 110), Color(109, 40, 217), Color(161, 98, 7), Color(190, 24, 93) },
+	MSG_INVITE = 4501,
+	MSG_CREATED = 4502,
+	MSG_ACCEPT = 4503,
+	MSG_LEAVE = 4505,
+	MSG_FIND = 7033,
+	LFG_EXTEND_AT = 180,
+	MSG_CARD = 7534,
+	MSG_CARD_REPLY = 7535,
 	MATE_HEROES = 3,
 	META_W = 0.5,
 	TAL_REACH = { 0.92, 0.74, 0.44 },
@@ -4225,8 +4365,8 @@ local N = {
 
 local W = { dead = {}, seen = {}, seen_at = {}, todo_at = {}, todo_n = 0, foe_at = {}, item_at = {}, drop = {}, base_a = 1, base_y = 0, base_x = 0, dir = 0, flat = false, nums = {}, nums_n = 0 }
 
-W.TABS = { "draft", "build", "fight" }
-W.ORDER = { draft = 1, build = 2, fight = 3, settings = 4 }
+W.TABS = { "draft", "build", "fight", "party" }
+W.ORDER = { draft = 1, build = 2, fight = 3, party = 4, settings = 5 }
 W.WHERE = { "shop", "auto" }
 
 function W.ease(t)
@@ -5922,6 +6062,8 @@ function W.tab(name, w, h)
 		W.build(w, h)
 	elseif name == "fight" then
 		W.fight(w, h)
+	elseif name == "party" then
+		W.party(w, h)
 	else
 		W.settings(w, h)
 	end
@@ -6028,6 +6170,693 @@ local function draw_window()
 	G.alpha, G.oy, G.ox = open, base_y, win.x
 	W.draw_tip()
 	G.alpha = 1
+end
+
+local LFG = { av = {}, need = {}, next_av = 0, list = {}, list_at = 0, next_list = 0, busy = {}, filter = { rank = true, mode = nil, lang = nil }, form = { open = false, mode = 1, roles = 31, spread = 1, lang = nil, auto = true }, own = nil, next_host = 0, asks = {}, invited = {}, waiting = {}, join = nil, next_join = 0, rank = nil, rank_asked = false, version = nil, msg = nil, msg_at = 0, pb = nil }
+
+function LFG.ok()
+	if LFG.on == nil then LFG.on = Config.ReadInt(K.CONFIG, "lfg_ok", 0) == 1 end
+	return LFG.on
+end
+
+function LFG.sid()
+	local ok, sid = pcall(GC.GetSteamID)
+	sid = ok and tostring(sid or "") or ""
+	if sid:match("^7656119%d%d%d%d%d%d%d%d%d%d$") then return sid end
+	return nil
+end
+
+function LFG.name()
+	local ok, name = pcall(Steam.GetPersonaName)
+	return ok and type(name) == "string" and name ~= "" and name or "?"
+end
+
+function LFG.lang()
+	if LFG.form.lang then return LFG.form.lang end
+	local ok, lang = pcall(Steam.GetGameLanguage)
+	LFG.form.lang = ok and lang == "russian" and "ru" or "en"
+	return LFG.form.lang
+end
+
+function LFG.say(key, arg)
+	LFG.msg = arg and string.format(L(key), arg) or L(key)
+	LFG.msg_at = state.clock
+end
+
+function LFG.ver()
+	return LFG.version
+end
+
+function LFG.proto()
+	if LFG.pb == nil then
+		local ok, pb = pcall(require, "protobuf")
+		LFG.pb = ok and pb or false
+	end
+	return LFG.pb or nil
+end
+
+function LFG.gc(name, data, id)
+	local pb = LFG.proto()
+	if not pb then return false end
+	local ok, req = pcall(pb.encodeFromJSON, name, encode(data))
+	if not ok or not req then return false end
+	return pcall(GC.SendMessage, req.binary, id, req.size)
+end
+
+function LFG.read(name, buffer, size)
+	local pb = LFG.proto()
+	if not pb or not buffer then return nil end
+	local ok, text = pcall(pb.decodeToJSON, name, buffer, size)
+	return ok and decode(text) or nil
+end
+
+function LFG.req(method, path, body, done)
+	local key = method .. path:match("^/%w+")
+	local since = LFG.busy[key]
+	if since and state.clock - since < K.NET_TIMEOUT + 5 then return end
+	LFG.busy[key] = state.clock
+	LFG.seq = (LFG.seq or 0) + 1
+	local tag = "lfg" .. LFG.seq
+	local opts = { timeout = K.NET_TIMEOUT }
+	if body then
+		opts.headers = { ["Content-Type"] = "application/json" }
+		opts.data = encode(body)
+	end
+	local ok, sent = pcall(HTTP.Request, method, K.LFG_URL .. path, opts, function(res)
+		if LFG.busy[key] then LFG.busy[key] = nil end
+		local data = type(res) == "table" and decode(res.response) or nil
+		local code = type(res) == "table" and tonumber(res.code) or 0
+		local okd, err = pcall(done, type(data) == "table" and data or {}, code or 0)
+		if not okd then Log.Write("[Build Brain] party " .. path .. ": " .. tostring(err)) end
+	end, tag)
+	if not ok or sent == false then
+		LFG.busy[key] = nil
+		LFG.offline = true
+	end
+end
+
+function LFG.ask_rank()
+	if LFG.rank_asked then return end
+	local sid = LFG.sid()
+	if not sid then return end
+	LFG.rank_asked = true
+	LFG.gc("CMsgClientToGCGetProfileCard", { account_id = math.tointeger(tonumber(sid)) - K.STEAM_BASE }, K.MSG_CARD)
+end
+
+function LFG.fits(p)
+	if not LFG.rank or not p.rank then return true end
+	local spread = K.LFG_SPREAD[(p.spread or 2) + 1] or 99
+	return math.abs(LFG.rank // 10 - p.rank // 10) <= spread
+end
+
+function LFG.rank_label(r)
+	r = tonumber(r) or 0
+	local medal, star = r // 10, r % 10
+	if medal < 1 or medal > 8 then return L("bb_lfg_norank") end
+	if medal == 8 or star == 0 then return L("bb_medal_" .. medal) end
+	return L("bb_medal_" .. medal) .. " " .. star
+end
+
+function LFG.medal_name(m)
+	if m < 1 or m > 8 then return L("bb_lfg_norank") end
+	return L("bb_medal_" .. m)
+end
+
+function LFG.range_text(spread)
+	local d = K.LFG_SPREAD[(spread or 2) + 1] or 99
+	if d >= 8 then return L("bb_lfg_range_all") end
+	local m = (LFG.rank or 0) // 10
+	local lo, hi = math.max(0, m - d), math.min(8, m + d)
+	if lo == hi then return string.format(L("bb_lfg_range_one"), LFG.medal_name(lo)) end
+	return string.format(L("bb_lfg_range"), LFG.medal_name(lo), LFG.medal_name(hi))
+end
+
+function LFG.save()
+	local own = LFG.own
+	if not own then
+		Config.WriteString(K.CONFIG, "lfg_own", "")
+		return
+	end
+	local left = math.max(0, math.floor(own.ends - state.clock))
+	Config.WriteString(K.CONFIG, "lfg_own", table.concat({ own.token, own.id, os.time() + left, own.mode, own.roles, LFG.sid() or "0" }, "|"))
+end
+
+function LFG.restore()
+	if LFG.restored then return end
+	LFG.restored = true
+	local raw = Config.ReadString(K.CONFIG, "lfg_own", "")
+	local token, id, epoch, mode, roles, sid = raw:match("^(%x+)|(%x+)|(%d+)|(%d+)|(%d+)|(%d+)$")
+	local left = epoch and (tonumber(epoch) - os.time()) or 0
+	if not token or left < 20 or sid ~= LFG.sid() then return end
+	LFG.own = { token = token, id = id, ends = state.clock + left, size = 1, mode = tonumber(mode), roles = tonumber(roles) }
+	LFG.next_host = 0
+end
+
+function LFG.finish(key)
+	if not LFG.own then return end
+	LFG.act("close")
+	if key then LFG.say(key) end
+end
+
+function LFG.medal(x, y, size, r)
+	r = tonumber(r) or 0
+	local medal, star = r // 10, r % 10
+	if medal < 0 or medal > 8 then medal, star = 0, 0 end
+	W.pic(load_image("panorama/images/rank_tier_icons/rank" .. medal .. "_psd.vtex_c"), x, y, size, size, 0)
+	if medal >= 1 and medal <= 7 and star >= 1 and star <= 7 then
+		W.pic(load_image("panorama/images/rank_tier_icons/pip" .. star .. "_psd.vtex_c"), x, y, size, size, 0)
+	end
+end
+
+function LFG.tint(key)
+	local hsum = 0
+	for i = 1, #key do hsum = (hsum * 31 + key:byte(i)) % 997 end
+	return K.LFG_TINTS[hsum % #K.LFG_TINTS + 1]
+end
+
+function LFG.path(sid)
+	local dir = Engine.GetCheatDirectory() or ""
+	if dir ~= "" and not dir:match("[\\/]$") then dir = dir .. "\\" end
+	return dir .. "images\\bb_av_" .. sid .. ".b64"
+end
+
+function LFG.load(sid, b64)
+	if not b64 then b64 = read_file(LFG.path(sid)) end
+	if type(b64) ~= "string" or #b64 < K.LFG_AV_MIN then return nil end
+	local svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64"><image width="64" height="64" xlink:href="data:image/jpeg;base64,' .. b64 .. '"/></svg>'
+	local ok, handle = pcall(Render.LoadSvgString, svg, Vec2(64, 64), "bbav" .. sid)
+	if ok and type(handle) == "number" and handle > 0 then return handle end
+	return nil
+end
+
+function LFG.avatar(sid)
+	local h = LFG.av[sid]
+	if h then return h end
+	if h == false then return nil end
+	local okp, sh = pcall(Steam.GetProfilePictureBySteamId, math.tointeger(tonumber(sid)), false)
+	if okp and type(sh) == "number" and sh > 0 then
+		LFG.av[sid] = sh
+		return sh
+	end
+	local disk = LFG.load(sid)
+	LFG.av[sid] = disk or false
+	if not disk then LFG.need[sid] = true end
+	return disk
+end
+
+function LFG.fetch_avatars()
+	if state.clock < LFG.next_av or not next(LFG.need) then return end
+	LFG.next_av = state.clock + K.LFG_AV_STEP
+	local ids = {}
+	for sid in pairs(LFG.need) do
+		if #ids < K.LFG_AV_BATCH then ids[#ids + 1] = sid end
+	end
+	for _, sid in ipairs(ids) do LFG.need[sid] = nil end
+	LFG.req("GET", "/avatars?ids=" .. table.concat(ids, ","), nil, function(data, code)
+		if code ~= 200 then
+			for _, sid in ipairs(ids) do
+				if LFG.av[sid] == false then LFG.av[sid] = nil end
+			end
+			LFG.next_av = state.clock + K.LFG_AV_RETRY
+			return
+		end
+		for sid, b64 in pairs(data) do
+			if type(sid) == "string" and sid:match("^%d+$") and type(b64) == "string" and #b64 > K.LFG_AV_MIN then
+				local okb, fb = pcall(io.open, LFG.path(sid), "wb")
+				if okb and fb then
+					fb:write(b64)
+					fb:close()
+				end
+				LFG.av[sid] = LFG.load(sid, b64) or false
+			end
+		end
+	end)
+end
+
+function LFG.over()
+	local win = state.win
+	if not win.visible or not win.x then return false end
+	local sc = win.scale or G.s
+	return cursor_in(win.x, win.y, win.x + K.WIN_W * sc, win.y + K.WIN_H * sc)
+end
+
+function LFG.wheel(dir)
+	LFG.scroll_to = math.max(0, math.min(LFG.scroll_max or 0, (LFG.scroll_to or 0) - dir * K.LFG_ROW))
+end
+
+function LFG.roles(mask)
+	local out = {}
+	for p = 1, 5 do
+		if mask & (1 << (p - 1)) ~= 0 then out[#out + 1] = L("bb_role_" .. p) end
+	end
+	if #out == 5 then return { L("bb_lfg_any") } end
+	return out
+end
+
+function LFG.tick()
+	if not LFG.ok() then return end
+	LFG.restore()
+	local now = state.clock
+	local win = state.win
+	local open = win.visible and win.tab == "party"
+	if open then LFG.ask_rank() end
+	if open and now >= LFG.next_list then
+		LFG.next_list = now + K.LFG_LIST
+		local q = {}
+		if LFG.filter.mode then q[#q + 1] = "mode=" .. LFG.filter.mode end
+		if LFG.filter.lang then q[#q + 1] = "lang=" .. LFG.filter.lang end
+		LFG.req("GET", "/parties" .. (#q > 0 and ("?" .. table.concat(q, "&")) or ""), nil, function(data, code)
+			if code ~= 200 then
+				LFG.offline = true
+				return
+			end
+			LFG.offline = false
+			LFG.list = type(data.parties) == "table" and data.parties or {}
+			LFG.list_at = state.clock
+		end)
+	end
+	if open then LFG.fetch_avatars() end
+	local own = LFG.own
+	if own and now >= own.ends then
+		LFG.own, LFG.asks = nil, {}
+		LFG.save()
+		own = nil
+	end
+	if own and now >= LFG.next_host then
+		LFG.next_host = now + (open and K.LFG_HOST or K.LFG_HOST_IDLE)
+		LFG.req("GET", "/host?token=" .. own.token, nil, function(data, code)
+			if not LFG.own or LFG.own.token ~= own.token then return end
+			if code == 404 then
+				LFG.own, LFG.asks = nil, {}
+				LFG.save()
+				return
+			end
+			if code ~= 200 then return end
+			if type(data.members) == "table" then own.members = data.members end
+			if type(data.party) == "table" then
+				own.size = tonumber(data.party.size) or own.size
+				local left = tonumber(data.party.expires) and data.now and (tonumber(data.party.expires) - tonumber(data.now))
+				if left then own.ends = state.clock + left end
+			end
+			if (own.size or 1) >= 5 then return LFG.finish("bb_lfg_closed_full") end
+			local asks = {}
+			for _, j in ipairs(type(data.joins) == "table" and data.joins or K.NONE) do
+				if j.status == "wait" and not LFG.invited[j.id] then
+					LFG.invited[j.id] = true
+					LFG.waiting[j.sid] = { id = j.id, name = j.name }
+					local body = { steam_id = j.sid }
+					if LFG.ver() then body.client_version = LFG.version end
+					LFG.gc("CMsgInviteToParty", body, K.MSG_INVITE)
+				elseif j.status == "ask" then
+					asks[#asks + 1] = j
+				end
+			end
+			LFG.asks = asks
+		end)
+	end
+	local join = LFG.join
+	if join and now >= join.ends then
+		LFG.join = nil
+		LFG.say("bb_lfg_gone")
+		join = nil
+	end
+	if join and now >= LFG.next_join then
+		LFG.next_join = now + K.LFG_JOIN
+		LFG.req("GET", "/status?id=" .. join.id .. "&secret=" .. join.secret, nil, function(data, code)
+			if LFG.join ~= join then return end
+			if code == 404 then
+				LFG.join = nil
+				LFG.say("bb_lfg_gone")
+				return
+			end
+			if data.status == "no" then
+				LFG.join = nil
+				LFG.say("bb_lfg_declined")
+			elseif data.status == "invited" and type(data.group) == "string" and data.group ~= "" then
+				local body = { party_id = data.group, accept = true }
+				if LFG.ver() then body.client_version = LFG.version end
+				LFG.gc("CMsgPartyInviteResponse", body, K.MSG_ACCEPT)
+				LFG.join = nil
+				LFG.say("bb_lfg_in")
+			end
+		end)
+	end
+end
+
+function LFG.on_gc(msg)
+	local kind = msg.msg_type
+	if msg.binary_buffer_send and kind == K.MSG_INVITE then
+		local data = LFG.read("CMsgInviteToParty", msg.binary_buffer_send, msg.size)
+		local v = data and tonumber(data.client_version)
+		if v and v > 0 then LFG.version = math.tointeger(v) end
+	elseif msg.binary_buffer_recv and kind == K.MSG_CREATED then
+		local data = LFG.read("CMsgInvitationCreated", msg.binary_buffer_recv, msg.size)
+		local sid = data and tostring(data.steam_id or "")
+		local w = sid and LFG.waiting[sid]
+		if w and LFG.own and data.group_id then
+			LFG.waiting[sid] = nil
+			LFG.req("POST", "/invited", { token = LFG.own.token, join = w.id, group = tostring(data.group_id) }, function(_, code)
+				if code ~= 200 then return end
+				LFG.next_host, LFG.next_list = 0, 0
+				pcall(Chat.Print, "ConsoleChat", string.format(L("bb_lfg_joined_chat"), tostring(w.name or "?")))
+			end)
+		end
+	elseif msg.binary_buffer_send and (kind == K.MSG_LEAVE or kind == K.MSG_FIND) and LFG.own then
+		LFG.finish(kind == K.MSG_FIND and "bb_lfg_closed_find" or "bb_lfg_closed_leave")
+	elseif msg.binary_buffer_recv and kind == K.MSG_CARD_REPLY and LFG.rank_asked and not LFG.rank then
+		local data = LFG.read("CMsgDOTAProfileCard", msg.binary_buffer_recv, msg.size)
+		local sid = LFG.sid()
+		if data and sid and tonumber(data.account_id) == math.tointeger(tonumber(sid)) - K.STEAM_BASE then
+			LFG.rank = math.tointeger(tonumber(data.rank_tier) or 0) or 0
+		end
+	end
+end
+
+function LFG.err(code, data)
+	local e = data and data.error
+	if e == "full" then return LFG.say("bb_lfg_err_full") end
+	if e == "rank" then return LFG.say("bb_lfg_err_rank") end
+	if e == "busy" then return LFG.say("bb_lfg_err_busy") end
+	if e == "gone" then return LFG.say("bb_lfg_gone") end
+	if code == 0 or code >= 500 then return LFG.say("bb_lfg_err_net") end
+	LFG.say("bb_lfg_err_net")
+end
+
+function LFG.act(value)
+	local cmd, arg = tostring(value):match("^(%w+):?(.*)$")
+	local f = LFG.form
+	if cmd == "ok" then
+		Config.WriteInt(K.CONFIG, "lfg_ok", 1)
+		LFG.on = true
+		LFG.next_list = 0
+	elseif cmd == "new" then
+		f.open = true
+		state.anim.lfg_form = 0
+	elseif cmd == "x" then
+		f.open = false
+	elseif cmd == "fmode" then
+		f.mode = tonumber(arg) or f.mode
+	elseif cmd == "fany" then
+		f.roles = 31
+	elseif cmd == "frole" then
+		local bit = 1 << ((tonumber(arg) or 1) - 1)
+		f.roles = f.roles == 31 and bit or (f.roles ~ bit)
+		if f.roles == 0 then f.roles = 31 end
+	elseif cmd == "fspread" then
+		f.spread = tonumber(arg) or f.spread
+	elseif cmd == "flang" then
+		f.lang = arg
+	elseif cmd == "fauto" then
+		f.auto = not f.auto
+	elseif cmd == "lrank" then
+		LFG.filter.rank = not LFG.filter.rank
+	elseif cmd == "lmode" then
+		local m = tonumber(arg)
+		LFG.filter.mode = LFG.filter.mode ~= m and m or nil
+		LFG.next_list = 0
+	elseif cmd == "llang" then
+		LFG.filter.lang = LFG.filter.lang ~= arg and arg or nil
+		LFG.next_list = 0
+	elseif cmd == "create" then
+		local sid = LFG.sid()
+		if f.roles == 0 then return LFG.say("bb_lfg_pick_role") end
+		if not sid then return LFG.say("bb_lfg_err_net") end
+		LFG.req("POST", "/party", { sid = sid, name = LFG.name(), rank = LFG.rank or 0, mode = f.mode, roles = f.roles, lang = LFG.lang(), spread = f.spread, auto = f.auto, size = 1 }, function(data, code)
+			if code ~= 200 or not data.token then return LFG.err(code, data) end
+			LFG.own = { id = data.id, token = data.token, ends = state.clock + K.LFG_TTL, size = 1, mode = f.mode, roles = f.roles }
+			LFG.save()
+			LFG.invited, LFG.waiting, LFG.asks = {}, {}, {}
+			LFG.next_host, LFG.next_list = 0, 0
+			f.open = false
+		end)
+	elseif cmd == "close" then
+		local own = LFG.own
+		LFG.own, LFG.asks = nil, {}
+		LFG.next_list = 0
+		LFG.save()
+		if own then LFG.req("POST", "/close", { token = own.token }, function() end) end
+	elseif cmd == "extend" then
+		local own = LFG.own
+		if not own then return end
+		LFG.req("POST", "/extend", { token = own.token }, function(data, code)
+			if code ~= 200 or not LFG.own or LFG.own.token ~= own.token then return end
+			local left = tonumber(data.expires) and tonumber(data.now) and (tonumber(data.expires) - tonumber(data.now))
+			if left then
+				own.ends = state.clock + left
+				LFG.save()
+			end
+		end)
+	elseif cmd == "join" then
+		local sid = LFG.sid()
+		if not sid or LFG.join then return end
+		local host = nil
+		for _, p in ipairs(LFG.list) do
+			if p.id == arg then host = p end
+		end
+		LFG.req("POST", "/join", { party = arg, sid = sid, name = LFG.name(), rank = LFG.rank or 0, role = my_position() }, function(data, code)
+			if code ~= 200 or not data.id then return LFG.err(code, data) end
+			LFG.join = { id = data.id, secret = data.secret, name = host and host.name or "?", ends = state.clock + K.LFG_WAIT }
+			LFG.next_join = state.clock + K.LFG_JOIN
+		end)
+	elseif cmd == "yes" or cmd == "no" then
+		local own = LFG.own
+		if not own then return end
+		for i = #LFG.asks, 1, -1 do
+			if LFG.asks[i].id == arg then table.remove(LFG.asks, i) end
+		end
+		LFG.req("POST", "/decide", { token = own.token, join = arg, ok = cmd == "yes" }, function() LFG.next_host = 0 end)
+	end
+end
+
+function W.chip(key, label, x, y, on, kind, value)
+	local tw = measure(fonts.w500, 13, label) + 20
+	local hot = hover_t("chip_" .. key, x, y, tw, 28)
+	local t = tween("chip_on_" .. key, on and 1 or 0, 16)
+	rect(x, y, tw, 28, mix(mix(N.SLOT, N.TRACK, hot), N.ACCENT, t), 8)
+	text(fonts.w500, 13, label, x + 10, y + 6, mix(N.TEXT, N.INK, t))
+	if kind then button(kind, x, y, tw, 28, value) end
+	return tw
+end
+
+function W.party(w, h)
+	local x, cw = N.X, w - 2 * N.X
+	local top = N.TOP
+	W.block(0)
+	if not LFG.ok() then
+		local bw = 520
+		local bx = (w - bw) / 2
+		local by = top + 90
+		text(fonts.d600, 22, L("bb_lfg_consent_title"), w / 2, by, N.TEXT, "center")
+		local lines = wrap(fonts.w500, 15, L("bb_lfg_consent"), bw, 5)
+		for i, l in ipairs(lines) do text(fonts.w500, 15, l, w / 2, by + 44 + (i - 1) * 22, N.MUTED, "center") end
+		W.button_main("lfg_ok", L("bb_lfg_enable"), (w - 200) / 2, by + 60 + #lines * 22, 200, 44, "lfg", "ok")
+		W.unblock()
+		return
+	end
+	local f = LFG.filter
+	local cx = x
+	cx = cx + W.chip("lrank", L("bb_lfg_my_rank"), cx, top, f.rank, "lfg", "lrank") + 6
+	for m = 0, 3 do cx = cx + W.chip("lm" .. m, L("bb_lfg_mode_" .. m), cx, top, f.mode == m, "lfg", "lmode:" .. m) + 6 end
+	for _, lg in ipairs(K.LFG_LANGS) do cx = cx + W.chip("ll" .. lg, lg:upper(), cx, top, f.lang == lg, "lfg", "llang:" .. lg) + 6 end
+	if not LFG.own then W.button_main("lfg_new", L("bb_lfg_new"), x + cw - 170, top - 4, 170, 36, "lfg", "new") end
+	W.unblock()
+	local strip = ((LFG.own and #LFG.asks > 0) or LFG.join or (LFG.msg and state.clock - LFG.msg_at < K.LFG_MSG)) and 64 or 0
+	local y = top + 48
+	local bottom = h - 16 - strip
+	W.block(1)
+	local rows = {}
+	local own = LFG.own
+	if own then
+		local sid = LFG.sid() or ""
+		rows[1] = { id = own.id, sid = sid, name = LFG.name(), rank = LFG.rank or 0, mode = own.mode, roles = own.roles, lang = LFG.lang(), size = own.size or 1, members = own.members or { sid } }
+	end
+	for _, p in ipairs(LFG.list) do
+		if own and p.id == own.id then
+			if type(p.members) == "table" then own.members = p.members end
+		elseif not f.rank or LFG.fits(p) then
+			rows[#rows + 1] = p
+		end
+	end
+	if LFG.list_at == 0 and not LFG.offline and not own then
+		for i = 0, 2 do
+			W.skeleton(x, y + i * 70, cw, 62, i)
+		end
+	elseif #rows == 0 then
+		W.empty(LFG.offline and L("bb_lfg_err_net") or L("bb_lfg_empty"), x, y + 12, cw)
+	end
+	local total = #rows * K.LFG_ROW
+	LFG.scroll_max = math.max(0, total - (bottom - y))
+	LFG.scroll_to = math.max(0, math.min(LFG.scroll_max, LFG.scroll_to or 0))
+	local sc = tween("lfg_scroll", LFG.scroll_to, 14)
+	Render.PushClip(P(x - 4, y - 4), P(x + cw + 4, bottom), true)
+	for i, p in ipairs(rows) do
+		local ry = y + (i - 1) * K.LFG_ROW - sc
+		if ry > bottom then break end
+		local live = ry >= y - 1 and ry + 60 <= bottom + 1
+		if ry + 60 >= y then
+			local mine = LFG.own and p.id == LFG.own.id
+			local fits = mine or LFG.fits(p)
+			local hot = hover_t("lfg_row_" .. p.id, x, ry, cw, 60)
+			local bg = mix(N.PANEL, N.SLOT, hot)
+			rect(x, ry, cw, 60, bg, 14)
+			if mine then frame_line(x, ry, cw, 60, alpha(N.ACCENT, 0.55), 14, 1.2) end
+			local members = type(p.members) == "table" and p.members or { p.sid }
+			local filled = math.max(#members, math.min(5, tonumber(p.size) or 1))
+			local cxs, rs = {}, {}
+			local ax = x + 14
+			for k = 1, 5 do
+				local r = k == 1 and 19 or 14
+				if k == 1 then
+					cxs[k] = ax + r
+				else
+					cxs[k] = cxs[k - 1] + rs[k - 1] + r - 8
+				end
+				rs[k] = r
+			end
+			local cy = ry + 30
+			for k = 5, 1, -1 do
+				local r, cx = rs[k], cxs[k]
+				dot(cx, cy, r + 2, bg)
+				if k <= filled then
+					local sid = members[k]
+					local handle = sid and LFG.avatar(sid)
+					if handle then
+						W.pic(handle, cx - r, cy - r, r * 2, r * 2, r)
+					else
+						dot(cx, cy, r, LFG.tint(sid or p.id .. k))
+						if k == 1 then
+							local name = tostring(p.name or "?")
+							local first = name:sub(1, (utf8.offset(name, 2) or (#name + 1)) - 1)
+							text(fonts.d600, 15, first:upper(), cx, cy - 9, N.TEXT, "center")
+						end
+					end
+				else
+					Render.Circle(P(cx, cy), r * G.s, A(N.LINE), 1.5 * G.s, 0, 1, false, 32)
+					text(fonts.w500, 13, "+", cx, cy - 8, N.DIM, "center")
+				end
+			end
+			local tx = cxs[5] + rs[5] + 16
+			local right = x + cw - ((mine and LFG.own and LFG.own.ends - state.clock < K.LFG_EXTEND_AT) and 248 or 132)
+			local title = mine and L("bb_lfg_mine") or tostring(p.name or "?")
+			text(fonts.w600, 15, fit(fonts.w600, 15, title, right - tx), tx, ry + 11, N.TEXT)
+			LFG.medal(tx - 2, ry + 31, 20, p.rank)
+			local roles = table.concat(LFG.roles(tonumber(p.roles) or 0), ", ")
+			local info = LFG.rank_label(p.rank) .. " · " .. tostring(p.lang or ""):upper() .. " · " .. L("bb_lfg_mode_" .. (tonumber(p.mode) or 0)) .. " · " .. string.format(L(mine and "bb_lfg_we" or "bb_lfg_they"), roles)
+			if mine and LFG.own then info = info .. " · " .. string.format(L("bb_lfg_left"), math.max(0, math.ceil((LFG.own.ends - state.clock) / 60))) end
+			text(fonts.w500, 12, fit(fonts.w500, 12, info, right - tx - 22), tx + 22, ry + 35, N.MUTED)
+			if mine then
+				W.button_ghost("lfg_cancel_" .. p.id, L("bb_lfg_close"), x + cw - 120, ry + 12, 108, 36, live and "lfg" or "none", "close")
+				if LFG.own and LFG.own.ends - state.clock < K.LFG_EXTEND_AT then
+					W.button_ghost("lfg_extend", L("bb_lfg_extend"), x + cw - 236, ry + 12, 108, 36, live and "lfg" or "none", "extend")
+				end
+			elseif fits and not LFG.join and not LFG.own then
+				W.button_main("lfg_join_" .. p.id, L("bb_lfg_join"), x + cw - 120, ry + 12, 108, 36, live and "lfg" or "none", "join:" .. p.id)
+			elseif not fits then
+				text(fonts.w500, 12, L("bb_lfg_rank_no"), x + cw - 14, ry + 23, N.DIM, "right")
+			end
+		end
+	end
+	Render.PopClip()
+	if LFG.scroll_max > 0 then
+		local view = bottom - y
+		local bh = math.max(24, view * view / total)
+		local by = y + (view - bh) * (sc / LFG.scroll_max)
+		if LFG.drag then
+			if Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1, true) then
+				local _, cy = Input.GetCursorPos()
+				LFG.scroll_to = LFG.drag.s + (cy - LFG.drag.y) / G.s * LFG.scroll_max / math.max(1, view - bh)
+			else
+				LFG.drag = nil
+			end
+		end
+		local bhot = hover_t("lfg_bar", x + cw, y, 16, view)
+		rect(x + cw + 6 - bhot, by, 3 + bhot * 2, bh, mix(N.LINE, N.DIM, math.max(bhot, LFG.drag and 1 or 0)), 3)
+		button("lfgbar", x + cw, y, 16, view, "bar")
+		if state.win.tab == "party" and LFG.over() and state.clock - (LFG.wheel_at or -10) > 0.2 then
+			if Input.IsKeyDownOnce(Enum.ButtonCode.KEY_MWHEELUP, true) then
+				LFG.wheel(1)
+			elseif Input.IsKeyDownOnce(Enum.ButtonCode.KEY_MWHEELDOWN, true) then
+				LFG.wheel(-1)
+			end
+		end
+	end
+	W.unblock()
+	if strip > 0 then
+		W.block(2)
+		local sy = h - 16 - 52
+		rect(x, sy, cw, 52, N.PANEL, 12)
+		frame_line(x, sy, cw, 52, N.LINE, 12)
+		if LFG.own and LFG.asks[1] then
+			local ask = LFG.asks[1]
+			dot(x + 20, sy + 26, 4, N.WIN)
+			if ask then
+				local line = string.format(L("bb_lfg_asks"), tostring(ask.name or "?")) .. " · " .. LFG.rank_label(ask.rank)
+				text(fonts.w600, 14, fit(fonts.w600, 14, line, cw - 320), x + 36, sy + 16, N.TEXT)
+				W.button_main("lfg_yes", L("bb_lfg_yes"), x + cw - 236, sy + 9, 110, 34, "lfg", "yes:" .. ask.id)
+				W.button_ghost("lfg_no", L("bb_lfg_no"), x + cw - 118, sy + 9, 106, 34, "lfg", "no:" .. ask.id)
+			end
+		elseif LFG.join then
+			W.dots(x + 22, sy + 26)
+			text(fonts.w600, 14, fit(fonts.w600, 14, string.format(L("bb_lfg_wait"), LFG.join.name), cw - 80), x + 50, sy + 16, N.TEXT)
+		else
+			text(fonts.w600, 14, fit(fonts.w600, 14, LFG.msg or "", cw - 40), x + 20, sy + 16, N.TEXT)
+		end
+		W.unblock()
+	end
+	if LFG.form.open then
+		local fo = LFG.form
+		local t = tween("lfg_form", 1, 18)
+		button("lfg", 0, N.HEAD, w, h - N.HEAD, "x")
+		local pw, ph = 380, 456
+		local px, py = x + cw - pw, top + 40 - (1 - t) * 8
+		local base = G.alpha
+		G.alpha = base * t
+		W.soft(px, py, pw, ph, 14, 24)
+		rect(px, py, pw, ph, N.PANEL, 14)
+		frame_line(px, py, pw, ph, N.LINE, 14)
+		button("lfg", px, py, pw, ph, "none")
+		text(fonts.w600, 16, L("bb_lfg_form"), px + 18, py + 16, N.TEXT)
+		local qx, qy, qw, qh, xh = W.btn("lfg_fx", px + pw - 42, py + 10, 30, 30)
+		if xh > 0.01 then rect(qx, qy, qw, qh, alpha(N.HOT, xh), 10) end
+		W.glyph(K.CLOSE, 13, qx + qw / 2, qy + qh / 2, mix(N.MUTED, N.TEXT, xh))
+		button("lfg", px + pw - 42, py + 10, 30, 30, "x")
+		local fy = py + 56
+		local function label(key)
+			text(fonts.w500, 13, L(key), px + 18, fy, N.MUTED)
+			fy = fy + 22
+		end
+		label("bb_lfg_f_mode")
+		local fx = px + 18
+		for m = 0, 3 do
+			local ml = L("bb_lfg_mode_" .. m)
+			if fx + measure(fonts.w500, 13, ml) + 20 > px + pw - 18 then fy, fx = fy + 34, px + 18 end
+			fx = fx + W.chip("fm" .. m, ml, fx, fy, fo.mode == m, "lfg", "fmode:" .. m) + 6
+		end
+		fy = fy + 42
+		label("bb_lfg_f_roles")
+		fx = px + 18
+		fx = fx + W.chip("frany", L("bb_lfg_anyone"), fx, fy, fo.roles == 31, "lfg", "fany") + 6
+		for p = 1, 5 do
+			local on = fo.roles ~= 31 and fo.roles & (1 << (p - 1)) ~= 0
+			fx = fx + W.chip("fr" .. p, tostring(p), fx, fy, on, "lfg", "frole:" .. p) + 6
+		end
+		fy = fy + 42
+		label("bb_lfg_f_rank")
+		fx = px + 18
+		for s = 0, 2 do fx = fx + W.chip("fs" .. s, L("bb_lfg_spread_" .. s), fx, fy, fo.spread == s, "lfg", "fspread:" .. s) + 6 end
+		fy = fy + 34
+		text(fonts.w500, 12, fit(fonts.w500, 12, LFG.range_text(fo.spread), pw - 36), px + 18, fy, N.DIM)
+		fy = fy + 26
+		label("bb_lfg_f_lang")
+		fx = px + 18
+		for _, lg in ipairs(K.LFG_LANGS) do fx = fx + W.chip("fl" .. lg, lg:upper(), fx, fy, LFG.lang() == lg, "lfg", "flang:" .. lg) + 6 end
+		fy = fy + 44
+		text(fonts.w500, 15, L("bb_lfg_auto"), px + 18, fy + 2, N.TEXT)
+		W.toggle("lfg_auto", px + pw - 58, fy, fo.auto)
+		button("lfg", px + 10, fy - 6, pw - 20, 34, "fauto")
+		W.button_main("lfg_create", L("bb_lfg_create"), px + 18, py + ph - 58, pw - 36, 42, "lfg", "create")
+		G.alpha = base
+	end
 end
 
 local SC = { data = {}, asked = {} }
@@ -6654,6 +7483,11 @@ local function click(key)
 				LINK.open(b.value)
 			elseif b.kind == "upd" and left then
 				UPD.act(b.value)
+			elseif b.kind == "lfg" and left then
+				LFG.act(b.value)
+			elseif b.kind == "lfgbar" and left then
+				local _, cy = Input.GetCursorPos()
+				LFG.drag = { y = cy, s = LFG.scroll_to or 0 }
 			elseif state.clock >= state.next_click and (b.kind == "item" or b.kind == "buy" or b.kind == "quick") then
 				state.next_click = state.clock + K.CLICK_GAP
 				if b.kind == "quick" or (b.kind == "item" and left) then
@@ -7780,7 +8614,7 @@ local function frame()
 		local ok, err = pcall(shop.draw)
 		if not ok and err ~= state.shop.error then
 			state.shop.error = err
-			log("shop: " .. tostring(err))
+			Log.Write("[Build Brain] shop: " .. tostring(err))
 		end
 	end
 end
@@ -7957,7 +8791,7 @@ function AB.game(hero)
 		ab.pending = nil
 		if gold > pend.gold - pend.cost * 0.5 and (counts[pend.name] or 0) <= pend.had and (counts[pend.step] or 0) <= pend.had_step then
 			ab.fail[pend.name] = state.clock + K.AB_FAIL
-			log("autobuy failed: " .. pend.name)
+			AB.chat({ pend.name }, string.format(L("bb_ab_fail"), item_title(pend.name)))
 		end
 	end
 	if state.clock < (ab.hold or 0) then return end
@@ -8033,6 +8867,19 @@ function script.OnFrame()
 		state.frame_error = err
 		Log.Write("[Build Brain] frame: " .. tostring(err))
 	end
+	local okl, errl = pcall(LFG.tick)
+	if not okl and errl ~= state.lfg_error then
+		state.lfg_error = errl
+		Log.Write("[Build Brain] party: " .. tostring(errl))
+	end
+end
+
+function script.OnGCMessage(msg)
+	if ui.enable:Get() and type(msg) == "table" then
+		local ok, err = pcall(LFG.on_gc, msg)
+		if not ok then log("lfg gc: " .. tostring(err)) end
+	end
+	return true
 end
 
 function script.OnUpdate()
@@ -8047,6 +8894,13 @@ end
 function script.OnKeyEvent(data)
 	if not ui.enable:Get() then return true end
 	local key, event = data.key, data.event
+	if (key == Enum.ButtonCode.KEY_MWHEELUP or key == Enum.ButtonCode.KEY_MWHEELDOWN) and state.win.tab == "party" and window_hit() then
+		if event ~= Enum.EKeyEvent.EKeyEvent_KEY_UP then
+			LFG.wheel_at = state.clock
+			LFG.wheel(key == Enum.ButtonCode.KEY_MWHEELUP and 1 or -1)
+		end
+		return false
+	end
 	if key ~= Enum.ButtonCode.KEY_MOUSE1 and key ~= Enum.ButtonCode.KEY_MOUSE2 then return true end
 	local win = state.win
 	if event == Enum.EKeyEvent.EKeyEvent_KEY_UP then
