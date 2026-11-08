@@ -11,6 +11,7 @@
 //   POST /join    {party,sid,name,rank,role}  -> {id,secret}
 //   GET  /status?id=&secret=           -> {status,group}
 //   GET  /avatars?ids=a,b              -> {sid: base64 jpg}, needs secret STEAM_KEY
+//   GET  /stats                        daily counters for the last 14 days
 
 const PARTY_TTL = 600;
 const JOIN_TTL = 120;
@@ -23,6 +24,7 @@ const AVATAR_TTL = 86400;
 
 let ready = false;
 const hits = new Map();
+const seenMem = new Set();
 
 async function setup(db) {
   if (ready) return;
@@ -30,6 +32,8 @@ async function setup(db) {
     db.prepare("CREATE TABLE IF NOT EXISTS parties (id TEXT PRIMARY KEY, token TEXT, sid TEXT UNIQUE, name TEXT, rank INTEGER, mode INTEGER, roles INTEGER, lang TEXT, spread INTEGER, auto INTEGER, size INTEGER, expires INTEGER)"),
     db.prepare("CREATE TABLE IF NOT EXISTS joins (id TEXT PRIMARY KEY, secret TEXT, party TEXT, sid TEXT, name TEXT, rank INTEGER, role INTEGER, status TEXT, grp TEXT, expires INTEGER)"),
     db.prepare("CREATE INDEX IF NOT EXISTS joins_party ON joins (party)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS stats (day TEXT, key TEXT, n INTEGER, PRIMARY KEY (day, key))"),
+    db.prepare("CREATE TABLE IF NOT EXISTS seen (day TEXT, h TEXT, PRIMARY KEY (day, h))"),
   ]);
   ready = true;
 }
@@ -69,6 +73,23 @@ const int = (v, lo, hi) => {
 };
 const clean = (s) => String(s || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 24) || "?";
 const medal = (r) => Math.floor(r / 10);
+const today = (t) => new Date(t * 1000).toISOString().slice(0, 10);
+
+async function bump(db, t, key) {
+  await db.prepare("INSERT INTO stats (day, key, n) VALUES (?, ?, 1) ON CONFLICT (day, key) DO UPDATE SET n = n + 1").bind(today(t), key).run();
+}
+
+async function viewer(db, t, ip) {
+  const day = today(t);
+  const raw = new TextEncoder().encode("bb-party:" + day + ":" + ip);
+  const h = [...new Uint8Array(await crypto.subtle.digest("SHA-256", raw))].slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const key = day + ":" + h;
+  if (seenMem.has(key)) return;
+  seenMem.add(key);
+  if (seenMem.size > 20000) seenMem.clear();
+  const r = await db.prepare("INSERT OR IGNORE INTO seen (day, h) VALUES (?, ?)").bind(day, h).run();
+  if (r && r.meta && r.meta.changes > 0) await bump(db, t, "viewers");
+}
 
 function b64(buf) {
   const bytes = new Uint8Array(buf);
@@ -127,8 +148,10 @@ export default {
         await db.batch([
           db.prepare("DELETE FROM parties WHERE expires < ?").bind(t),
           db.prepare("DELETE FROM joins WHERE expires < ?").bind(t),
+          db.prepare("DELETE FROM seen WHERE day < ?").bind(today(t - 2 * 86400)),
         ]);
       }
+      await viewer(db, t, ip);
       const mode = int(q.get("mode"), 0, MODES - 1);
       const lang = LANGS.includes(q.get("lang")) ? q.get("lang") : null;
       let sql = "SELECT id, sid, name, rank, mode, roles, lang, spread, auto, size, expires FROM parties WHERE expires > ?";
@@ -169,6 +192,7 @@ export default {
       const token = rid(16);
       await db.prepare("INSERT OR REPLACE INTO parties (id, token, sid, name, rank, mode, roles, lang, spread, auto, size, expires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
         .bind(id, token, sid, clean(body.name), rank, mode, roles, body.lang, spread, body.auto ? 1 : 0, size, t + PARTY_TTL).run();
+      await bump(db, t, "parties");
       return json({ id, token, expires: t + PARTY_TTL });
     }
 
@@ -215,6 +239,7 @@ export default {
         db.prepare("UPDATE joins SET status = 'invited', grp = ?, expires = (SELECT expires FROM parties WHERE id = ?) WHERE id = ? AND party = ?").bind(grp, party.id, join, party.id),
         db.prepare("UPDATE parties SET size = MIN(size + 1, 5) WHERE id = ?").bind(party.id),
       ]);
+      await bump(db, t, "joined");
       return json({ ok: true });
     }
 
@@ -234,6 +259,7 @@ export default {
       const secret = rid(16);
       await db.prepare("INSERT INTO joins (id, secret, party, sid, name, rank, role, status, grp, expires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '', ?)")
         .bind(id, secret, party.id, sid, clean(body.name), rank, role, party.auto ? "wait" : "ask", t + JOIN_TTL).run();
+      await bump(db, t, "joins");
       return json({ id, secret });
     }
 
@@ -247,6 +273,13 @@ export default {
       const ids = [...new Set((q.get("ids") || "").split(",").filter(sidOk))].slice(0, AVATAR_MAX);
       if (ids.length === 0) return json({});
       return json(await avatars(ids, env));
+    }
+
+    if (url.pathname === "/stats" && req.method === "GET") {
+      const rows = await db.prepare("SELECT day, key, n FROM stats WHERE day >= ? ORDER BY day DESC").bind(today(t - 13 * 86400)).all();
+      const days = {};
+      for (const r of rows.results || []) (days[r.day] = days[r.day] || { viewers: 0, parties: 0, joins: 0, joined: 0 })[r.key] = r.n;
+      return json({ days });
     }
 
     return json({ error: "not found" }, 404);
