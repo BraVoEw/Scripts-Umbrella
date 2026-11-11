@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.4.0/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.5.0/build_brain.lua)**
 
 ## Что умеет
 
@@ -32,6 +32,7 @@
 - Бой: какой урон тебе наносят вражеские герои и кто именно, разбор последней смерти, у кого из врагов ульта или BKB на кулдауне и кого можно бить прямо сейчас.
 - Команда: что купить каждому тиммейту по его сборке и против врагов. Клик по предмету героя отправляет ему родную подсказку Доты, клик по предмету на команду пишет в командный чат.
 - Пати: поиск тиммейтов среди игроков с Build Brain. Создаёшь пати (режим, кого ищешь, разброс по рангу, язык), другие видят её в списке и заходят в один клик: твой скрипт сам приглашает, их скрипт сам принимает. Можно одобрять каждого вручную. Пати сама убирается из списка, когда ты начал поиск игры, вышел из пати или набралось пятеро. Когда кто-то создал пати, в главном меню всплывает уведомление со звуком, оно выключается в настройках.
+- Поддержка: донат прямо из окна скрипта и список тех, кто поддержал. Вписываешь ник и пару слов, выбираешь способ, оплата проходит в браузере. Чем больше донат, тем заметнее карточка в списке.
 
 Если тебя в основном бьют магией или ты часто стоишь в контроле, скрипт это заметит и подскажет защиту.
 
@@ -42,7 +43,8 @@
 - Скрипт раз в час проверяет, есть ли свежий файл, и скачивает его, около 0.8 МБ. Если интернета нет, работает с последним скачанным. Если GitHub недоступен, файл качается через зеркало jsDelivr.
 - Матчапы в драфте и роли героев считаются по пабам высокого рейтинга (STRATZ), общий винрейт героя на твоём ранге берётся из OpenDota.
 - Скрипт ничего не отправляет о тебе и твоём аккаунте, пока ты сам не включил вкладку «Пати». Для разведки он спрашивает у OpenDota открытую статистику врагов по их ID.
-- Для уведомлений о новых пати скрипт раз в минуту в главном меню спрашивает наш сервер, есть ли новые пати. В этом запросе нет ни Steam ID, ни ника. Сервер считает по хэшу IP число игроков за сутки, сам адрес не хранит. Если уведомления выключить, запросов нет.
+- Для уведомлений о новых пати скрипт раз в минуту в главном меню спрашивает наш сервер, есть ли новые пати. В этом запросе нет ни Steam ID, ни ника. Сервер считает по хэшу IP число игроков за час, сутки, неделю и месяц, сколько из них новых и из каких они стран, и видит версию скрипта, сам адрес не хранит. Если уведомления выключить, запросов нет.
+- Вкладка «Поддержка» берёт список поддержавших с сервера сайта. Когда ты нажимаешь способ доната, скрипт отправляет туда ник и сообщение, которые ты сам вписал, чтобы привязать их к донату. Оплата проходит в браузере, платёжных данных скрипт не видит. Сервер статистики считает по хэшу IP, сколько игроков открыли вкладку и форму доната.
 - Вкладка «Пати» включается отдельной кнопкой. После этого на наш сервер уходят твой Steam ID, ник, ранг и роли пати, а аватарки участников подгружаются через Steam. Пати хранится 10 минут, заявка на вход 2 минуты, потом всё удаляется.
 
 ## Установка
@@ -75,7 +77,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.4.0/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.5.0/build_brain.lua)**
 
 ### Features
 
@@ -88,6 +90,7 @@ Umbrella script for Dota 2. Shows a build for your hero and role in the shop, ba
 - A window (on a key) with Draft, Build and Fight tabs: who to pick, who to watch out for, what kills you, enemy ult and BKB cooldowns and when you can fight.
 - Team tab: what each teammate should buy from their build and against the enemies. Click a hero's item to send them the native Dota suggestion, click a team item to write it in team chat.
 - Party tab: find teammates among Build Brain users. Create a party (mode, roles you need, rank range, language), others join it in one click: your script invites them and theirs accepts. Manual approval is optional. The party leaves the list by itself when you start a search, leave the party or it is full. It is off until you turn it on: then your Steam ID, nickname, rank and party roles go to our party server and are deleted after 10 minutes. When someone opens a party you get a notification with a sound in the main menu; for that the script asks our server once a minute whether there are new parties, with no Steam ID or nickname in the request. It can be turned off in Settings.
+- Support tab: donate right from the script window and see the list of supporters. Enter a name and a few words, pick a method, the payment itself happens in your browser. The bigger the donation, the more the card stands out.
 - Skip or replace any item of the build from its hover card, and remember the choice for the hero. Item minutes follow your real income, Turbo gets its own minutes.
 - Your own hero pool: mark the heroes you play and the draft shows your 2 best of them on top of the meta picks.
 - A short first-run setup (role, heroes, game mode) and window styles: Scoreboard, Mono, Gold, Ruby.
