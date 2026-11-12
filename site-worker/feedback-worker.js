@@ -20,6 +20,12 @@ let feedCache = null;
 const DN_EVERY = 300e3;                // Donatello answers 429 quickly: ask at most every 5 minutes, across all instances
 let donatelloIssue = "";               // why Donatello failed, shown only in the bot's /dons
 let donatelloWait = 0;                 // Retry-After from the last 429, ms
+const CLAIM_TTL = 20 * 60e3;
+const CLAIM_LIMIT = 8;
+const CLAIM_BACK = 10 * 60e3;
+const WALL_MAX = 300;
+const WALL_SHOW = 50;
+const WALL_FAST = 30e3;
 
 const HELP = [
   "Команды:",
@@ -71,12 +77,18 @@ export default {
     if (url.pathname === "/da-callback") return daCallback(url, env);
     if (url.pathname === "/donations" && req.method === "GET") {
       const feed = await donations(env);
-      return reply({ donations: feed.list.map(({ id, ...x }) => x), sources: feed.sources }, 200, { "Cache-Control": "public, max-age=60" });
+      return reply({ donations: feed.list.map(({ id, ...x }) => x), totals: feed.totals, sources: feed.sources }, 200, { "Cache-Control": "public, max-age=60" });
     }
     if (url.pathname === "/thanks" && req.method === "GET") {
       const list = (await getThanks(env)).map((x) => ({ name: x.name, link: x.link, ru: x.ru, en: x.en }));
       return reply({ thanks: list }, 200, { "Cache-Control": "public, max-age=60" });
     }
+    if (url.pathname === "/wall" && req.method === "GET") {
+      const waiting = url.searchParams.has("claim");
+      const feed = await donations(env, false, waiting ? WALL_FAST : FEED_TTL);
+      return reply({ donors: feed.wall || [], now: Date.now() }, 200, { "Access-Control-Allow-Origin": "*", "Cache-Control": waiting ? "no-store" : "public, max-age=30" });
+    }
+    if (url.pathname === "/claim" && req.method === "POST") return claim(req, env, reply);
     if (url.pathname !== "/" || req.method !== "POST") return reply({ ok: false }, 405);
     if (allowed.length && !allowed.includes(origin)) return reply({ ok: false }, 403);
 
@@ -234,6 +246,18 @@ function cleanMessage(v) {
   const t = String(v || "").replace(LINK, "").replace(/\s+/g, " ").trim();
   return !t || BAD.test(t) ? "" : t.slice(0, 120);
 }
+// The donor picks a project on the site and pastes its name into the message; anything else goes to future scripts.
+// A new script needs its own line here, keyed like the site's catalog.
+const PROJECTS = [
+  ["build-brain", /build\s*brain|buildbrain|(^|[^a-zа-яё])(bb|бб)($|[^a-zа-яё])|билд\s*брейн/i],
+  ["history-changer", /history\s*changer|(^|[^a-zа-яё])hc($|[^a-zа-яё])|хистори|history/i],
+];
+function projectOf(text) {
+  const t = String(text || "");
+  for (const [key, re] of PROJECTS) if (re.test(t)) return key;
+  return "future";
+}
+
 function when(v) {
   const t = Date.parse(String(v || "").replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(v || "")) ? "" : "Z"));
   return isNaN(t) ? 0 : t;
@@ -272,6 +296,7 @@ async function fromDonationAlerts(env) {
     amount: Number(x.amount) || 0,
     currency: String(x.currency || ""),
     message: x.message_type === "audio" ? "" : cleanMessage(x.message),
+    project: projectOf(x.message_type === "audio" ? "" : x.message),
     at: when(x.created_at),
   }));
 }
@@ -293,6 +318,7 @@ async function fromDonatello(env) {
     amount: Number(x.amount) || 0,
     currency: String(x.currency || "UAH"),
     message: cleanMessage(x.message),
+    project: projectOf(x.message),
     at: when(x.createdAt || x.created_at || x.date),
   }));
 }
@@ -314,12 +340,110 @@ async function donatelloSaved(env) {
   return list;
 }
 
-async function donations(env, fresh) {
-  if (!fresh && feedCache && Date.now() - feedCache.at < FEED_TTL) return feedCache.value;
+// Rubles per unit from the Central Bank of Russia, refreshed twice a day.
+async function rubRates(env) {
+  const saved = env.DB ? await getJSON(env, "rub_rates", null) : null;
+  if (saved && Date.now() - saved.at < 12 * 3600e3) return saved.rates;
+  try {
+    const r = await fetch("https://www.cbr-xml-daily.ru/daily_json.js");
+    if (!r.ok) throw 0;
+    const v = (await r.json()).Valute || {};
+    const rates = { RUB: 1 };
+    for (const k in v) if (v[k].Value && v[k].Nominal) rates[k] = v[k].Value / v[k].Nominal;
+    rates.USDT = rates.USD;
+    if (env.DB) await env.DB.put("rub_rates", JSON.stringify({ at: Date.now(), rates }));
+    return rates;
+  } catch {
+    return saved ? saved.rates : { RUB: 1 };
+  }
+}
+
+// Every donation is booked once by id, so totals keep growing past the API's first page. Hidden ones still count.
+async function tally(env, all) {
+  if (!env.DB) return {};
+  const book = await getJSON(env, "don_book", {});
+  let changed = false;
+  for (const x of all) if (!book[x.id]) { book[x.id] = [x.project || "future", x.amount, x.currency]; changed = true; }
+  if (changed) await env.DB.put("don_book", JSON.stringify(book));
+  const rates = await rubRates(env), totals = {};
+  for (const [p, amount, cur] of Object.values(book)) {
+    const rate = rates[String(cur).toUpperCase()];
+    if (rate) totals[p] = (totals[p] || 0) + amount * rate;
+  }
+  for (const p in totals) totals[p] = Math.round(totals[p]);
+  return totals;
+}
+
+async function claim(req, env, reply) {
+  if (!env.DB) return reply({ ok: false }, 503);
+  let d;
+  try { d = await req.json(); } catch { return reply({ ok: false }, 400); }
+  const name = cleanName(String(d.nick || "").replace(/\s+/g, " ")).slice(0, 24).trim();
+  const message = cleanMessage(d.message).slice(0, 60).trim();
+  const way = d.way === "dn" ? "dn" : "da";
+  if (!name) return reply({ ok: false, error: "nick" }, 400);
+  const ip = await sha(`ip:${req.headers.get("CF-Connecting-IP") || "?"}:${env.SETUP_KEY || ""}`, 16);
+  if (await isBanned(env, ip, "")) return reply({ ok: false, error: "banned" }, 403);
+  const now = Date.now();
+  const hits = (seen.get("c:" + ip) || []).filter((t) => now - t < WINDOW);
+  if (hits.length >= CLAIM_LIMIT) return reply({ ok: false, error: "rate" }, 429);
+  hits.push(now);
+  seen.set("c:" + ip, hits);
+  await donations(env, true);
+  const list = (await getJSON(env, "claims", [])).filter((c) => !c.used && now - c.at < CLAIM_TTL && c.ip !== ip);
+  const id = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
+  list.push({ id, name, message, way, at: now, ip });
+  await env.DB.put("claims", JSON.stringify(list));
+  return reply({ ok: true, id, ttl: CLAIM_TTL / 1000 });
+}
+
+async function wallOf(env, all, hidden) {
+  if (!env.DB) return [];
+  const book = await getJSON(env, "don_wall", {});
+  const fresh = all.filter((x) => !book[x.id]).sort((a, b) => a.at - b.at);
+  if (fresh.length) {
+    const now = Date.now();
+    const rates = await rubRates(env);
+    const claims = (await getJSON(env, "claims", [])).filter((c) => now - c.at < CLAIM_TTL);
+    let used = false;
+    for (const x of fresh) {
+      const way = x.id.slice(0, 2);
+      const mine = claims.find((c) => !c.used && c.way === way && x.at >= c.at - CLAIM_BACK && (!x.name || c.name.toLowerCase() === x.name.toLowerCase()));
+      const rate = rates[String(x.currency).toUpperCase()] || 0;
+      const row = { n: x.name, m: x.message, a: x.amount, c: x.currency, r: Math.round(x.amount * rate), t: x.at, s: now, k: "" };
+      if (mine) {
+        mine.used = true;
+        used = true;
+        row.n = mine.name;
+        row.m = row.m || mine.message;
+        row.k = mine.id;
+      }
+      book[x.id] = row;
+    }
+    const ids = Object.keys(book);
+    if (ids.length > WALL_MAX) {
+      ids.sort((a, b) => book[a].s - book[b].s || book[a].t - book[b].t);
+      for (const id of ids.slice(0, ids.length - WALL_MAX)) delete book[id];
+    }
+    await env.DB.put("don_wall", JSON.stringify(book));
+    if (used) await env.DB.put("claims", JSON.stringify(claims));
+  }
+  return Object.entries(book)
+    .filter(([id]) => !hidden.includes(id))
+    .map(([, x]) => ({ name: x.n, message: x.m, amount: x.a, currency: x.c, rub: x.r, at: x.t, seen: x.s, c: x.k }))
+    .sort((a, b) => b.rub - a.rub || b.at - a.at)
+    .slice(0, WALL_SHOW);
+}
+
+async function donations(env, fresh, ttl = FEED_TTL) {
+  if (!fresh && feedCache && Date.now() - feedCache.at < ttl) return feedCache.value;
   const [da, dn] = await Promise.all([fromDonationAlerts(env).catch(() => null), donatelloSaved(env).catch(() => null)]);
   const hidden = env.DB ? await getJSON(env, "hidden_donations", []) : [];
-  const list = [...(da || []), ...(dn || [])].filter((x) => x.at >= FEED_SINCE && !hidden.includes(x.id)).sort((a, b) => b.at - a.at).slice(0, FEED_MAX);
-  const value = { list, sources: { donationalerts: da ? da.length : null, donatello: dn ? dn.length : null } };
+  const all = [...(da || []), ...(dn || [])].filter((x) => x.at >= FEED_SINCE);
+  const totals = await tally(env, all).catch(() => ({}));
+  const list = all.filter((x) => !hidden.includes(x.id)).sort((a, b) => b.at - a.at).slice(0, FEED_MAX);
+  const wall = await wallOf(env, all, hidden).catch(() => []);
+  const value = { list, totals, wall, sources: { donationalerts: da ? da.length : null, donatello: dn ? dn.length : null } };
   feedCache = { at: Date.now(), value };
   return value;
 }
@@ -453,12 +577,12 @@ async function onMessage(env, m) {
   }
 
   if (cmd === "/dons") {
-    const { list, sources } = await donations(env, true);
+    const { list, sources, totals } = await donations(env, true);
     const off = Object.keys(sources).filter((k) => sources[k] === null);
     const notes = [off.length ? "Не подключено: " + off.join(", ") : "", donatelloIssue ? "Donatello: " + donatelloIssue : ""].filter(Boolean);
     const head = notes.length ? notes.join("\n") + "\n\n" : "";
     if (!list.length) return say(head + "Донатов пока нет.");
-    return say(head + ["Донаты на сайте:", ...list.map((x, i) => `${i + 1}. ${x.name || "Аноним"} · ${x.amount} ${x.currency}${x.message ? " · " + x.message : ""}`), "", "Скрыть: /hidedon номер"].join("\n"));
+    return say(head + ["Донаты на сайте:", ...list.map((x, i) => `${i + 1}. ${x.name || "Аноним"} · ${x.amount} ${x.currency} · ${x.project || "future"}${x.message ? " · " + x.message : ""}`), "", "Собрано, ₽: " + (Object.entries(totals || {}).map(([p, v]) => p + " " + v).join(", ") || "0"), "Скрыть: /hidedon номер"].join("\n"));
   }
 
   if (cmd === "/hidedon") {
