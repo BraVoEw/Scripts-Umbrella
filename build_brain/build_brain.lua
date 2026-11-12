@@ -1692,9 +1692,10 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "2.5.0",
+	VERSION = "2.5.1",
+	NEWS_VER = "2.5.0",
 	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
-	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
+	LINKS = { tg = "https://t.me/renvais" },
 	NEWS = { "bb_news_30", "bb_news_31", "bb_news_32" },
 	NEWS_W = 420,
 	CHAT_BAN_TTL = 900,
@@ -6790,7 +6791,7 @@ W.news = { active = false, pending = false, at = 0, x = 0, y = 0, w = 0, h = 0, 
 
 function W.news_close()
 	W.news.active = false
-	Config.WriteString(K.CONFIG, "news_seen", K.VERSION)
+	Config.WriteString(K.CONFIG, "news_seen", K.NEWS_VER)
 	state.win.visible = W.news.was
 end
 
@@ -7135,8 +7136,8 @@ local function draw_window()
 		W.onb.active = false
 		if not Config.mem and Config.ReadInt(K.CONFIG, "onboard2", 0) == 0 then
 			W.onb_start()
-			Config.WriteString(K.CONFIG, "news_seen", K.VERSION)
-		elseif not Config.mem and Config.ReadString(K.CONFIG, "news_seen", "") ~= K.VERSION then
+			Config.WriteString(K.CONFIG, "news_seen", K.NEWS_VER)
+		elseif not Config.mem and Config.ReadString(K.CONFIG, "news_seen", "") ~= K.NEWS_VER then
 			W.news.pending = true
 		end
 	elseif W.news.pending then
@@ -7148,7 +7149,7 @@ local function draw_window()
 		end
 	elseif W.news.active and not win.visible then
 		W.news.active = false
-		Config.WriteString(K.CONFIG, "news_seen", K.VERSION)
+		Config.WriteString(K.CONFIG, "news_seen", K.NEWS_VER)
 	elseif W.onb.active and not win.visible then
 		W.onb.active = false
 		Config.WriteInt(K.CONFIG, "onboard2", 1)
