@@ -3,12 +3,15 @@ import collections
 import json
 import math
 import os
+import re
 import sys
 import time
 import urllib.error
 import urllib.request
 
 API = "https://api.stratz.com/graphql"
+GAME_FILES = "https://raw.githubusercontent.com/SteamDatabase/GameTracking-Dota2/master/game/dota/pak01_dir/scripts/npc/"
+GAME_MIN_ITEMS = 300
 WEEK = 604800
 POSITIONS = ["POSITION_1", "POSITION_2", "POSITION_3", "POSITION_4", "POSITION_5"]
 START_GOLD = 600
@@ -203,6 +206,123 @@ def item_parts():
     with urllib.request.urlopen(req, timeout=120) as r:
         d = json.loads(r.read().decode())
     return {"item_" + k: ["item_" + c for c in (v.get("components") or []) if c] for k, v in d.items()}
+
+
+KV_TOKEN = re.compile(r'"((?:[^"\\]|\\.)*)"|([{}])|//[^\n]*|\[[^\]\n]*\]|([^\s{}"\[\]]+)')
+
+
+def kv_parse(text):
+    stack, key = [{}], None
+    for m in KV_TOKEN.finditer(text):
+        s, brace, bare = m.groups()
+        if brace == "{":
+            node = {}
+            if key is not None:
+                stack[-1][key] = node
+            stack.append(node)
+            key = None
+        elif brace == "}":
+            if len(stack) > 1:
+                stack.pop()
+            key = None
+        elif s is not None or bare is not None:
+            val = s if s is not None else bare
+            if key is None:
+                key = val
+            else:
+                stack[-1][key] = val
+                key = None
+    return stack[0]
+
+
+def fetch_text(url):
+    for n in range(4):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "build-brain"})
+            with urllib.request.urlopen(req, timeout=120) as r:
+                return r.read().decode("utf-8", "replace")
+        except Exception as e:
+            print("fetch failed", url, e, flush=True)
+            time.sleep(10 * (n + 1))
+    return None
+
+
+def item_ids(node, out):
+    for k, v in node.items():
+        if isinstance(v, dict):
+            item_ids(v, out)
+        elif k.startswith("item_") and str(v).isdigit():
+            out[k] = int(v)
+    return out
+
+
+def game_items():
+    text, ids_text = fetch_text(GAME_FILES + "items.txt"), fetch_text(GAME_FILES + "npc_ability_ids.txt")
+    if not text or not ids_text:
+        return None
+    root = kv_parse(text).get("DOTAAbilities") or {}
+    ids = item_ids((kv_parse(ids_text).get("DOTAAbilityIDs") or {}).get("ItemAbilities") or {}, {})
+    out = {}
+    for name, e in root.items():
+        if not name.startswith("item_") or not isinstance(e, dict):
+            continue
+        iid = ids.get(name) or (int(e["ID"]) if str(e.get("ID", "")).isdigit() else None)
+        if not iid:
+            continue
+        reqs = e.get("ItemRequirements") if isinstance(e.get("ItemRequirements"), dict) else {}
+        req = reqs.get("01") or reqs.get("02") or reqs.get("03") or ""
+        recipe = e.get("ItemRecipe") == "1"
+        stock = e.get("ItemInitialStockTime") or "0"
+        out[name] = {
+            "id": iid,
+            "cost": int(float(e.get("ItemCost") or 0)),
+            "recipe": recipe,
+            "gone": e.get("ItemPurchasable") == "0" or e.get("IsObsolete") == "1",
+            "stack": e.get("ItemStackable") == "1",
+            "stock": stock,
+            "stock_turbo": e.get("ItemInitialStockTimeTurbo") or stock,
+            "result": e.get("ItemResult", "") if recipe and isinstance(e.get("ItemResult"), str) else "",
+            "req": req if recipe and isinstance(req, str) else "",
+        }
+    if len(out) < GAME_MIN_ITEMS:
+        print("game items look broken", len(out), flush=True)
+        return None
+    return out
+
+
+def game_parts(game):
+    parts = {}
+    for g in game.values():
+        if g["result"] and g["req"]:
+            parts[g["result"]] = [p.replace("*", "") for p in g["req"].split(";") if p.replace("*", "")]
+    return parts
+
+
+def apply_game(items, game):
+    for name, g in game.items():
+        e = items["by_name"].get(name)
+        if e is None:
+            e = {"name": name, "id": g["id"]}
+            items["by_name"][name] = e
+        e["cost"], e["recipe"] = g["cost"], g["recipe"]
+        items["by_id"][g["id"]] = e
+    for name, g in game.items():
+        if g["gone"]:
+            items["by_name"].pop(name, None)
+            items["by_id"].pop(g["id"], None)
+    parts = game_parts(game)
+    if parts:
+        items["parts"] = parts
+        PARTS_MEMO.clear()
+
+
+def catalog_lines(game):
+    out = []
+    for name in sorted(game):
+        g = game[name]
+        flags = ("r" if g["recipe"] else "") + ("g" if g["gone"] else "") + ("s" if g["stack"] else "")
+        out.append("I\t%s\t%d\t%d\t%s\t%s\t%s\t%s\t%s" % (name, g["id"], g["cost"], flags, g["stock"], g["stock_turbo"], g["result"], g["req"]))
+    return out
 
 
 def median_level(dist):
@@ -600,12 +720,27 @@ def main():
     first_full = -(-patch["asOfDateTime"] // WEEK)
     weeks = [w for w in range(week_now - args.weeks + 1, week_now + 1) if w >= first_full] or [week_now]
     week_ts = [w * WEEK for w in weeks]
-    items = {"by_id": {}, "by_name": {}, "parts": item_parts()}
+    game = None
+    try:
+        game = game_items()
+    except Exception as e:
+        print("game items failed", e, flush=True)
+    try:
+        parts = item_parts()
+    except Exception as e:
+        if not game:
+            raise
+        print("dotaconstants parts failed", e, flush=True)
+        parts = {}
+    items = {"by_id": {}, "by_name": {}, "parts": parts}
     for it in c["items"]:
         st = it.get("stat") or {}
         e = {"name": "item_" + it["shortName"], "cost": st.get("cost") or 0, "recipe": bool(st.get("isRecipe")), "id": it["id"]}
         items["by_id"][it["id"]] = e
         items["by_name"][e["name"]] = e
+    if game:
+        apply_game(items, game)
+        print("game items", len(game), "gone", sum(1 for g in game.values() if g["gone"]), flush=True)
     ab = {a["id"]: a for a in c["abilities"]}
     heroes = sorted(c["heroes"], key=lambda h: h["id"])
     if args.heroes:
@@ -678,7 +813,7 @@ def main():
     print("vision", len(vision), "matches,", sum(1 for x in e_lines if x.split("\t")[4]), "lines with heroes", flush=True)
     head = "BB1\t%s\t%d\t%s" % (patch["name"], now, ",".join(str(w) for w in week_ts))
     with open(args.out, "w", encoding="utf-8", newline="\n") as f:
-        f.write(head + "\n" + "\n".join(lines + vs_lines + (["W\t" + ",".join(wr_parts)] if wr_parts else []) + e_lines) + "\n")
+        f.write(head + "\n" + "\n".join(lines + vs_lines + (["W\t" + ",".join(wr_parts)] if wr_parts else []) + e_lines + (catalog_lines(game) if game else [])) + "\n")
     if args.version_file:
         with open(args.version_file, "w", encoding="utf-8", newline="\n") as f:
             f.write("%s\t%d\n" % (patch["name"], now))
