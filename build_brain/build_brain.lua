@@ -508,7 +508,7 @@ local localization = qLocalization.new({
 		bb_it_black_king_bar = "BKB: immune to magic and disables",
 		bb_it_blade_mail = "Blade Mail: returns damage",
 		bb_it_bloodstone = "Bloodstone: heals from spells",
-		bb_it_bloodthorn = "Bloodthorn: silence and crits",
+		bb_it_bloodthorn = "Bloodthorn: silence and extra damage from attacks",
 		bb_it_butterfly = "Butterfly: evades attacks",
 		bb_it_cyclone = "Eul's: lifts himself and dispels",
 		bb_it_dagon = "Dagon: magic burst",
@@ -544,7 +544,7 @@ local localization = qLocalization.new({
 		bb_how_bfury = "cleave hits illusions and summons",
 		bb_how_black_king_bar = "immunity to magic and most disables",
 		bb_how_blade_mail = "returns damage to attackers",
-		bb_how_bloodthorn = "silence and attacks that pierce evasion",
+		bb_how_bloodthorn = "silence: no casting, no escape, attacks hit harder",
 		bb_how_butterfly = "evasion from attacks",
 		bb_how_crellas_crozier = "aura cuts healing of enemies nearby",
 		bb_how_crimson_guard = "blocks physical damage for your team",
@@ -1017,7 +1017,7 @@ local localization = qLocalization.new({
 		bb_it_black_king_bar = "BKB: на него не действуют магия и контроль",
 		bb_it_blade_mail = "Блейд Мейл: возвращает урон",
 		bb_it_bloodstone = "Бладстоун: лечится от заклинаний",
-		bb_it_bloodthorn = "Бладторн: сайленс и криты",
+		bb_it_bloodthorn = "Бладторн: сайленс и доп урон от атак",
 		bb_it_butterfly = "Бабочка: уклоняется от атак",
 		bb_it_cyclone = "Еул: подкидывает себя и снимает контроль",
 		bb_it_dagon = "Дагон: взрыв магией",
@@ -1053,7 +1053,7 @@ local localization = qLocalization.new({
 		bb_how_bfury = "сплеш бьёт иллюзии и юнитов",
 		bb_how_black_king_bar = "иммунитет к магии и большинству контроля",
 		bb_how_blade_mail = "возвращает урон тому, кто тебя бьёт",
-		bb_how_bloodthorn = "сайленс и атаки сквозь уклонение",
+		bb_how_bloodthorn = "сайленс: не даст кастовать и убежать, атаки бьют сильнее",
 		bb_how_butterfly = "уклонение от атак",
 		bb_how_crellas_crozier = "аура режет лечение врагов рядом",
 		bb_how_crimson_guard = "блокирует физ урон всей команде",
@@ -1500,7 +1500,7 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "2.6.0",
+	VERSION = "2.6.1",
 	NEWS_VER = "2.5.0",
 	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
 	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
@@ -1604,7 +1604,7 @@ local K = {
 	},
 	BOOTS = {
 		item_boots = true, item_phase_boots = true, item_power_treads = true, item_tranquil_boots = true,
-		item_arcane_boots = true, item_guardian_greaves = true, item_boots_of_bearing = true,
+		item_arcane_boots = true, item_guardian_greaves = true, item_boots_of_bearing = true, item_berserkers_sabatons = true,
 	},
 	FOE_TAGS = {
 		abaddon = "save heal", abyssal_underlord = "ctl tank", alchemist = "heal tank ctl", ancient_apparition = "mag ctl", antimage = "esc",
@@ -1636,7 +1636,7 @@ local K = {
 	},
 	RULES = {
 		{ tag = "brk", items = { "item_silver_edge" } },
-		{ tag = "eva", items = { "item_monkey_king_bar", "item_bloodthorn" } },
+		{ tag = "eva", items = { "item_monkey_king_bar" } },
 		{ tag = "heal", pair = true, items = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" } },
 		{ tag = "inv", items = { "item_dust", "item_ward_sentry" } },
 		{ tag = "ill", items = { "item_mjollnir", "item_bfury", "item_radiance", "item_shivas_guard", "item_maelstrom" } },
@@ -1660,7 +1660,7 @@ local K = {
 		item_blade_mail = { "item_black_king_bar" },
 		item_bloodstone = { "item_spirit_vessel", "item_skadi", "item_crellas_crozier", "item_orb_of_corrosion" },
 		item_bloodthorn = { "item_manta", "item_lotus_orb", "item_black_king_bar" },
-		item_butterfly = { "item_monkey_king_bar", "item_bloodthorn" },
+		item_butterfly = { "item_monkey_king_bar" },
 		item_cyclone = { "item_sheepstick", "item_abyssal_blade" },
 		item_dagon = { "item_black_king_bar", "item_lotus_orb", "item_glimmer_cape", "item_pipe" },
 		item_desolator = { "item_ghost", "item_shivas_guard", "item_assault", "item_solar_crest" },
@@ -2063,12 +2063,40 @@ local function encode(data)
 	if ok then return text end
 end
 
+local function data_catalog(cat, text)
+	if not text or not text:find("\nI\t", 1, true) then return false end
+	for line in text:gmatch("\nI\t([^\n]+)") do
+		local f = {}
+		for v in (line .. "\t"):gmatch("([^\t]*)\t") do f[#f + 1] = v end
+		local name, id, cost = f[1], tonumber(f[2]), tonumber(f[3]) or 0
+		if name and name:match("^item_") and id then
+			local flags, stock = f[4] or "", tonumber(f[5]) or 0
+			cat.by_name[name] = { id = id, cost = cost, recipe = flags:find("r", 1, true) ~= nil, gone = flags:find("g", 1, true) ~= nil, stack = flags:find("s", 1, true) ~= nil,
+				stock = stock, stock_turbo = tonumber(f[6]) or stock }
+			cat.by_id[id] = name
+			local result, req = f[7] or "", f[8] or ""
+			if result ~= "" and req ~= "" then
+				local parts = {}
+				for part in req:gmatch("[^;]+") do parts[#parts + 1] = (part:gsub("%*", "")) end
+				if cost > 0 then parts[#parts + 1] = name end
+				cat.parts[result] = parts
+			end
+		end
+	end
+	return next(cat.by_name) ~= nil
+end
+
 local function load_catalog()
 	if state.cat then return state.cat end
 	local cat = { by_name = {}, by_id = {}, parts = {} }
 	state.cat = cat
 	local dir = Engine.GetCheatDirectory() or ""
 	if dir ~= "" and not dir:match("[\\/]$") then dir = dir .. "\\" end
+	if data_catalog(cat, state.sz_text or read_file(dir .. K.SZ_FILE)) then
+		log("catalog: items from builds file")
+		return cat
+	end
+	cat.by_name, cat.by_id, cat.parts = {}, {}, {}
 	local data = decode(read_file(dir .. "assets\\data\\items.json"))
 	local root = type(data) == "table" and (data.DOTAAbilities or data) or nil
 	if not root then
@@ -2557,7 +2585,8 @@ end
 local function pt_item(raw)
 	if type(raw) ~= "string" then return nil end
 	if K.PT_ITEMS[raw] then return K.PT_ITEMS[raw] end
-	if raw:match("^item_") and load_catalog().by_name[raw] then return raw end
+	local entry = raw:match("^item_") and load_catalog().by_name[raw]
+	if entry and not entry.gone then return raw end
 	return nil
 end
 
@@ -2768,27 +2797,31 @@ local function sz_route(d, pos, unit)
 	end
 	if not e then return nil end
 	local cat = load_catalog()
+	local function live(name)
+		local entry = name and cat.by_name[name]
+		return entry ~= nil and not entry.gone
+	end
 	local start, route, pop = {}, {}, {}
 	for _, name in ipairs(e.start or {}) do
-		if cat.by_name[name] then start[#start + 1] = name end
+		if live(name) then start[#start + 1] = name end
 	end
 	for _, r in ipairs(e.early or {}) do
-		if cat.by_name[r[1]] then route[#route + 1] = { name = r[1], stage = 2, share = (r[3] or 0) / 100, tm = r[2] or 0, early = true } end
+		if live(r[1]) then route[#route + 1] = { name = r[1], stage = 2, share = (r[3] or 0) / 100, tm = r[2] or 0, early = true } end
 	end
 	for _, r in ipairs(e.core or {}) do
 		local tm = r[2] or 0
-		if cat.by_name[r[1]] then route[#route + 1] = { name = r[1], stage = tm <= 720 and 2 or (tm <= 1560 and 3 or 4), share = (r[3] or 0) / 100, tm = tm } end
+		if live(r[1]) then route[#route + 1] = { name = r[1], stage = tm <= 720 and 2 or (tm <= 1560 and 3 or 4), share = (r[3] or 0) / 100, tm = tm } end
 	end
 	table.sort(route, function(p, q) return p.tm < q.tm end)
 	for _, r in ipairs(e.sit or {}) do
-		if cat.by_name[r[1]] then pop[#pop + 1] = { name = r[1], share = (r[2] or 0) / 100 } end
+		if live(r[1]) then pop[#pop + 1] = { name = r[1], share = (r[2] or 0) / 100 } end
 	end
 	if #route == 0 then return nil end
 	local buy = nil
 	if type(e.buy) == "string" then
 		for iid, pct in e.buy:gmatch("(%d+):(%d+)") do
 			local name = cat.by_id[tonumber(iid)]
-			if name then
+			if live(name) then
 				buy = buy or {}
 				buy[name] = tonumber(pct)
 			end
@@ -2839,7 +2872,7 @@ local function od_route(id, pos)
 		local name = "item_" .. tostring(r[1])
 		local entry = cat.by_name[name]
 		local share = (r[2] or 0) / math.max(1, d.n)
-		if entry and not entry.recipe and not K.SKIP[name] and share >= K.SIT_SHARE then
+		if entry and not entry.recipe and not entry.gone and not K.SKIP[name] and share >= K.SIT_SHARE then
 			cand[#cand + 1] = { name = name, share = share, tm = r[3] or 0, w = r[4] or 0, cost = entry.cost }
 		end
 	end
@@ -2953,7 +2986,7 @@ local function base_route(id)
 		for _, row in ipairs(pop[stage.key] or {}) do
 			local name = cat.by_id[row[1]]
 			local entry = name and cat.by_name[name]
-			if entry and not entry.recipe and not seen[name] then
+			if entry and not entry.recipe and not entry.gone and not seen[name] then
 				if i == 1 then
 					if #start < K.START_MAX and name ~= "item_tpscroll" and not name:match("^item_ward") then
 						start[#start + 1] = name
@@ -8812,6 +8845,7 @@ local function sz_sync()
 			Config.WriteString(K.CONFIG, "sz_version", body:match("^BB1\t([^\t\n]+\t%d+)") or version)
 			state.sz, state.sz_text, state.sz_next, state.sz_pos, state.sz_vs, state.sz_vidx, state.sz_wr, state.sz_vis = {}, nil, 0, nil, {}, nil, nil, nil
 			state.sz_tm = nil
+			state.cat, state.inside = nil, {}
 			state.next_model = 0
 			log("builds updated " .. version)
 		end, "bb_builds")
