@@ -39,6 +39,7 @@ jobs:
         if: steps.decide.outputs.run == 'true'
         env:
           STRATZ_TOKEN: ${{ secrets.STRATZ_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: python -I build_brain/tools/stratz_builds.py --out data/builds.txt --version-file data/version.txt
 
       - name: Publish

@@ -12,6 +12,8 @@ import urllib.request
 API = "https://api.stratz.com/graphql"
 GAME_FILES = "https://raw.githubusercontent.com/SteamDatabase/GameTracking-Dota2/master/game/dota/pak01_dir/scripts/npc/"
 GAME_MIN_ITEMS = 300
+PATCH_LIST = "https://www.dota2.com/datafeed/patchnoteslist?language=english"
+CUTOFF = None
 WEEK = 604800
 POSITIONS = ["POSITION_1", "POSITION_2", "POSITION_3", "POSITION_4", "POSITION_5"]
 START_GOLD = 600
@@ -236,9 +238,13 @@ def kv_parse(text):
 
 
 def fetch_text(url):
+    headers = {"User-Agent": "build-brain"}
+    gh_token = os.environ.get("GITHUB_TOKEN", "").strip()
+    if gh_token and url.startswith("https://api.github.com/"):
+        headers["Authorization"] = "Bearer " + gh_token
     for n in range(4):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "build-brain"})
+            req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=120) as r:
                 return r.read().decode("utf-8", "replace")
         except Exception as e:
@@ -310,10 +316,45 @@ def apply_game(items, game):
         if g["gone"]:
             items["by_name"].pop(name, None)
             items["by_id"].pop(g["id"], None)
-    parts = game_parts(game)
-    if parts:
-        items["parts"] = parts
-        PARTS_MEMO.clear()
+    for result, plist in game_parts(game).items():
+        cur = items["parts"].setdefault(result, [])
+        for p in plist:
+            if p not in cur:
+                cur.append(p)
+    PARTS_MEMO.clear()
+
+
+def parts_at(ts):
+    path = "game/dota/pak01_dir/scripts/npc/items.txt"
+    url = "https://api.github.com/repos/SteamDatabase/GameTracking-Dota2/commits?per_page=1&path=%s&until=%s" % (path, time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(ts)))
+    try:
+        sha = json.loads(fetch_text(url) or "[]")[0]["sha"]
+    except Exception as e:
+        print("old items lookup failed", e, flush=True)
+        return None
+    text = fetch_text("https://raw.githubusercontent.com/SteamDatabase/GameTracking-Dota2/%s/%s" % (sha, path))
+    if not text:
+        return None
+    parts = {}
+    for name, e in (kv_parse(text).get("DOTAAbilities") or {}).items():
+        if not isinstance(e, dict) or e.get("ItemRecipe") != "1" or not isinstance(e.get("ItemResult"), str):
+            continue
+        reqs = e.get("ItemRequirements") if isinstance(e.get("ItemRequirements"), dict) else {}
+        req = reqs.get("01") or reqs.get("02") or reqs.get("03") or ""
+        if isinstance(req, str) and req:
+            parts[e["ItemResult"]] = [p.replace("*", "") for p in req.split(";") if p.replace("*", "")]
+    print("recipes as of", time.strftime("%Y-%m-%d %H:%M", time.gmtime(ts)), "from", sha[:8], len(parts), flush=True)
+    return parts if len(parts) >= 50 else None
+
+
+def game_patch():
+    try:
+        d = json.loads(fetch_text(PATCH_LIST) or "{}")
+        p = d["patches"][-1]
+        return p["patch_number"], int(p["patch_timestamp"])
+    except Exception as e:
+        print("patch list failed", e, flush=True)
+        return None
 
 
 def catalog_lines(game):
@@ -343,12 +384,12 @@ def mainer_games(hero_id, version, matches=None):
     games = []
     for k in range(0, len(ids), 5):
         chunk = ids[k:k + 5]
-        parts = ['p%d: player(steamAccountId: %d) { matches(request: {heroIds: [%d], take: %d}) { id gameVersionId players { steamAccountId heroId position isRadiant isVictory stats { itemPurchases { time itemId } } } } }'
+        parts = ['p%d: player(steamAccountId: %d) { matches(request: {heroIds: [%d], take: %d}) { id gameVersionId startDateTime players { steamAccountId heroId position isRadiant isVictory stats { itemPurchases { time itemId } } } } }'
                  % (i, sid, hero_id, MAIN_PER) for i, sid in enumerate(chunk)]
         data = gql("{ " + " ".join(parts) + " }")
         for i, sid in enumerate(chunk):
             for m in (data.get("p%d" % i) or {}).get("matches") or []:
-                if m.get("gameVersionId") != version:
+                if m.get("gameVersionId") != version or (CUTOFF and (m.get("startDateTime") or 0) >= CUTOFF):
                     continue
                 if matches is not None and m.get("id") and m["id"] not in matches:
                     matches[m["id"]] = [[p["heroId"], p.get("position") or "", bool(p.get("isRadiant")),
@@ -715,8 +756,17 @@ def main():
     if now - latest["asOfDateTime"] < PATCH_GRACE and len(versions) > 1:
         patch = versions[-2]
     week_now = now // WEEK
+    data_until = None
     if patch is not latest:
         week_now = latest["asOfDateTime"] // WEEK - 1
+        data_until = latest["asOfDateTime"]
+    gp = game_patch()
+    if gp and patch is latest and gp[0] != latest["name"] and gp[1] > latest["asOfDateTime"]:
+        global CUTOFF
+        CUTOFF = gp[1]
+        data_until = gp[1]
+        week_now = min(week_now, gp[1] // WEEK - 1)
+        print("game is on", gp[0], "but STRATZ latest is", latest["name"], "so only weeks before it", flush=True)
     first_full = -(-patch["asOfDateTime"] // WEEK)
     weeks = [w for w in range(week_now - args.weeks + 1, week_now + 1) if w >= first_full] or [week_now]
     week_ts = [w * WEEK for w in weeks]
@@ -741,6 +791,11 @@ def main():
     if game:
         apply_game(items, game)
         print("game items", len(game), "gone", sum(1 for g in game.values() if g["gone"]), flush=True)
+    if data_until:
+        old_parts = parts_at(data_until)
+        if old_parts:
+            items["parts"] = old_parts
+            PARTS_MEMO.clear()
     ab = {a["id"]: a for a in c["abilities"]}
     heroes = sorted(c["heroes"], key=lambda h: h["id"])
     if args.heroes:
