@@ -445,6 +445,7 @@ def game_heroes(heroes):
         defs = node.get("AbilityDefinitions") if isinstance(node.get("AbilityDefinitions"), dict) else {}
         skills, talents, learn, seen = [], [], [], {}
         slots = sorted(int(k[7:]) for k in node if k.startswith("Ability") and k[7:].isdigit())
+        linked = {d.get("LinkedAbility") for d in defs.values() if isinstance(d, dict)}
         for i in slots:
             name = node.get("Ability%d" % i)
             if not isinstance(name, str) or not name or name.startswith("generic_") or name == "dota_empty" or name not in ids:
@@ -458,7 +459,8 @@ def game_heroes(heroes):
                 continue
             skills.append({"abilityId": aid, "slot": len(skills)})
             seen[aid] = {"id": aid, "name": name, "isTalent": False, "stat": {"isUltimate": bool(d) and d.get("AbilityType") == "ABILITY_TYPE_ULTIMATE"}}
-            if d and learnable(d):
+            if d and learnable(d) and name not in linked and not d.get("LinkedAbility") and d.get("OnLearnbar") != "0" \
+                    and d.get("AbilityType") != "ABILITY_TYPE_ULTIMATE":
                 learn.append(aid)
         if len(skills) >= 3 and len(talents) == 8:
             out[h["id"]] = {"abilities": skills, "talents": talents, "learn": learn}
