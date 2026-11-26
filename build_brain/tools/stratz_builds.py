@@ -1,5 +1,6 @@
 import argparse
 import collections
+import concurrent.futures
 import json
 import math
 import os
@@ -7,13 +8,13 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 API = "https://api.stratz.com/graphql"
 GAME_FILES = "https://raw.githubusercontent.com/SteamDatabase/GameTracking-Dota2/master/game/dota/pak01_dir/scripts/npc/"
 GAME_MIN_ITEMS = 300
 PATCH_LIST = "https://www.dota2.com/datafeed/patchnoteslist?language=english"
-CUTOFF = None
 WEEK = 604800
 POSITIONS = ["POSITION_1", "POSITION_2", "POSITION_3", "POSITION_4", "POSITION_5"]
 START_GOLD = 600
@@ -45,6 +46,11 @@ VISION_MIN = 15
 VISION_LIFT = 1.3
 VISION_PRIOR = 10
 PATCH_GRACE = 2 * 86400
+READY_MAJOR = 3 * 86400
+READY_MINOR = 7 * 86400
+OD_API = "https://api.opendota.com/api/"
+OD_MIN_GAMES = 10
+OD_NEW_SHARE = 0.15
 FULL_CRON = "0 3 * * 1,4"
 SIT_MAX = 12
 BUY_SHARE = 0.02
@@ -347,14 +353,171 @@ def parts_at(ts):
     return parts if len(parts) >= 50 else None
 
 
-def game_patch():
+def valve_patches():
     try:
         d = json.loads(fetch_text(PATCH_LIST) or "{}")
-        p = d["patches"][-1]
-        return p["patch_number"], int(p["patch_timestamp"])
+        out = sorted(((p["patch_number"], int(p["patch_timestamp"])) for p in d.get("patches") or []
+                      if p.get("patch_number") and str(p.get("patch_timestamp", "")).isdigit()), key=lambda p: p[1])
+        return out or None
     except Exception as e:
         print("patch list failed", e, flush=True)
         return None
+
+
+def major(name):
+    m = re.match(r"\d+\.\d+", name or "")
+    return m.group(0) if m else name
+
+
+def patch_window(patches, now, n_weeks):
+    for i in range(len(patches) - 1, -1, -1):
+        name, since = patches[i]
+        if since > now:
+            continue
+        until = next((ts for n2, ts in patches[i + 1:] if major(n2) != major(name)), None)
+        end = min(now, until) if until else now
+        weeks = [w for w in range(-(-since // WEEK), end // WEEK + 1)
+                 if w * WEEK < end and (until is None or (w + 1) * WEEK <= until)]
+        covered = sum(min(end, (w + 1) * WEEK) - w * WEEK for w in weeks)
+        prev = patches[i - 1][0] if i > 0 else None
+        need = READY_MINOR if prev and major(prev) == major(name) and i == len(patches) - 1 else READY_MAJOR
+        if weeks and (covered >= need or i == 0):
+            return {"name": name, "since": since, "until": until, "weeks": weeks[-n_weeks:]}
+    return None
+
+
+def stratz_window(c, now, n_weeks):
+    versions = sorted(c["gameVersions"], key=lambda v: v["asOfDateTime"])
+    latest = versions[-1]
+    patch = latest
+    if now - latest["asOfDateTime"] < PATCH_GRACE and len(versions) > 1:
+        patch = versions[-2]
+    week_now, until = now // WEEK, None
+    if patch is not latest:
+        week_now, until = latest["asOfDateTime"] // WEEK - 1, latest["asOfDateTime"]
+    first_full = -(-patch["asOfDateTime"] // WEEK)
+    weeks = [w for w in range(week_now - n_weeks + 1, week_now + 1) if w >= first_full] or [week_now]
+    return {"name": patch["name"], "since": patch["asOfDateTime"], "until": until, "weeks": weeks}
+
+
+def pick_window(now, n_weeks, c=None):
+    patches = valve_patches()
+    win = patch_window(patches, now, n_weeks) if patches else None
+    if win:
+        win["src"] = "valve"
+        return win
+    win = stratz_window(c if c is not None else constants(), now, n_weeks)
+    win["src"] = "stratz"
+    return win
+
+
+def learnable(d):
+    beh = d.get("AbilityBehavior") if isinstance(d.get("AbilityBehavior"), str) else ""
+    return not (d.get("Innate") == "1" or d.get("IsGrantedByScepter") == "1" or d.get("IsGrantedByShard") == "1"
+                or d.get("MaxLevel") == "1" or "HIDDEN" in beh or "NOT_LEARNABLE" in beh)
+
+
+def game_heroes(heroes):
+    ids_text = fetch_text(GAME_FILES + "npc_ability_ids.txt")
+    if not ids_text:
+        return None
+    ids = {}
+
+    def walk(node):
+        for k, v in node.items():
+            if isinstance(v, dict):
+                walk(v)
+            elif str(v).isdigit():
+                ids[k] = int(v)
+
+    walk(kv_parse(ids_text).get("DOTAAbilityIDs") or {})
+
+    def one(h):
+        return h, fetch_text(GAME_FILES + "heroes/npc_dota_hero_%s.txt" % h["shortName"])
+
+    with concurrent.futures.ThreadPoolExecutor(8) as ex:
+        texts = list(ex.map(one, heroes))
+    out, ab = {}, {}
+    for h, text in texts:
+        node = (kv_parse(text or "").get("DOTAHeroes") or {}).get("npc_dota_hero_" + h["shortName"])
+        if not isinstance(node, dict):
+            continue
+        defs = node.get("AbilityDefinitions") if isinstance(node.get("AbilityDefinitions"), dict) else {}
+        skills, talents, learn, seen = [], [], [], {}
+        slots = sorted(int(k[7:]) for k in node if k.startswith("Ability") and k[7:].isdigit())
+        for i in slots:
+            name = node.get("Ability%d" % i)
+            if not isinstance(name, str) or not name or name.startswith("generic_") or name == "dota_empty" or name not in ids:
+                continue
+            aid = ids[name]
+            d = defs.get(name) if isinstance(defs.get(name), dict) else None
+            if name.startswith("special_bonus_"):
+                if name != "special_bonus_attributes":
+                    talents.append({"abilityId": aid, "slot": len(talents)})
+                seen[aid] = {"id": aid, "name": name, "isTalent": True, "stat": {"isUltimate": False}}
+                continue
+            skills.append({"abilityId": aid, "slot": len(skills)})
+            seen[aid] = {"id": aid, "name": name, "isTalent": False, "stat": {"isUltimate": bool(d) and d.get("AbilityType") == "ABILITY_TYPE_ULTIMATE"}}
+            if d and learnable(d):
+                learn.append(aid)
+        if len(skills) >= 3 and len(talents) == 8:
+            out[h["id"]] = {"abilities": skills, "talents": talents, "learn": learn}
+            ab.update(seen)
+        else:
+            print("game hero skipped", h["shortName"], len(skills), len(talents), flush=True)
+    if len(out) < len(heroes) * 0.8:
+        print("game heroes look broken", len(out), flush=True)
+        return None
+    return out, ab
+
+
+def od_explorer(sql):
+    req = urllib.request.Request(OD_API + "explorer?sql=" + urllib.parse.quote(sql), headers={"User-Agent": "build-brain"})
+    for n in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=180) as r:
+                d = json.loads(r.read().decode())
+            if d.get("err"):
+                raise RuntimeError(str(d["err"])[:300])
+            return d.get("rows") or []
+        except Exception as e:
+            print("opendota failed", e, flush=True)
+            time.sleep(15 * (n + 1))
+    return None
+
+
+def od_new_items(names, since, until):
+    keys = sorted(n[5:] for n in names if re.match(r"^item_[a-z0-9_]+$", n))
+    if not keys:
+        return {}
+    cut = " AND m.start_time < %d" % until if until else ""
+    rows = od_explorer(
+        "WITH g AS (SELECT p.match_id, p.hero_id, p.purchase_log FROM player_matches p JOIN matches m USING(match_id) "
+        "WHERE m.start_time >= %d%s AND p.purchase_log IS NOT NULL) "
+        "SELECT hero_id, '' item, count(*) n FROM g GROUP BY 1 UNION ALL "
+        "SELECT g.hero_id, x->>'key', count(DISTINCT g.match_id) FROM g, unnest(g.purchase_log) x "
+        "WHERE x->>'key' IN (%s) GROUP BY 1, 2" % (since, cut, ",".join("'%s'" % k for k in keys)))
+    out = {}
+    for r in rows or []:
+        e = out.setdefault(int(r["hero_id"]), {"n": 0, "items": {}})
+        if r["item"]:
+            e["items"]["item_" + r["item"]] = int(r["n"])
+        else:
+            e["n"] = int(r["n"])
+    return out
+
+
+def add_new_items(roles, od):
+    if not od or od["n"] < OD_MIN_GAMES:
+        return []
+    got = sorted(((n, c / od["n"]) for n, c in od["items"].items() if c / od["n"] >= OD_NEW_SHARE), key=lambda x: -x[1])
+    for r in roles.values():
+        have = {x[0] for x in r["core"]} | {x[0] for x in r["sit"]}
+        for name, share in got:
+            if name not in have:
+                r["sit"].append([name, round(share * 100)])
+        r["sit"] = sorted(r["sit"], key=lambda x: -x[1])[:SIT_MAX]
+    return [n for n, _ in got]
 
 
 def catalog_lines(game):
@@ -378,7 +541,7 @@ def median_level(dist):
     return 99
 
 
-def mainer_games(hero_id, version, matches=None):
+def mainer_games(hero_id, win, matches=None):
     d = gql('{ leaderboard { a: hero(request: {heroIds: [%d], bracketIds: [IMMORTAL], take: %d}) { steamAccountId } } }' % (hero_id, MAIN_PLAYERS))
     ids = [p["steamAccountId"] for p in (d.get("leaderboard") or {}).get("a") or []]
     games = []
@@ -389,7 +552,8 @@ def mainer_games(hero_id, version, matches=None):
         data = gql("{ " + " ".join(parts) + " }")
         for i, sid in enumerate(chunk):
             for m in (data.get("p%d" % i) or {}).get("matches") or []:
-                if m.get("gameVersionId") != version or (CUTOFF and (m.get("startDateTime") or 0) >= CUTOFF):
+                st = m.get("startDateTime") or 0
+                if st < win["since"] or (win["until"] and st >= win["until"]):
                     continue
                 if matches is not None and m.get("id") and m["id"] not in matches:
                     matches[m["id"]] = [[p["heroId"], p.get("position") or "", bool(p.get("isRadiant")),
@@ -695,6 +859,10 @@ def summarize(hero, data, weeks, items, ab, mainers=None):
         sit.sort(key=lambda c: -c["share"])
         sit = sit[:SIT_MAX]
         skills = build_skills(hero, ab, d["min"], d["max"], n, talent_tiers(hero, ab, d["tal"]))
+        blind = [a for a in hero.get("learn") or [] if not sum(d["min"].get(a, {}).values())]
+        if blind:
+            print("skills dropped", hero["shortName"], p, "no data for", ",".join(ab[a]["name"] for a in blind if a in ab), flush=True)
+            skills = []
         out[str(POSITIONS.index(p) + 1)] = {
             "n": n,
             "start": start,
@@ -734,42 +902,26 @@ def main():
     ap.add_argument("--main-age", type=int, default=86400)
     args = ap.parse_args()
     TOKEN = token()
-    c = constants()
-    versions = sorted(c["gameVersions"], key=lambda v: v["asOfDateTime"])
     now = int(time.time())
-    latest = versions[-1]
     if args.decide:
+        win = pick_window(now, args.weeks)
         old = ""
         if args.version_file and os.path.exists(args.version_file):
             with open(args.version_file, encoding="utf-8") as f:
                 old = f.read().split("\t")[0].strip()
-        run = args.event != "schedule" or args.schedule == FULL_CRON or not old
-        if not run:
-            run = old != latest["name"] and now - latest["asOfDateTime"] >= PATCH_GRACE
+        run = args.event != "schedule" or args.schedule == FULL_CRON or not old or old != win["name"]
         out = os.environ.get("GITHUB_OUTPUT")
         if out:
             with open(out, "a", encoding="utf-8") as f:
                 f.write("run=%s\n" % ("true" if run else "false"))
-        print("latest patch", latest["name"], "stored", old or "none", "run", run)
+        print("patch", win["name"], "from", win["src"], "stored", old or "none", "run", run)
         return 0
-    patch = latest
-    if now - latest["asOfDateTime"] < PATCH_GRACE and len(versions) > 1:
-        patch = versions[-2]
-    week_now = now // WEEK
-    data_until = None
-    if patch is not latest:
-        week_now = latest["asOfDateTime"] // WEEK - 1
-        data_until = latest["asOfDateTime"]
-    gp = game_patch()
-    if gp and patch is latest and gp[0] != latest["name"] and gp[1] > latest["asOfDateTime"]:
-        global CUTOFF
-        CUTOFF = gp[1]
-        data_until = gp[1]
-        week_now = min(week_now, gp[1] // WEEK - 1)
-        print("game is on", gp[0], "but STRATZ latest is", latest["name"], "so only weeks before it", flush=True)
-    first_full = -(-patch["asOfDateTime"] // WEEK)
-    weeks = [w for w in range(week_now - args.weeks + 1, week_now + 1) if w >= first_full] or [week_now]
-    week_ts = [w * WEEK for w in weeks]
+    c = constants()
+    win = pick_window(now, args.weeks, c)
+    data_until = win["until"]
+    week_ts = [w * WEEK for w in win["weeks"]]
+    print("patch", win["name"], "from", win["src"], "weeks", " ".join(time.strftime("%Y-%m-%d", time.gmtime(t)) for t in week_ts),
+          "until", time.strftime("%Y-%m-%d %H:%M", time.gmtime(data_until)) if data_until else "now", flush=True)
     game = None
     try:
         game = game_items()
@@ -788,9 +940,12 @@ def main():
         e = {"name": "item_" + it["shortName"], "cost": st.get("cost") or 0, "recipe": bool(st.get("isRecipe")), "id": it["id"]}
         items["by_id"][it["id"]] = e
         items["by_name"][e["name"]] = e
+    unseen = set()
     if game:
+        known = set(items["by_id"])
+        unseen = {n for n, g in game.items() if g["id"] not in known and not g["gone"] and not g["recipe"] and g["cost"] >= SIT_COST}
         apply_game(items, game)
-        print("game items", len(game), "gone", sum(1 for g in game.values() if g["gone"]), flush=True)
+        print("game items", len(game), "gone", sum(1 for g in game.values() if g["gone"]), "unknown to STRATZ", ",".join(sorted(unseen)), flush=True)
     if data_until:
         old_parts = parts_at(data_until)
         if old_parts:
@@ -801,6 +956,21 @@ def main():
     if args.heroes:
         want = {int(x) for x in args.heroes.split(",")}
         heroes = [h for h in heroes if h["id"] in want]
+    gh = None
+    try:
+        gh = game_heroes(heroes)
+    except Exception as e:
+        print("game heroes failed", e, flush=True)
+    if gh:
+        by_hero, game_ab = gh
+        ab.update(game_ab)
+        heroes = [dict(h, **by_hero[h["id"]]) if h["id"] in by_hero else h for h in heroes]
+        print("game heroes", len(by_hero), "of", len(heroes), flush=True)
+    od_new = {}
+    if unseen:
+        od_new = od_new_items(unseen, win["since"], win["until"]) or {}
+        print("opendota new items", len(od_new), "heroes", flush=True)
+    mkey = "%s@%d" % (win["name"], win["since"])
     lines, vs_lines, wr_parts = [], [], []
     vision = {}
     try:
@@ -829,14 +999,14 @@ def main():
         if mfile and os.path.exists(mfile):
             with open(mfile, encoding="utf-8") as f:
                 cached = json.load(f)
-            if cached.get("version") == patch["id"] and now - cached.get("at", 0) < args.main_age and "matches" in cached:
+            if cached.get("version") == mkey and now - cached.get("at", 0) < args.main_age and "matches" in cached:
                 games = cached["games"]
                 for k, v in cached["matches"].items():
                     vision.setdefault(int(k), v)
         if games is None:
             got = {}
             try:
-                games = mainer_games(h["id"], patch["id"], got)
+                games = mainer_games(h["id"], win, got)
             except Exception as e:
                 print("mainers failed", h["shortName"], e, flush=True)
                 games = []
@@ -844,8 +1014,11 @@ def main():
                 vision.setdefault(k, v)
             if mfile:
                 with open(mfile, "w", encoding="utf-8") as f:
-                    json.dump({"version": patch["id"], "at": now, "games": games, "matches": got}, f)
+                    json.dump({"version": mkey, "at": now, "games": games, "matches": got}, f)
         roles = with_wins(summarize(h, data, week_ts, items, ab, mainer_builds(games, items)), h["id"], wins)
+        added = add_new_items(roles, od_new.get(h["id"]))
+        if added:
+            print("new items from opendota", h["shortName"], ",".join(added), flush=True)
         if roles:
             lines.append("%d\t%s" % (h["id"], json.dumps(roles, ensure_ascii=False, separators=(",", ":"))))
         try:
@@ -866,12 +1039,12 @@ def main():
         print("vision failed", e, flush=True)
         e_lines = []
     print("vision", len(vision), "matches,", sum(1 for x in e_lines if x.split("\t")[4]), "lines with heroes", flush=True)
-    head = "BB1\t%s\t%d\t%s" % (patch["name"], now, ",".join(str(w) for w in week_ts))
+    head = "BB1\t%s\t%d\t%s" % (win["name"], now, ",".join(str(w) for w in week_ts))
     with open(args.out, "w", encoding="utf-8", newline="\n") as f:
         f.write(head + "\n" + "\n".join(lines + vs_lines + (["W\t" + ",".join(wr_parts)] if wr_parts else []) + e_lines + (catalog_lines(game) if game else [])) + "\n")
     if args.version_file:
         with open(args.version_file, "w", encoding="utf-8", newline="\n") as f:
-            f.write("%s\t%d\n" % (patch["name"], now))
+            f.write("%s\t%d\n" % (win["name"], now))
     print("wrote", args.out, len(lines), "heroes", len(vs_lines), "matchup rows", len(wr_parts), "win rates", os.path.getsize(args.out), "bytes")
 
 
