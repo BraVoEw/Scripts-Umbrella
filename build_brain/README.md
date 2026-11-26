@@ -4,7 +4,7 @@
 
 Скрипт для Umbrella (Dota 2). Показывает в магазине сборку на твоего героя и роль по свежим пабам высокого рейтинга, а сверху подсказывает, что собрать против конкретных врагов в этой игре и зачем.
 
-**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.6.1/build_brain.lua)**
+**[Скачать последнюю версию](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.6.2/build_brain.lua)**
 
 ## Что умеет
 
@@ -36,7 +36,8 @@
 
 ## Откуда сборки
 
-- Сборки считаются по матчам Божества и Титана на текущем патче, данные STRATZ.
+- Сборки считаются по матчам Божества и Титана на текущем патче, данные STRATZ. Текущий патч берётся из официального списка патчей Dota, способности и таланты героев из файлов игры.
+- Пока STRATZ не видит что-то новое из патча (способность или предмет), эта часть берётся из про-матчей OpenDota.
 - Робот на GitHub пересобирает их два раза в неделю, а после нового патча, как только наберутся игры.
 - Скрипт раз в час проверяет, есть ли свежий файл, и скачивает его, около 0.8 МБ. Если интернета нет, работает с последним скачанным. Если GitHub недоступен, файл качается через зеркало jsDelivr.
 - Матчапы в драфте и роли героев считаются по пабам высокого рейтинга (STRATZ), общий винрейт героя на твоём ранге берётся из OpenDota.
@@ -72,7 +73,7 @@
 
 Umbrella script for Dota 2. Shows a build for your hero and role in the shop, based on fresh high-MMR pubs, and tells you what to buy against your actual enemies in this game and why.
 
-**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.6.1/build_brain.lua)**
+**[Download the latest version](https://github.com/BraVoEw/Scripts-Umbrella/releases/download/build-brain-v2.6.2/build_brain.lua)**
 
 ### Features
 
@@ -86,7 +87,7 @@ Umbrella script for Dota 2. Shows a build for your hero and role in the shop, ba
 - Team tab: what each teammate should buy from their build and against the enemies. Click a hero's item to send them the native Dota suggestion, click a team item to write it in team chat.
 - Skip or replace any item of the build from its hover card, and remember the choice for the hero. Item minutes follow your real income, Turbo gets its own minutes.
 - Your own hero pool: mark the heroes you play and the draft shows your 2 best of them on top of the meta picks.
-- A short first-run setup (role, heroes, game mode) and window styles: Scoreboard, Mono, Gold, Ruby.
+- A short first-run setup (role, heroes, game mode) and window styles: Scoreboard, Mono, Gold, Ruby, plus two full themes, Midnight (dark blue) and Paper (light).
 - Live counters: when an enemy buys an item like Butterfly, the counter (for example MKB) moves into your build as the next item.
 - Builds come from Divine and Immortal matches on the current patch, matchups from Legend to Immortal pubs over two weeks (STRATZ data). A GitHub bot rebuilds them twice a week and after a new patch, the script checks for a new file hourly, through the jsDelivr mirror when GitHub is not reachable.
 

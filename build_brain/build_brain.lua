@@ -1,10 +1,3 @@
---[[
-     ~ qLocalization
-     ~ automatic localization wrapper for Lua menu interfaces
-
-     ~ author: qfun (qfun_g9s)
-]]
-
 local qLocalization = (function()
 	local lib = {}
 
@@ -644,6 +637,8 @@ local localization = qLocalization.new({
 		bb_style_1 = "Mono",
 		bb_style_2 = "Gold",
 		bb_style_3 = "Ruby",
+		bb_style_4 = "Midnight",
+		bb_style_5 = "Paper",
 		bb_need = "%s gold to go",
 		bb_enough = "Enough gold",
 		bb_status_link = "Opening in your browser",
@@ -1153,6 +1148,8 @@ local localization = qLocalization.new({
 		bb_style_1 = "Тишина",
 		bb_style_2 = "Золото",
 		bb_style_3 = "Рубин",
+		bb_style_4 = "Полночь",
+		bb_style_5 = "Бумага",
 		bb_need = "не хватает %s",
 		bb_enough = "Хватает золота",
 		bb_status_link = "Открываю в браузере",
@@ -1500,9 +1497,9 @@ local K = {
 	START_MAX = 5,
 	GPM_DEFAULT = { 600, 620, 520, 380, 320 },
 	IDENTIFIER = "build_brain",
-	VERSION = "2.6.1",
+	VERSION = "2.6.2",
 	NEWS_VER = "2.5.0",
-	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 } },
+	STYLES = { { 255, 90, 44, 0 }, { 242, 242, 242, 0 }, { 217, 180, 95, 0 }, { 229, 72, 77, 1 }, { 56, 189, 248, 0, "night" }, { 214, 84, 16, 1, "paper" } },
 	LINKS = { tg = "https://t.me/+JYe25eMFs7tkYjky" },
 	NEWS = { "bb_news_30", "bb_news_31" },
 	NEWS_W = 420,
@@ -1765,7 +1762,7 @@ local K = {
 		{ key = "role", title = "bb_set_role", count = 6, default = 0, label = "bb_role_", group = "game" },
 		{ key = "mode", title = "bb_set_mode", count = 3, default = 0, label = "bb_mode_", group = "game" },
 		{ key = "auto", title = "bb_set_auto", count = 2, default = 1, flag = true, group = "win" },
-		{ key = "style", title = "bb_set_style", count = 4, default = 0, label = "bb_style_", group = "win" },
+		{ key = "style", title = "bb_set_style", count = 6, default = 0, label = "bb_style_", group = "win" },
 		{ key = "scale", title = "bb_set_scale", count = 5, default = 1, values = { 90, 100, 110, 120, 130 }, group = "win" },
 		{ key = "shop", title = "bb_set_shop", count = 2, default = 1, flag = true, group = "shop" },
 		{ key = "shard", title = "bb_set_shard", count = 2, default = 1, flag = true, group = "shop" },
@@ -5075,6 +5072,7 @@ local N = {
 	LOSE = Color(240, 100, 110),
 	DONE = Color(255, 255, 255, 92),
 	SHADE = Color(0, 0, 0, 170),
+	PURE = Color(245, 240, 230),
 	ACCENT = Color(255, 90, 44),
 	ACCENT_HOT = Color(255, 122, 84),
 	ACCENT_SOFT = Color(255, 90, 44, 36),
@@ -5239,19 +5237,56 @@ function W.skeleton(x, y, w, h, i)
 end
 
 W.st = { key = nil, from = nil, to = nil, at = -10, done = true, pals = {} }
-W.ST_FIELDS = { "ACCENT", "ACCENT_HOT", "ACCENT_SOFT", "INK" }
+W.ST_FIELDS = { "ACCENT", "ACCENT_HOT", "ACCENT_SOFT", "INK", "BG", "PANEL", "SLOT", "LINE", "HOT", "TEXT", "MUTED", "DIM", "TRACK", "WIN", "LOSE", "DONE", "SHADE", "PURE" }
+W.BASE = {}
+for _, f in ipairs(W.ST_FIELDS) do W.BASE[f] = N[f] end
+W.THEMES = {
+	night = {
+		BG = Color(10, 14, 24, 255),
+		PANEL = Color(16, 22, 36, 255),
+		SLOT = Color(21, 28, 45, 255),
+		LINE = Color(35, 45, 68, 255),
+		HOT = Color(140, 180, 255, 16),
+		TEXT = Color(230, 237, 250),
+		MUTED = Color(136, 150, 178),
+		DIM = Color(82, 95, 122),
+		TRACK = Color(33, 43, 66),
+		WIN = Color(74, 222, 160),
+		LOSE = Color(248, 113, 133),
+		DONE = Color(200, 215, 255, 92),
+		SHADE = Color(4, 8, 18, 185),
+		PURE = Color(226, 232, 245),
+	},
+	paper = {
+		BG = Color(246, 244, 239, 255),
+		PANEL = Color(255, 255, 255, 255),
+		SLOT = Color(236, 233, 226, 255),
+		LINE = Color(218, 213, 202, 255),
+		HOT = Color(0, 0, 0, 12),
+		TEXT = Color(30, 30, 32),
+		MUTED = Color(102, 99, 94),
+		DIM = Color(152, 147, 139),
+		TRACK = Color(224, 219, 209),
+		WIN = Color(21, 150, 84),
+		LOSE = Color(214, 48, 60),
+		DONE = Color(255, 255, 255, 110),
+		SHADE = Color(255, 255, 255, 225),
+		PURE = Color(120, 112, 104),
+	},
+}
 
 function W.style_pal(i)
 	local pal = W.st.pals[i]
 	if pal then return pal end
 	local s = K.STYLES[i + 1] or K.STYLES[1]
 	local r, g, b = s[1], s[2], s[3]
-	pal = {
-		ACCENT = Color(r, g, b),
-		ACCENT_HOT = Color(math.floor(r + (255 - r) * 0.18 + 0.5), math.floor(g + (255 - g) * 0.18 + 0.5), math.floor(b + (255 - b) * 0.18 + 0.5)),
-		ACCENT_SOFT = Color(r, g, b, 36),
-		INK = s[4] == 1 and Color(255, 255, 255) or Color(0, 0, 0),
-	}
+	local theme = s[5] and W.THEMES[s[5]] or K.NONE
+	pal = {}
+	for _, f in ipairs(W.ST_FIELDS) do pal[f] = theme[f] or W.BASE[f] end
+	pal.ACCENT = Color(r, g, b)
+	pal.ACCENT_HOT = Color(math.floor(r + (255 - r) * 0.18 + 0.5), math.floor(g + (255 - g) * 0.18 + 0.5), math.floor(b + (255 - b) * 0.18 + 0.5))
+	pal.ACCENT_SOFT = Color(r, g, b, 36)
+	pal.INK = s[4] == 1 and Color(255, 255, 255) or Color(0, 0, 0)
 	W.st.pals[i] = pal
 	return pal
 end
@@ -5937,7 +5972,7 @@ function W.donut(cx, cy, r, th, mag, phys, grow)
 	if phys > 0.001 then Render.Circle(P(cx, cy), r * G.s, A(C.PHYS), th * G.s, start, phys * grow, false, 64) end
 	start = start + phys * 360 * grow
 	local pure = math.max(0, 1 - mag - phys)
-	if pure > 0.001 then Render.Circle(P(cx, cy), r * G.s, A(C.PURE), th * G.s, start, pure * grow, false, 64) end
+	if pure > 0.001 then Render.Circle(P(cx, cy), r * G.s, A(N.PURE), th * G.s, start, pure * grow, false, 64) end
 end
 
 function W.fight_killers(src, total)
@@ -5999,7 +6034,7 @@ function W.fight(w, h)
 		for i, r in ipairs(K.DMG_ROWS) do
 			local ly = ky + 28 + (i - 1) * 30
 			local part = i == 1 and mag or (i == 2 and phys or math.max(0, 1 - mag - phys))
-			rect(gx, ly + 5, 8, 8, C[r[1]], 2)
+			rect(gx, ly + 5, 8, 8, N[r[1]] or C[r[1]], 2)
 			text(fonts.w500, 14, L(r[2]), gx + 18, ly, N.TEXT)
 			text(fonts.d600, 15, math.floor(part * 100 + 0.5) .. "%", gr, ly, N.TEXT, "right")
 		end
